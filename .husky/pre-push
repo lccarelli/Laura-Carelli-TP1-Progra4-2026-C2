@@ -1,0 +1,5 @@
+rama=$(git rev-parse --abbrev-ref HEAD)
+if [ "$rama" = "main" ]; then
+  echo "No se puede pushear directo a main. Creá una rama."
+  exit 1
+fi

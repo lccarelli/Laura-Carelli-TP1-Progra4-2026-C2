@@ -1,5 +1,6 @@
-rama=$(git rev-parse --abbrev-ref HEAD)
-if [ "$rama" = "main" ]; then
-  echo "No se puede pushear directo a main. Creá una rama."
-  exit 1
-fi
+while read local_ref local_sha remote_ref remote_sha; do
+  if [ "$remote_ref" = "refs/heads/main" ]; then
+    echo "No se puede pushear directo a main. Creá una rama."
+    exit 1
+  fi
+done

@@ -13,7 +13,8 @@
     "test:ci": "ng test --no-watch",
     "prepare": "husky",
     "prestart": "node scripts/generate-environment.js",
-    "prebuild": "node scripts/generate-environment.js"
+    "prebuild": "node scripts/generate-environment.js",
+    "pretest:ci": "node scripts/generate-environment.js"
   },
   "private": true,
   "packageManager": "npm@11.17.0",

@@ -1,0 +1,21 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.pagina-inicio {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background-color: var(--crema);
+}
+
+.tarjeta__texto {
+  position: relative;
+  font-size: 0.95rem;
+  color: color-mix(in srgb, var(--negro) 70%, transparent);
+  margin: 0 0 1.75rem;
+}

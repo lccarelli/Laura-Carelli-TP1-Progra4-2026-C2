@@ -1,0 +1,90 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.pagina-salas {
+  flex: 1;
+  display: flex;
+  padding: 2rem 1rem;
+  background-color: var(--crema);
+}
+
+.panel {
+  width: 100%;
+  max-width: 50rem;
+  margin-inline: auto;
+  background: #fff;
+  border: 2px solid var(--negro);
+  border-radius: 1.75rem;
+  padding: 2rem;
+}
+
+.panel__encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+}
+
+.panel__titulo {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--negro);
+}
+
+.tabla-contenedor {
+  overflow-x: auto;
+}
+
+.tabla {
+  width: 100%;
+  min-width: 24rem;
+  border-collapse: collapse;
+  line-height: 2.5;
+}
+
+.tabla th {
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: color-mix(in srgb, var(--negro) 60%, transparent);
+  padding: 0 0.75rem 0.5rem 0;
+  border-bottom: 2px solid var(--negro);
+}
+
+.tabla td {
+  padding: 0.75rem 0.75rem 0.75rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
+  vertical-align: middle;
+}
+
+.tabla th:first-child,
+.tabla td:first-child {
+  padding-left: 0;
+}
+
+.tabla th:last-child,
+.tabla td:last-child {
+  padding-right: 0;
+}
+
+.tabla__nombre {
+  font-weight: 700;
+}
+
+.tabla__acciones {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tabla__vacio {
+  text-align: center;
+  color: color-mix(in srgb, var(--negro) 60%, transparent);
+  padding-block: 1.5rem;
+}

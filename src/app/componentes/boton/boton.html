@@ -1,0 +1,8 @@
+<button
+  [class]="'boton boton--' + variante"
+  [type]="tipo"
+  [disabled]="disabled"
+  (click)="clic.emit()"
+>
+  <ng-content />
+</button>

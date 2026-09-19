@@ -23,7 +23,7 @@ TP1 de Programación IV.
 - [Cómo correr el proyecto](#cómo-correr-el-proyecto)
 - [Estructura de carpetas](#estructura-de-carpetas)
 - [Manejo de branches y merges](#manejo-de-branches-y-merges)
-- [Documentacion](#docs) -> `docs/` (Trabajando)
+- [Documentación](#documentación)
 
 ---
 
@@ -105,3 +105,10 @@ src/app/
 **`main` es lo único que deploya a producción:**
 
 - El merge a `main` dispara el deploy de producción a Vercel.
+
+---
+
+## Documentación
+
+- [Análisis de correos de la consigna](docs/analisis-correos-consigna.md)
+- [Requerimientos funcionales y no funcionales, y plan de tareas](docs/requerimientos-funcionales-y-no-funcionales.md)

@@ -4,6 +4,9 @@ import { Errores } from '../../../servicios/errores/errores';
 import { Sala } from '../../../interfaces/sala';
 import { Boton } from '../../../componentes/boton/boton';
 import { BotonLink } from '../../../componentes/boton-link/boton-link';
+import { Logger } from '../../../servicios/logger/logger';
+import { Flujo } from '../../../servicios/logger/flujo';
+import { TipoEvento } from '../../../servicios/logger/tipo-evento';
 
 @Component({
   imports: [Boton, BotonLink],
@@ -14,6 +17,7 @@ import { BotonLink } from '../../../componentes/boton-link/boton-link';
 export class Salas {
   private salaServicio = inject(SalaServicio);
   private errores = inject(Errores);
+  private logger = inject(Logger);
 
   protected salas = signal<Sala[]>([]);
 
@@ -35,8 +39,10 @@ export class Salas {
     const { error } = await this.salaServicio.eliminar(id);
 
     if (error) {
+      this.logger.registrar(Flujo.BajaSala, TipoEvento.Error, error.message);
       this.errores.mostrar(error.message);
     } else {
+      this.logger.registrar(Flujo.BajaSala, TipoEvento.Exito, id);
       await this.cargar();
     }
   }

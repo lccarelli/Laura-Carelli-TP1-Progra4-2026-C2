@@ -3,6 +3,9 @@ import { Router } from '@angular/router';
 import { Auth } from '../../servicios/auth/auth';
 import { Boton } from '../boton/boton';
 import { BotonLink } from '../boton-link/boton-link';
+import { Logger } from '../../servicios/logger/logger';
+import { Flujo } from '../../servicios/logger/flujo';
+import { TipoEvento } from '../../servicios/logger/tipo-evento';
 
 @Component({
   imports: [Boton, BotonLink],
@@ -13,9 +16,13 @@ import { BotonLink } from '../boton-link/boton-link';
 export class Header {
   protected auth = inject(Auth);
   private router = inject(Router);
+  private logger = inject(Logger);
 
   async cerrarSesion() {
+    const email = this.auth.usuario()?.email;
+
     await this.auth.cerrarSesion();
+    this.logger.registrar(Flujo.CerrarSesion, TipoEvento.Exito, email);
     await this.router.navigate(['/']);
   }
 }

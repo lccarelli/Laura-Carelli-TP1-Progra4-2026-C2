@@ -4,6 +4,9 @@ import { Router } from '@angular/router';
 import { SalaServicio } from '../../../../servicios/sala/sala';
 import { Errores } from '../../../../servicios/errores/errores';
 import { Boton } from '../../../../componentes/boton/boton';
+import { Logger } from '../../../../servicios/logger/logger';
+import { Flujo } from '../../../../servicios/logger/flujo';
+import { TipoEvento } from '../../../../servicios/logger/tipo-evento';
 
 @Component({
   imports: [ReactiveFormsModule, Boton],
@@ -16,19 +19,25 @@ export class FormularioSala {
   private errores = inject(Errores);
   private formBuilder = inject(FormBuilder);
   private router = inject(Router);
+  private logger = inject(Logger);
 
   protected formulario = this.formBuilder.nonNullable.group({
     nombre: ['', Validators.required],
   });
 
   async guardar() {
-    const { error } = await this.salaServicio.crear(this.formulario.getRawValue());
+    const valores = this.formulario.getRawValue();
+    const { error } = await this.salaServicio.crear(valores);
 
     if (error) {
-      this.errores.mostrar(error.message);
+      const mensaje = error.code === '23505' ? 'Ya existe una sala con ese nombre' : error.message;
+
+      this.logger.registrar(Flujo.AltaSala, TipoEvento.Error, mensaje);
+      this.errores.mostrar(mensaje);
       return;
     }
 
+    this.logger.registrar(Flujo.AltaSala, TipoEvento.Exito, valores.nombre);
     await this.router.navigate(['/admin/salas']);
   }
 

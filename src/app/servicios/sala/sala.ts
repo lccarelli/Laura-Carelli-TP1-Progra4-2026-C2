@@ -57,9 +57,9 @@ export class SalaServicio {
 
     const agregarFila = (fila: string, tipo: Butaca['tipo'], tamanos: [number, number, number]) => {
       const bloques: { nombre: Butaca['bloque']; cantidad: number }[] = [
-        { nombre: 'izquierda', cantidad: tamanos[0] },
+        { nombre: 'izquierdo', cantidad: tamanos[0] },
         { nombre: 'centro', cantidad: tamanos[1] },
-        { nombre: 'derecha', cantidad: tamanos[2] },
+        { nombre: 'derecho', cantidad: tamanos[2] },
       ];
 
       let numero = 1;

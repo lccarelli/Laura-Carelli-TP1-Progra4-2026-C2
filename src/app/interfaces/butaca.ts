@@ -3,6 +3,6 @@ export interface Butaca {
   sala_id: string;
   fila: string;
   numero: number;
-  bloque: 'izquierda' | 'centro' | 'derecha';
+  bloque: 'izquierdo' | 'centro' | 'derecho';
   tipo: 'normal' | 'accesible' | 'vip';
 }

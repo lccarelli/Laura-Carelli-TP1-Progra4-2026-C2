@@ -1,0 +1,90 @@
+<main class="pagina-formulario">
+  <section class="panel">
+    <div class="panel__encabezado">
+      <div class="panel__titulo-fila">
+        @if (id()) {
+          <span
+            class="estado-punto estado-punto--grande"
+            [class.estado-punto--activa]="activa()"
+            [class.estado-punto--inactiva]="!activa()"
+            [attr.aria-label]="activa() ? 'Activa' : 'Desactivada'"
+            [title]="activa() ? 'Activa' : 'Desactivada'"
+          ></span>
+        }
+        <h2 class="panel__titulo">
+          {{ id() ? 'Editar película' : 'Nueva película' }}
+        </h2>
+      </div>
+
+      @if (id()) {
+        <div class="panel__acciones">
+          <app-boton variante="claro-negro" (clic)="cambiarEstado()">
+            {{ activa() ? 'Desactivar película' : 'Activar película' }}
+          </app-boton>
+          <app-boton variante="claro-rojo" (clic)="eliminarPelicula()">
+            Eliminar película
+          </app-boton>
+        </div>
+      }
+    </div>
+
+    <form class="formulario" [formGroup]="formulario" (ngSubmit)="guardar()">
+      <div class="formulario__grid">
+        <div class="formulario__columna-imagen">
+          <div class="preview preview--grande">
+            @if (imagenUrl() && !imagenRota()) {
+              <img class="preview__imagen" [src]="imagenUrl()" (error)="imagenFallo()" alt="" />
+            } @else if (imagenUrl() && imagenRota()) {
+              <span class="preview__error">No se pudo cargar la imagen</span>
+            } @else {
+              <span class="preview__vacio">Sin imagen</span>
+            }
+          </div>
+        </div>
+
+        <div class="formulario__columna-campos">
+          <label class="campo">
+            <span class="campo__etiqueta">Nombre</span>
+            <input class="campo__input" type="text" formControlName="nombre" />
+          </label>
+
+          <label class="campo">
+            <span class="campo__etiqueta">Sinopsis</span>
+            <textarea
+              class="campo__input campo__input--area"
+              formControlName="sinopsis"
+              rows="4"
+            ></textarea>
+          </label>
+
+          <label class="campo">
+            <span class="campo__etiqueta">Duración (minutos)</span>
+            <input class="campo__input" type="number" formControlName="duracion_minutos" />
+          </label>
+
+          <label class="campo">
+            <span class="campo__etiqueta">Restricción de edad</span>
+            <select class="campo__input" formControlName="restriccion_edad">
+              <option value="">Sin restricción</option>
+              <option value="13">+13</option>
+              <option value="18">+18</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <label class="campo">
+        <span class="campo__etiqueta">Imagen (URL)</span>
+        <input class="campo__input" type="text" formControlName="imagen_url" />
+      </label>
+
+      <div class="formulario__acciones">
+        <app-boton variante="menu" tipo="submit" [disabled]="formulario.invalid">
+          {{ id() ? 'Guardar cambios' : 'Crear película' }}
+        </app-boton>
+
+        <app-boton variante="claro-negro" (clic)="cancelar()">Cancelar</app-boton>
+      </div>
+    </form>
+  </section>
+</main>

@@ -5,6 +5,8 @@ const path = require('path');
 const contenido = `export const environment = {
   SUPABASE_URL: '${process.env.SUPABASE_URL}',
   SUPABASE_KEY: '${process.env.SUPABASE_KEY}',
+  PROFESOR_EMAIL: '${process.env.PROFESOR_EMAIL}',
+  PROFESOR_PASSWORD: '${process.env.PROFESOR_PASSWORD}',
 };
 `;
 

@@ -1,0 +1,78 @@
+<main class="pagina-peliculas">
+  <section class="panel">
+    <div class="panel__encabezado">
+      <h2 class="panel__titulo">Películas</h2>
+      <app-boton-link variante="mas" ruta="/admin/peliculas/nueva" ariaLabel="Nueva película">
+        +
+      </app-boton-link>
+    </div>
+
+    <input
+      class="buscador"
+      type="text"
+      placeholder="Buscar por nombre..."
+      [value]="busqueda()"
+      (input)="buscar($any($event.target).value)"
+    />
+
+    <div class="tabla-contenedor">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th class="tabla__col-estado">Estado</th>
+            <th>Película</th>
+            <th>Duración</th>
+            <th>Restricción</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (pelicula of peliculasFiltradas(); track pelicula.id) {
+            <tr>
+              <td class="tabla__col-estado">
+                <span
+                  class="estado-punto"
+                  [class.estado-punto--activa]="pelicula.activa"
+                  [class.estado-punto--inactiva]="!pelicula.activa"
+                  [attr.aria-label]="pelicula.activa ? 'Activa' : 'Desactivada'"
+                  [title]="pelicula.activa ? 'Activa' : 'Desactivada'"
+                ></span>
+              </td>
+              <td>
+                <div class="tabla__pelicula">
+                  @if (pelicula.imagen_url) {
+                    <img class="miniatura" [src]="pelicula.imagen_url" alt="" />
+                  } @else {
+                    <div class="miniatura miniatura--vacia"></div>
+                  }
+                  <span class="tabla__nombre">{{ pelicula.nombre }}</span>
+                </div>
+              </td>
+              <td>{{ pelicula.duracion_minutos }} min</td>
+              <td class="tabla__restriccion">
+                {{
+                  pelicula.restriccion_edad ? '+' + pelicula.restriccion_edad : 'Sin restricción'
+                }}
+              </td>
+              <td class="tabla__acciones">
+                <app-boton-link
+                  variante="claro-negro"
+                  [ruta]="['/admin/peliculas', pelicula.id, 'editar']"
+                >
+                  Editar
+                </app-boton-link>
+                <app-boton variante="claro-negro" (clic)="eliminar(pelicula.id)">
+                  Eliminar
+                </app-boton>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="tabla__vacio" colspan="5">No hay películas cargadas todavía.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>

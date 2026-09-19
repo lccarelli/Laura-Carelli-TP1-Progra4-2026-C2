@@ -1,3 +1,94 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import 'tailwindcss';
+
+:root {
+  --crema: #f2f0ea;
+  --negro: #131313;
+  --naranja: #f2541a;
+  --amarillo: #ffdca0;
+  --rojo: #c1443a;
+}
+
+.boton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.boton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.boton--claro-negro,
+.boton--claro-rojo {
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  font-size: 0.8rem;
+  background: transparent;
+  border: 2px solid var(--negro);
+  color: var(--negro);
+}
+
+.boton--claro-negro:not(:disabled):hover {
+  background: var(--negro);
+  color: #fff;
+}
+
+.boton--claro-rojo {
+  border-color: var(--rojo);
+  color: var(--rojo);
+}
+
+.boton--claro-rojo:not(:disabled):hover {
+  background: var(--rojo);
+  color: #fff;
+}
+
+.boton--oscuro-blanco {
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  background: transparent;
+  border: 1px solid var(--crema);
+  color: var(--crema);
+}
+
+.boton--oscuro-blanco:hover {
+  background: var(--crema);
+  color: var(--negro);
+}
+
+.boton--mas {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--negro);
+  color: #fff;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.boton--mas:hover {
+  opacity: 0.85;
+}
+
+.boton--menu {
+  border: none;
+  border-radius: 999px;
+  padding: 0.85rem 2rem;
+  font-size: 0.95rem;
+  color: var(--negro);
+  background: linear-gradient(90deg, var(--amarillo) 0%, var(--naranja) 100%);
+}
+
+.boton--menu:not(:disabled):hover {
+  opacity: 0.85;
+}

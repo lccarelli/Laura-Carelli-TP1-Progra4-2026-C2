@@ -1,0 +1,33 @@
+<main class="pagina-login">
+  <section class="tarjeta">
+    <img class="tarjeta__asterisco" src="icono-popcorn.png" alt="" aria-hidden="true" />
+    <span class="tarjeta__circulo" aria-hidden="true"></span>
+
+    <h2 class="tarjeta__titulo">Iniciar<br />sesión</h2>
+
+    <form class="tarjeta__form" [formGroup]="formulario" (ngSubmit)="enviar()">
+      <label class="campo">
+        <span class="campo__etiqueta">Email</span>
+        <input class="campo__input" type="email" formControlName="email" autocomplete="email" />
+      </label>
+
+      <label class="campo">
+        <span class="campo__etiqueta">Contraseña</span>
+        <input
+          class="campo__input"
+          type="password"
+          formControlName="password"
+          autocomplete="current-password"
+        />
+      </label>
+
+      <app-boton variante="menu" tipo="submit" [disabled]="formulario.invalid">
+        Ingresar
+      </app-boton>
+    </form>
+
+    <app-boton class="acceso-profesor" variante="claro-negro" (clic)="ingresarComoProfesor()">
+      Ingresar como profesor
+    </app-boton>
+  </section>
+</main>

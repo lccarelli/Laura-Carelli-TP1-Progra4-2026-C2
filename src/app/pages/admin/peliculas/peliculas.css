@@ -1,0 +1,161 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.pagina-peliculas {
+  min-height: 100dvh;
+  display: flex;
+  padding: 2rem 1rem;
+  background-color: var(--crema);
+}
+
+.panel {
+  width: 100%;
+  max-width: 70rem;
+  margin-inline: auto;
+  background: #fff;
+  border: 2px solid var(--negro);
+  border-radius: 1.75rem;
+  padding: 2rem;
+}
+
+.panel__encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+}
+
+.panel__titulo {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--negro);
+}
+
+.buscador {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid var(--negro);
+  background: transparent;
+  padding: 0.5rem 0.1rem;
+  font-size: 1rem;
+  color: var(--negro);
+  font-family: inherit;
+  margin-bottom: 2.5rem;
+}
+
+.buscador:focus {
+  outline: none;
+  border-bottom-color: var(--naranja);
+}
+
+.buscador::placeholder {
+  color: color-mix(in srgb, var(--negro) 45%, transparent);
+}
+
+.tabla-contenedor {
+  overflow-x: auto;
+}
+
+.tabla {
+  width: 100%;
+  min-width: 34rem;
+  border-collapse: collapse;
+  line-height: 2.5;
+}
+
+.tabla th {
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: color-mix(in srgb, var(--negro) 60%, transparent);
+  padding: 0 0.75rem 0.5rem 0;
+  border-bottom: 2px solid var(--negro);
+}
+
+.tabla td {
+  padding: 0.75rem 0.75rem 0.75rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
+  vertical-align: middle;
+}
+
+.tabla__restriccion {
+  white-space: nowrap;
+}
+
+.tabla th:first-child,
+.tabla td:first-child {
+  padding-left: 0;
+}
+
+.tabla th:last-child,
+.tabla td:last-child {
+  padding-right: 0;
+}
+
+.tabla__col-estado {
+  width: 2rem;
+}
+
+.tabla th.tabla__col-estado,
+.tabla td.tabla__col-estado {
+  text-align: center;
+}
+
+.estado-punto {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+}
+
+.estado-punto--activa {
+  background: #4caf50;
+}
+
+.estado-punto--inactiva {
+  background: #c1443a;
+}
+
+.tabla__pelicula {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 2.75rem;
+}
+
+.tabla__nombre {
+  font-weight: 700;
+}
+
+.miniatura {
+  width: 1.5rem;
+  height: 2.25rem;
+  border: 1px solid var(--negro);
+  border-radius: 0.3rem;
+  object-fit: cover;
+  display: block;
+  flex-shrink: 0;
+}
+
+.miniatura--vacia {
+  background: var(--crema);
+}
+
+.tabla__acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.tabla__vacio {
+  text-align: center;
+  color: color-mix(in srgb, var(--negro) 60%, transparent);
+  padding-block: 1.5rem;
+}

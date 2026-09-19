@@ -3,6 +3,10 @@ import { adminGuard } from './guards/admin-guard';
 
 export const routes: Routes = [
   {
+    path: '',
+    loadComponent: () => import('./pages/inicio/inicio').then((m) => m.Inicio),
+  },
+  {
     path: 'login',
     loadComponent: () => import('./pages/login/login').then((m) => m.Login),
   },
@@ -27,5 +31,16 @@ export const routes: Routes = [
     canActivate: [adminGuard],
     loadComponent: () =>
       import('./pages/admin/peliculas/formulario/formulario').then((m) => m.Formulario),
+  },
+  {
+    path: 'admin/salas',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./pages/admin/salas/salas').then((m) => m.Salas),
+  },
+  {
+    path: 'admin/salas/nueva',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./pages/admin/salas/formulario/formulario').then((m) => m.FormularioSala),
   },
 ];

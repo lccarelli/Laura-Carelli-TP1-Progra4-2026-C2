@@ -1,0 +1,37 @@
+<main class="pagina-salas">
+  <section class="panel">
+    <div class="panel__encabezado">
+      <h2 class="panel__titulo">Salas</h2>
+      <app-boton-link variante="mas" ruta="/admin/salas/nueva" ariaLabel="Nueva sala">
+        +
+      </app-boton-link>
+    </div>
+
+    <div class="tabla-contenedor">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Sala</th>
+            <th>Butacas</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (sala of salas(); track sala.id) {
+            <tr>
+              <td class="tabla__nombre">{{ sala.nombre }}</td>
+              <td>546</td>
+              <td class="tabla__acciones">
+                <app-boton variante="claro-negro" (clic)="eliminar(sala.id)">Eliminar</app-boton>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="tabla__vacio" colspan="3">No hay salas cargadas todavía.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>

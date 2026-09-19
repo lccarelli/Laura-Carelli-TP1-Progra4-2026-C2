@@ -16,6 +16,6 @@ export class Header {
 
   async cerrarSesion() {
     await this.auth.cerrarSesion();
-    await this.router.navigate(['/login']);
+    await this.router.navigate(['/']);
   }
 }

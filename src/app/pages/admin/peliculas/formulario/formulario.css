@@ -1,10 +1,11 @@
 :host {
-  display: block;
-  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .pagina-formulario {
-  min-height: 100dvh;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;

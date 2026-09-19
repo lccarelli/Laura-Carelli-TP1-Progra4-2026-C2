@@ -1,0 +1,28 @@
+<main class="pagina-formulario">
+  <section class="panel">
+    <h2 class="panel__titulo">Nueva sala</h2>
+
+    <p class="panel__ayuda">Se van a generar automáticamente sus 546 butacas:</p>
+    <ul class="panel__lista">
+      <li>9 filas normales: bloque 4, 20, 4</li>
+      <li>1 fila accesible: bloque 2, 10, 2</li>
+      <li>7 filas normales: bloque 4, 20, 4</li>
+      <li>3 filas VIP: bloque 4, 20, 4</li>
+    </ul>
+
+    <form class="formulario" [formGroup]="formulario" (ngSubmit)="guardar()">
+      <label class="campo">
+        <span class="campo__etiqueta">Nombre</span>
+        <input class="campo__input" type="text" formControlName="nombre" />
+      </label>
+
+      <div class="formulario__acciones">
+        <app-boton variante="menu" tipo="submit" [disabled]="formulario.invalid">
+          Crear sala
+        </app-boton>
+
+        <app-boton variante="claro-negro" (clic)="cancelar()">Cancelar</app-boton>
+      </div>
+    </form>
+  </section>
+</main>

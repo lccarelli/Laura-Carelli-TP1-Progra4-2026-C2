@@ -5,6 +5,9 @@ import { Errores } from '../../servicios/errores/errores';
 import { Router } from '@angular/router';
 import { Boton } from '../../componentes/boton/boton';
 import { environment } from '../../../environments/environment';
+import { Logger } from '../../servicios/logger/logger';
+import { Flujo } from '../../servicios/logger/flujo';
+import { TipoEvento } from '../../servicios/logger/tipo-evento';
 
 @Component({
   imports: [ReactiveFormsModule, Boton],
@@ -17,6 +20,7 @@ export class Login {
   private errores = inject(Errores);
   private router = inject(Router);
   private formBuilder = inject(FormBuilder);
+  private logger = inject(Logger);
 
   protected formulario = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -28,8 +32,10 @@ export class Login {
     const { error } = await this.auth.loguear(email, password);
 
     if (error) {
+      this.logger.registrar(Flujo.Login, TipoEvento.Error, error.message);
       this.errores.mostrar(error.message);
     } else {
+      this.logger.registrar(Flujo.Login, TipoEvento.Exito, email);
       await this.router.navigate(['/admin']);
     }
   }
@@ -41,8 +47,10 @@ export class Login {
     );
 
     if (error) {
+      this.logger.registrar(Flujo.Login, TipoEvento.Error, error.message);
       this.errores.mostrar(error.message);
     } else {
+      this.logger.registrar(Flujo.Login, TipoEvento.Exito, 'acceso directo profesor');
       await this.router.navigate(['/admin']);
     }
   }

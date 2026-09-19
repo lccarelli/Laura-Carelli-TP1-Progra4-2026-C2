@@ -4,6 +4,9 @@ import { Errores } from '../../../servicios/errores/errores';
 import { Pelicula } from '../../../interfaces/pelicula';
 import { Boton } from '../../../componentes/boton/boton';
 import { BotonLink } from '../../../componentes/boton-link/boton-link';
+import { Logger } from '../../../servicios/logger/logger';
+import { Flujo } from '../../../servicios/logger/flujo';
+import { TipoEvento } from '../../../servicios/logger/tipo-evento';
 
 @Component({
   imports: [Boton, BotonLink],
@@ -12,8 +15,9 @@ import { BotonLink } from '../../../componentes/boton-link/boton-link';
   templateUrl: './peliculas.html',
 })
 export class Peliculas {
-  private pelicula = inject(PeliculaServicio);
+  private peliculaServicio = inject(PeliculaServicio);
   private errores = inject(Errores);
+  private logger = inject(Logger);
 
   protected peliculas = signal<Pelicula[]>([]);
   protected busqueda = signal('');
@@ -33,7 +37,7 @@ export class Peliculas {
   }
 
   async cargar() {
-    const { data, error } = await this.pelicula.listar();
+    const { data, error } = await this.peliculaServicio.listar();
 
     if (error) {
       this.errores.mostrar(error.message);
@@ -47,11 +51,13 @@ export class Peliculas {
   }
 
   async eliminar(id: string) {
-    const { error } = await this.pelicula.eliminar(id);
+    const { error } = await this.peliculaServicio.eliminar(id);
 
     if (error) {
+      this.logger.registrar(Flujo.BajaPelicula, TipoEvento.Error, error.message);
       this.errores.mostrar(error.message);
     } else {
+      this.logger.registrar(Flujo.BajaPelicula, TipoEvento.Exito, id);
       await this.cargar();
     }
   }

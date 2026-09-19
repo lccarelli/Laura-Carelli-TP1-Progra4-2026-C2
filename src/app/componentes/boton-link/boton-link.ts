@@ -5,7 +5,6 @@ import { VarianteBoton } from '../variante-boton';
 @Component({
   imports: [RouterLink],
   selector: 'app-boton-link',
-  styleUrl: './boton-link.css',
   templateUrl: './boton-link.html',
 })
 export class BotonLink {

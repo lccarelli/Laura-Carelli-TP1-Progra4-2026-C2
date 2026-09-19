@@ -6,6 +6,9 @@ import { PeliculaServicio } from '../../../../servicios/pelicula/pelicula';
 import { Errores } from '../../../../servicios/errores/errores';
 import { PeliculaPorCrear } from '../../../../interfaces/pelicula-por-crear';
 import { Boton } from '../../../../componentes/boton/boton';
+import { Logger } from '../../../../servicios/logger/logger';
+import { Flujo } from '../../../../servicios/logger/flujo';
+import { TipoEvento } from '../../../../servicios/logger/tipo-evento';
 
 @Component({
   imports: [ReactiveFormsModule, Boton],
@@ -14,17 +17,18 @@ import { Boton } from '../../../../componentes/boton/boton';
   templateUrl: './formulario.html',
 })
 export class Formulario {
-  private peliculaS = inject(PeliculaServicio);
+  private peliculaServicio = inject(PeliculaServicio);
   private errores = inject(Errores);
-  private fb = inject(FormBuilder);
+  private formBuilder = inject(FormBuilder);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private logger = inject(Logger);
 
   protected id = signal<string | null>(null);
   protected activa = signal(true);
   protected imagenRota = signal(false);
 
-  protected formulario = this.fb.nonNullable.group({
+  protected formulario = this.formBuilder.nonNullable.group({
     nombre: ['', Validators.required],
     sinopsis: [''],
     duracion_minutos: [0, [Validators.required, Validators.min(1)]],
@@ -55,7 +59,7 @@ export class Formulario {
   }
 
   async cargar(id: string) {
-    const { data, error } = await this.peliculaS.buscarPorId(id);
+    const { data, error } = await this.peliculaServicio.buscarPorId(id);
 
     if (error || !data) {
       this.errores.mostrar(error?.message ?? 'No se encontró la película');
@@ -77,11 +81,17 @@ export class Formulario {
     if (!id) return;
 
     const nuevoEstado = !this.activa();
-    const { error } = await this.peliculaS.cambiarEstado(id, nuevoEstado);
+    const { error } = await this.peliculaServicio.cambiarEstado(id, nuevoEstado);
 
     if (error) {
+      this.logger.registrar(Flujo.ModificacionPelicula, TipoEvento.Error, error.message);
       this.errores.mostrar(error.message);
     } else {
+      this.logger.registrar(
+        Flujo.ModificacionPelicula,
+        TipoEvento.Exito,
+        nuevoEstado ? 'activada' : 'desactivada',
+      );
       this.activa.set(nuevoEstado);
     }
   }
@@ -90,11 +100,13 @@ export class Formulario {
     const id = this.id();
     if (!id) return;
 
-    const { error } = await this.peliculaS.eliminar(id);
+    const { error } = await this.peliculaServicio.eliminar(id);
 
     if (error) {
+      this.logger.registrar(Flujo.BajaPelicula, TipoEvento.Error, error.message);
       this.errores.mostrar(error.message);
     } else {
+      this.logger.registrar(Flujo.BajaPelicula, TipoEvento.Exito, id);
       await this.router.navigate(['/admin/peliculas']);
     }
   }
@@ -102,16 +114,19 @@ export class Formulario {
   async guardar() {
     const valores = this.valoresParaGuardar();
     const id = this.id();
+    const flujo = id ? Flujo.ModificacionPelicula : Flujo.AltaPelicula;
 
     const { error } = id
-      ? await this.peliculaS.editar({ ...valores, id })
-      : await this.peliculaS.crear(valores);
+      ? await this.peliculaServicio.editar({ ...valores, id })
+      : await this.peliculaServicio.crear(valores);
 
     if (error) {
+      this.logger.registrar(flujo, TipoEvento.Error, error.message);
       this.errores.mostrar(error.message);
       return;
     }
 
+    this.logger.registrar(flujo, TipoEvento.Exito, valores.nombre);
     await this.router.navigate(['/admin/peliculas']);
   }
 

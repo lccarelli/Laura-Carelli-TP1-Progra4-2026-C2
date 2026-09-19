@@ -4,7 +4,6 @@ import { VarianteBoton } from '../variante-boton';
 @Component({
   imports: [],
   selector: 'app-boton',
-  styleUrl: './boton.css',
   templateUrl: './boton.html',
 })
 export class Boton {

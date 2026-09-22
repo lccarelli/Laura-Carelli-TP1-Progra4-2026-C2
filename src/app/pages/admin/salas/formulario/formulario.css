@@ -4,30 +4,8 @@
   flex: 1;
 }
 
-.pagina-formulario {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 1rem;
-  background-color: var(--crema);
-}
-
-.panel {
-  width: 100%;
-  max-width: 28rem;
-  background: #fff;
-  border: 2px solid var(--negro);
-  border-radius: 1.75rem;
-  padding: 2.5rem;
-}
-
 .panel__titulo {
-  font-size: 1.75rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin: 0 0 0.75rem;
-  color: var(--negro);
+  margin-bottom: 0.75rem;
 }
 
 .panel__ayuda {

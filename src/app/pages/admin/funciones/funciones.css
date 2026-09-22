@@ -1,0 +1,13 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.tabla {
+  min-width: 40rem;
+}
+
+.tabla td {
+  white-space: nowrap;
+}

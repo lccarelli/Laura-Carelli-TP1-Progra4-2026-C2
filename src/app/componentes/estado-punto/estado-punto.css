@@ -1,0 +1,14 @@
+.estado-punto {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+}
+
+.estado-punto--activa {
+  background: #4caf50;
+}
+
+.estado-punto--inactiva {
+  background: #c1443a;
+}

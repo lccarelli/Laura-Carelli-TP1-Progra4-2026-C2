@@ -1,5 +1,9 @@
-<main class="pagina-salas">
-  <section class="panel">
+<main class="pagina">
+  <section class="panel panel--ancho">
+    <app-boton-link variante="claro-negro" ruta="/admin" class="panel__volver">
+      ← Volver
+    </app-boton-link>
+
     <div class="panel__encabezado">
       <h2 class="panel__titulo">Salas</h2>
       <app-boton-link variante="mas" ruta="/admin/salas/nueva" ariaLabel="Nueva sala">
@@ -20,7 +24,7 @@
           @for (sala of salas(); track sala.id) {
             <tr>
               <td class="tabla__nombre">{{ sala.nombre }}</td>
-              <td>546</td>
+              <td>518</td>
               <td class="tabla__acciones">
                 <app-boton variante="claro-negro" (clic)="eliminar(sala.id)">Eliminar</app-boton>
               </td>

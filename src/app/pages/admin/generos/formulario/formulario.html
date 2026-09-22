@@ -1,0 +1,20 @@
+<main class="pagina pagina--centrada">
+  <section class="panel panel--angosto">
+    <h2 class="panel__titulo">Nuevo género</h2>
+
+    <form class="formulario" [formGroup]="formulario" (ngSubmit)="guardar()">
+      <label class="campo">
+        <span class="campo__etiqueta">Nombre</span>
+        <input class="campo__input" type="text" formControlName="nombre" />
+      </label>
+
+      <div class="formulario__acciones">
+        <app-boton variante="menu" tipo="submit" [disabled]="formulario.invalid">
+          Crear género
+        </app-boton>
+
+        <app-boton variante="claro-negro" (clic)="cancelar()">Cancelar</app-boton>
+      </div>
+    </form>
+  </section>
+</main>

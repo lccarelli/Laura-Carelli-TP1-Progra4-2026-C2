@@ -1,0 +1,41 @@
+<main class="pagina">
+  <section class="panel panel--ancho">
+    <app-boton-link variante="claro-negro" ruta="/admin" class="panel__volver">
+      ← Volver
+    </app-boton-link>
+
+    <div class="panel__encabezado">
+      <h2 class="panel__titulo">Géneros</h2>
+      <app-boton-link variante="mas" ruta="/admin/generos/nueva" ariaLabel="Nuevo género">
+        +
+      </app-boton-link>
+    </div>
+
+    <div class="tabla-contenedor">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Género</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (genero of generos(); track genero.id) {
+            <tr>
+              <td class="tabla__nombre">{{ genero.nombre }}</td>
+              <td class="tabla__acciones">
+                <app-boton variante="claro-negro" (clic)="eliminar(genero.id)">
+                  Eliminar
+                </app-boton>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="tabla__vacio" colspan="2">No hay géneros cargados todavía.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>

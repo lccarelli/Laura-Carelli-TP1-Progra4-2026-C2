@@ -1,6 +1,7 @@
 import { Service, inject, WritableSignal, signal } from '@angular/core';
 import { User } from '@supabase/supabase-js';
 import { Supabase } from '../supabase/supabase';
+import { ClientePorCrear } from '../../interfaces/cliente-por-crear';
 
 @Service()
 export class Auth {
@@ -18,11 +19,25 @@ export class Auth {
     return await this.supabase.Supabase.auth.signInWithPassword({ email, password });
   }
 
+  async registrarCliente(datos: ClientePorCrear) {
+    const { email, password, ...perfil } = datos;
+
+    return await this.supabase.Supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { role: 'cliente', ...perfil } },
+    });
+  }
+
   async cerrarSesion() {
     await this.supabase.Supabase.auth.signOut();
   }
 
   esAdmin(): boolean {
     return this.usuario()?.user_metadata?.['role'] === 'admin';
+  }
+
+  esCliente(): boolean {
+    return this.usuario()?.user_metadata?.['role'] === 'cliente';
   }
 }

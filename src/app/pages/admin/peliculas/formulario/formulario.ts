@@ -1,23 +1,28 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PeliculaServicio } from '../../../../servicios/pelicula/pelicula';
+import { GeneroServicio } from '../../../../servicios/genero/genero';
 import { Errores } from '../../../../servicios/errores/errores';
 import { PeliculaPorCrear } from '../../../../interfaces/pelicula-por-crear';
+import { Genero } from '../../../../interfaces/genero';
 import { Boton } from '../../../../componentes/boton/boton';
+import { EstadoPunto } from '../../../../componentes/estado-punto/estado-punto';
+import { SelectorChips } from '../../../../componentes/selector-chips/selector-chips';
 import { Logger } from '../../../../servicios/logger/logger';
 import { Flujo } from '../../../../servicios/logger/flujo';
 import { TipoEvento } from '../../../../servicios/logger/tipo-evento';
 
 @Component({
-  imports: [ReactiveFormsModule, Boton],
+  imports: [ReactiveFormsModule, Boton, EstadoPunto, SelectorChips],
   selector: 'app-formulario',
   styleUrl: './formulario.css',
   templateUrl: './formulario.html',
 })
 export class Formulario {
   private peliculaServicio = inject(PeliculaServicio);
+  private generoServicio = inject(GeneroServicio);
   private errores = inject(Errores);
   private formBuilder = inject(FormBuilder);
   private route = inject(ActivatedRoute);
@@ -27,6 +32,12 @@ export class Formulario {
   protected id = signal<string | null>(null);
   protected activa = signal(true);
   protected imagenRota = signal(false);
+  protected generos = signal<Genero[]>([]);
+  protected generosSeleccionados = signal<Set<string>>(new Set());
+
+  protected opcionesGenero = computed(() =>
+    this.generos().map((genero) => ({ valor: genero.id, etiqueta: genero.nombre })),
+  );
 
   protected formulario = this.formBuilder.nonNullable.group({
     nombre: ['', Validators.required],
@@ -43,6 +54,8 @@ export class Formulario {
   constructor() {
     const id = this.route.snapshot.paramMap.get('id');
 
+    this.cargarGeneros();
+
     if (id) {
       this.id.set(id);
       this.cargar(id);
@@ -58,8 +71,34 @@ export class Formulario {
     this.imagenRota.set(true);
   }
 
+  async cargarGeneros() {
+    const { data, error } = await this.generoServicio.listar();
+
+    if (error) {
+      this.errores.mostrar(error.message);
+    } else {
+      this.generos.set(data ?? []);
+    }
+  }
+
+  alternarGenero(valor: string | number) {
+    const id = String(valor);
+    const seleccionados = new Set(this.generosSeleccionados());
+
+    if (seleccionados.has(id)) {
+      seleccionados.delete(id);
+    } else {
+      seleccionados.add(id);
+    }
+
+    this.generosSeleccionados.set(seleccionados);
+  }
+
   async cargar(id: string) {
-    const { data, error } = await this.peliculaServicio.buscarPorId(id);
+    const [{ data, error }, { data: generosDePelicula }] = await Promise.all([
+      this.peliculaServicio.buscarPorId(id),
+      this.generoServicio.listarPorPelicula(id),
+    ]);
 
     if (error || !data) {
       this.errores.mostrar(error?.message ?? 'No se encontró la película');
@@ -74,6 +113,7 @@ export class Formulario {
       restriccion_edad: data.restriccion_edad ? String(data.restriccion_edad) : '',
     });
     this.activa.set(data.activa);
+    this.generosSeleccionados.set(new Set((generosDePelicula ?? []).map((g) => g.id)));
   }
 
   async cambiarEstado() {
@@ -113,16 +153,41 @@ export class Formulario {
 
   async guardar() {
     const valores = this.valoresParaGuardar();
-    const id = this.id();
-    const flujo = id ? Flujo.ModificacionPelicula : Flujo.AltaPelicula;
+    const idExistente = this.id();
+    const flujo = idExistente ? Flujo.ModificacionPelicula : Flujo.AltaPelicula;
 
-    const { error } = id
-      ? await this.peliculaServicio.editar({ ...valores, id })
-      : await this.peliculaServicio.crear(valores);
+    let peliculaId: string;
 
-    if (error) {
-      this.logger.registrar(flujo, TipoEvento.Error, error.message);
-      this.errores.mostrar(error.message);
+    if (idExistente) {
+      const { error } = await this.peliculaServicio.editar({ ...valores, id: idExistente });
+
+      if (error) {
+        this.logger.registrar(flujo, TipoEvento.Error, error.message);
+        this.errores.mostrar(error.message);
+        return;
+      }
+
+      peliculaId = idExistente;
+    } else {
+      const { data, error } = await this.peliculaServicio.crear(valores);
+
+      if (error || !data) {
+        const mensaje = error?.message ?? 'No se pudo crear la película.';
+        this.logger.registrar(flujo, TipoEvento.Error, mensaje);
+        this.errores.mostrar(mensaje);
+        return;
+      }
+
+      peliculaId = data[0].id;
+    }
+
+    const { error: errorGeneros } = await this.generoServicio.asignarAPelicula(peliculaId, [
+      ...this.generosSeleccionados(),
+    ]);
+
+    if (errorGeneros) {
+      this.logger.registrar(flujo, TipoEvento.Error, errorGeneros.message);
+      this.errores.mostrar(errorGeneros.message);
       return;
     }
 

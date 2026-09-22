@@ -1,0 +1,68 @@
+<main class="pagina">
+  <section class="panel panel--ancho">
+    <app-boton-link variante="claro-negro" ruta="/admin/funciones" class="panel__volver">
+      ← Volver
+    </app-boton-link>
+
+    @if (funcion(); as funcion) {
+      <div class="encabezado">
+        <div class="encabezado__poster">
+          @if (pelicula()?.imagen_url; as imagen) {
+            <img class="encabezado__imagen" [src]="imagen" alt="" />
+          } @else {
+            <div class="encabezado__imagen encabezado__imagen--vacia"></div>
+          }
+        </div>
+
+        <div class="encabezado__info">
+          <div class="panel__titulo-fila">
+            <app-estado-punto [activa]="funcion.activa" />
+            <h2 class="panel__titulo">{{ pelicula()?.nombre }}</h2>
+          </div>
+
+          <dl class="detalle">
+            <div class="detalle__fila">
+              <dt>Sala</dt>
+              <dd>{{ sala() }}</dd>
+            </div>
+            <div class="detalle__fila">
+              <dt>Inicio</dt>
+              <dd>{{ funcion.inicio | date: 'dd/MM/yyyy HH:mm' }}</dd>
+            </div>
+            <div class="detalle__fila">
+              <dt>Fin</dt>
+              <dd>{{ funcion.fin | date: 'dd/MM/yyyy HH:mm' }}</dd>
+            </div>
+            <div class="detalle__fila">
+              <dt>Duración</dt>
+              <dd>{{ pelicula()?.duracion_minutos }} min</dd>
+            </div>
+            <div class="detalle__fila">
+              <dt>Formato</dt>
+              <dd>{{ funcion.formato | uppercase }}</dd>
+            </div>
+            <div class="detalle__fila">
+              <dt>Idioma</dt>
+              <dd>{{ funcion.idioma }}</dd>
+            </div>
+          </dl>
+
+          <div class="panel__acciones">
+            <app-boton variante="claro-negro" (clic)="cambiarEstado()">
+              {{ funcion.activa ? 'Desactivar función' : 'Activar función' }}
+            </app-boton>
+            <app-boton variante="claro-rojo" (clic)="eliminarFuncion()">
+              Eliminar función
+            </app-boton>
+          </div>
+        </div>
+      </div>
+
+      <section class="mapa-seccion">
+        <h3 class="mapa-seccion__titulo">Mapa de butacas</h3>
+
+        <app-mapa-butacas [butacas]="butacas()" [entradas]="entradas()" />
+      </section>
+    }
+  </section>
+</main>

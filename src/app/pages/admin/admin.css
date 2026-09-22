@@ -4,36 +4,11 @@
   flex: 1;
 }
 
-.pagina-admin {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 1rem;
-  background-color: var(--crema);
-}
-
-.tarjeta-menu {
-  width: 100%;
-  max-width: 40rem;
-  background: #fff;
-  border: 2px solid var(--negro);
-  border-radius: 1.75rem;
-  padding: 2.5rem 2rem;
-}
-
-.tarjeta-menu__titulo {
-  font-size: 2.25rem;
-  font-weight: 800;
-  line-height: 0.95;
-  margin: 0 0 2rem;
-  color: var(--negro);
-}
-
-.tarjeta-menu__opciones {
+.tarjeta__opciones {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.25rem;
 }
 
 app-boton-link {

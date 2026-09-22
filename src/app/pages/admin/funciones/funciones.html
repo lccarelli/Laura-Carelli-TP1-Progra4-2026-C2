@@ -1,0 +1,55 @@
+<main class="pagina">
+  <section class="panel panel--ancho">
+    <app-boton-link variante="claro-negro" ruta="/admin" class="panel__volver">
+      ← Volver
+    </app-boton-link>
+
+    <div class="panel__encabezado">
+      <h2 class="panel__titulo">Funciones</h2>
+      <app-boton-link variante="mas" ruta="/admin/funciones/nueva" ariaLabel="Nueva función">
+        +
+      </app-boton-link>
+    </div>
+
+    <div class="tabla-contenedor">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th class="tabla__col-estado">Estado</th>
+            <th>Película</th>
+            <th>Sala</th>
+            <th>Inicio</th>
+            <th>Fin</th>
+            <th>Formato</th>
+            <th>Idioma</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (fila of filas(); track fila.id) {
+            <tr>
+              <td class="tabla__col-estado">
+                <app-estado-punto [activa]="fila.activa" />
+              </td>
+              <td class="tabla__nombre">{{ fila.pelicula }}</td>
+              <td>{{ fila.sala }}</td>
+              <td>{{ fila.inicio | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ fila.fin | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ fila.formato | uppercase }}</td>
+              <td>{{ fila.idioma }}</td>
+              <td class="tabla__acciones">
+                <app-boton-link variante="claro-negro" [ruta]="['/admin/funciones', fila.id]">
+                  Ver
+                </app-boton-link>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="tabla__vacio" colspan="8">No hay funciones cargadas todavía.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>

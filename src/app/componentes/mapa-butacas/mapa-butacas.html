@@ -1,0 +1,85 @@
+<div class="mapa">
+  <div class="mapa__columnas">
+    <div class="mapa__columna-butacas">
+      <div class="mapa__scroll">
+        <div class="mapa__grilla">
+          <div class="mapa__pantalla">Pantalla</div>
+
+          @for (fila of filas(); track fila.fila) {
+            <div class="mapa__fila">
+              <span class="mapa__etiqueta-fila">{{ fila.fila }}</span>
+
+              @for (bloque of fila.bloques; track $index) {
+                @if ($index > 0) {
+                  <div class="mapa__pasillo"></div>
+                }
+                <div class="mapa__bloque">
+                  @for (v of bloque; track v.butaca.id) {
+                    <span
+                      class="butaca"
+                      [class.butaca--accesible]="v.butaca.tipo === 'accesible'"
+                      [class.butaca--vip]="v.butaca.tipo === 'vip'"
+                      [class.butaca--reservada]="v.estado === 'reservada'"
+                      [class.butaca--vendida]="v.estado === 'vendida'"
+                      [title]="fila.fila + v.butaca.numero"
+                    ></span>
+                  }
+                </div>
+              }
+
+              <span class="mapa__etiqueta-fila">{{ fila.fila }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="mapa__leyenda">
+        <span class="mapa__leyenda-item"><span class="butaca"></span> Libre</span>
+        <span class="mapa__leyenda-item">
+          <span class="butaca butaca--reservada"></span> Reservada
+        </span>
+        <span class="mapa__leyenda-item"><span class="butaca butaca--vendida"></span> Vendida</span>
+        <span class="mapa__leyenda-item">
+          <span class="butaca butaca--accesible"></span> Accesible
+        </span>
+        <span class="mapa__leyenda-item"><span class="butaca butaca--vip"></span> VIP</span>
+      </div>
+    </div>
+
+    <div class="mapa__columna-resumen">
+      <table class="mapa__resumen">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Normal</th>
+            <th>Accesible</th>
+            <th>VIP</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (fila of resumen(); track fila.etiqueta) {
+            <tr>
+              <th>{{ fila.etiqueta }}</th>
+              <td>{{ fila.normal }}</td>
+              <td>{{ fila.accesible }}</td>
+              <td>{{ fila.vip }}</td>
+              <td>{{ fila.total }}</td>
+            </tr>
+          }
+        </tbody>
+        @if (resumenTotal(); as total) {
+          <tfoot>
+            <tr>
+              <th>{{ total.etiqueta }}</th>
+              <td>{{ total.normal }}</td>
+              <td>{{ total.accesible }}</td>
+              <td>{{ total.vip }}</td>
+              <td>{{ total.total }}</td>
+            </tr>
+          </tfoot>
+        }
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,25 @@
+.chips {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.chips__boton {
+  border: 2px solid var(--negro);
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: inherit;
+  background: transparent;
+  color: var(--negro);
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.chips__boton--activo {
+  background: var(--negro);
+  color: #fff;
+}

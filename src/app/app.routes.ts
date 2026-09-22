@@ -43,4 +43,20 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/admin/salas/formulario/formulario').then((m) => m.FormularioSala),
   },
+  {
+    path: 'admin/funciones',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./pages/admin/funciones/funciones').then((m) => m.Funciones),
+  },
+  {
+    path: 'admin/funciones/nueva',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./pages/admin/funciones/formulario/formulario').then((m) => m.FormularioFuncion),
+  },
+  {
+    path: 'admin/funciones/:id',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./pages/admin/funciones/detalle/detalle').then((m) => m.Detalle),
+  },
 ];

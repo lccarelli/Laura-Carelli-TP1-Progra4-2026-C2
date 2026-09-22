@@ -4,24 +4,7 @@ import { Sala } from '../../interfaces/sala';
 import { SalaPorCrear } from '../../interfaces/sala-por-crear';
 import { Butaca } from '../../interfaces/butaca';
 
-const FILAS_NORMALES = [
-  'A',
-  'B',
-  'C',
-  'D',
-  'E',
-  'F',
-  'G',
-  'H',
-  'I',
-  'K',
-  'L',
-  'M',
-  'N',
-  'O',
-  'P',
-  'Q',
-];
+const FILAS_NORMALES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'L', 'M', 'N', 'O', 'P', 'Q'];
 const FILAS_VIP = ['R', 'S', 'T'];
 const FILA_ACCESIBLE = 'J';
 
@@ -32,6 +15,15 @@ export class SalaServicio {
 
   listar() {
     return this.supabase.listar<Sala>(this.tabla);
+  }
+
+  listarButacas(salaId: string) {
+    return this.supabase.Supabase.from('butaca')
+      .select('*')
+      .eq('sala_id', salaId)
+      .order('fila')
+      .order('numero')
+      .returns<Butaca[]>();
   }
 
   async crear(sala: SalaPorCrear) {

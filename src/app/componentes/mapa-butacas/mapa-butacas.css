@@ -1,0 +1,194 @@
+.mapa {
+  container-type: inline-size;
+  padding-block: 0.5rem;
+}
+
+.mapa__columnas {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+@container (max-width: 700px) {
+  .mapa__columnas {
+    flex-direction: column;
+  }
+
+  .mapa__columna-butacas,
+  .mapa__columna-resumen {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}
+
+.mapa__columna-butacas {
+  display: flex;
+  flex-direction: column;
+  flex: 3 1 0%;
+  min-width: 0;
+  container-type: inline-size;
+}
+
+.mapa__scroll {
+  min-width: 0;
+  overflow-x: auto;
+  container-type: inline-size;
+}
+
+.mapa__grilla {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  /* 35.1 = suma de todas las unidades de la fila (etiquetas + bloques + pasillos + gaps) a tamaño base */
+  --u: calc(100cqw / 35.1);
+}
+
+.mapa__pantalla {
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--negro) 55%, transparent);
+  border-bottom: 3px solid var(--negro);
+  border-radius: 999px 999px 0 0;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.mapa__fila {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.15rem, calc(var(--u) * 0.35), 0.5rem);
+  margin-bottom: 0.22rem;
+}
+
+.mapa__etiqueta-fila {
+  width: clamp(0.7rem, calc(var(--u) * 1.1), 1.6rem);
+  flex-shrink: 0;
+  text-align: center;
+  font-size: clamp(0.5rem, calc(var(--u) * 0.65), 0.9rem);
+  font-weight: 700;
+  color: color-mix(in srgb, var(--negro) 55%, transparent);
+}
+
+.mapa__bloque {
+  display: flex;
+  gap: clamp(0.1rem, calc(var(--u) * 0.2), 0.3rem);
+}
+
+.mapa__pasillo {
+  width: clamp(0.6rem, calc(var(--u) * 1), 1.5rem);
+  flex-shrink: 0;
+}
+
+.butaca {
+  display: inline-block;
+  box-sizing: border-box;
+  width: 0.85rem;
+  height: 0.85rem;
+  padding: 0;
+  border-radius: 3px;
+  border: 1.5px solid var(--negro);
+  background: #fff;
+}
+
+.mapa__grilla .butaca {
+  width: clamp(0.5rem, calc(var(--u) * 0.85), 1.3rem);
+  height: clamp(0.5rem, calc(var(--u) * 0.85), 1.3rem);
+}
+
+.butaca--reservada {
+  background: var(--amarillo);
+  border-color: var(--amarillo);
+}
+
+.butaca--vendida {
+  background: var(--rojo);
+  border-color: var(--rojo);
+}
+
+.butaca--accesible {
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 999px;
+}
+
+.mapa__grilla .butaca--accesible {
+  width: clamp(1.1rem, calc(var(--u) * 1.9), 2.9rem);
+  height: clamp(1.1rem, calc(var(--u) * 1.9), 2.9rem);
+}
+
+.butaca--vip {
+  box-shadow: inset 0 0 0 1.5px var(--naranja);
+}
+
+.mapa__columna-resumen {
+  flex: 2 1 0%;
+  min-width: 0;
+  container-type: inline-size;
+}
+
+.mapa__resumen {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: clamp(0.65rem, 3.2cqw, 1rem);
+}
+
+.mapa__resumen th,
+.mapa__resumen td {
+  padding: clamp(0.25rem, 2.2cqw, 0.6rem) clamp(0.4rem, 4cqw, 1.1rem);
+  text-align: right;
+  border-bottom: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
+}
+
+.mapa__resumen thead th {
+  font-size: clamp(0.55rem, 2.6cqw, 0.85rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: color-mix(in srgb, var(--negro) 60%, transparent);
+  border-bottom: 2px solid var(--negro);
+}
+
+.mapa__resumen tbody th {
+  text-align: left;
+  font-weight: 700;
+  color: var(--negro);
+}
+
+.mapa__resumen tfoot th,
+.mapa__resumen tfoot td {
+  border-bottom: none;
+  border-top: 2px solid var(--negro);
+  font-weight: 800;
+}
+
+.mapa__leyenda {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: clamp(0.4rem, 3cqw, 1rem);
+  margin-top: 1.5rem;
+  font-size: clamp(0.55rem, 2.6cqw, 0.75rem);
+  color: color-mix(in srgb, var(--negro) 70%, transparent);
+  overflow-x: auto;
+}
+
+.mapa__leyenda-item {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(0.2rem, 1.2cqw, 0.4rem);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.mapa__leyenda .butaca {
+  width: clamp(0.45rem, 2cqw, 0.85rem);
+  height: clamp(0.45rem, 2cqw, 0.85rem);
+}
+
+.mapa__leyenda .butaca--accesible {
+  width: clamp(1rem, 4.4cqw, 1.9rem);
+  height: clamp(1rem, 4.4cqw, 1.9rem);
+}

@@ -1,0 +1,146 @@
+<main class="pagina pagina--centrada">
+  <section class="panel panel--ancho">
+    <h2 class="panel__titulo">Nueva función</h2>
+
+    <div class="modo-toggle">
+      <button
+        class="modo-toggle__boton"
+        type="button"
+        [class.modo-toggle__boton--activo]="modo() === 'unica'"
+        (click)="cambiarModo('unica')"
+      >
+        Función única
+      </button>
+      <button
+        class="modo-toggle__boton"
+        type="button"
+        [class.modo-toggle__boton--activo]="modo() === 'recurrente'"
+        (click)="cambiarModo('recurrente')"
+      >
+        Recurrente
+      </button>
+    </div>
+
+    <form class="formulario" [formGroup]="formulario" (ngSubmit)="guardar()">
+      <div class="formulario__grid">
+        <div class="formulario__columna-preview">
+          @if (peliculaSeleccionada(); as pelicula) {
+            <div class="preview-pelicula">
+              @if (pelicula.imagen_url) {
+                <img class="preview-pelicula__imagen" [src]="pelicula.imagen_url" alt="" />
+              } @else {
+                <div class="preview-pelicula__imagen preview-pelicula__imagen--vacia"></div>
+              }
+              <div class="preview-pelicula__info">
+                <span class="preview-pelicula__nombre">{{ pelicula.nombre }}</span>
+                <span class="preview-pelicula__dato">{{ pelicula.duracion_minutos }} min</span>
+                <span class="preview-pelicula__dato">
+                  {{ pelicula.restriccion_edad | restriccionEdad }}
+                </span>
+              </div>
+            </div>
+
+            @if (horarioCalculado(); as horario) {
+              <div class="preview-horario">
+                <span
+                  >Termina a las <strong>{{ horario.fin | date: 'HH:mm' }}</strong></span
+                >
+                <span
+                  >Sala libre desde las
+                  <strong>{{ horario.salaLibreDesde | date: 'HH:mm' }}</strong>
+                  (+30 min)</span
+                >
+              </div>
+            }
+          } @else {
+            <div class="preview-pelicula preview-pelicula--vacia">
+              Elegí una película para ver el preview
+            </div>
+          }
+        </div>
+
+        <div class="formulario__columna-campos">
+          <label class="campo">
+            <span class="campo__etiqueta">Película</span>
+            <select class="campo__input" formControlName="pelicula_id">
+              <option value="" disabled>Elegir película</option>
+              @for (pelicula of peliculas(); track pelicula.id) {
+                <option [value]="pelicula.id">{{ pelicula.nombre }}</option>
+              }
+            </select>
+          </label>
+
+          @if (modo() === 'unica') {
+            <label class="campo">
+              <span class="campo__etiqueta">Fecha y hora</span>
+              <input class="campo__input" type="datetime-local" formControlName="inicio" />
+            </label>
+          } @else {
+            <div class="campo">
+              <span class="campo__etiqueta">Días</span>
+              <app-selector-chips
+                [opciones]="diasSemana"
+                [seleccionados]="diasSeleccionados()"
+                (alternar)="alternarDia($event)"
+              />
+            </div>
+
+            <label class="campo">
+              <span class="campo__etiqueta">Hora</span>
+              <input class="campo__input" type="time" formControlName="hora" />
+            </label>
+
+            <div class="formulario__grid-fechas">
+              <label class="campo">
+                <span class="campo__etiqueta">Desde</span>
+                <input class="campo__input" type="date" formControlName="desde" />
+              </label>
+
+              <label class="campo">
+                <span class="campo__etiqueta">Hasta</span>
+                <input class="campo__input" type="date" formControlName="hasta" />
+              </label>
+            </div>
+          }
+
+          <label class="campo">
+            <span class="campo__etiqueta">Formato</span>
+            <select class="campo__input" formControlName="formato">
+              <option value="2d">2D</option>
+              <option value="3d">3D</option>
+              <option value="4d">4D</option>
+              <option value="5d">5D</option>
+            </select>
+          </label>
+
+          <label class="campo">
+            <span class="campo__etiqueta">Idioma</span>
+            <select class="campo__input" formControlName="idioma">
+              <option value="castellano">Castellano</option>
+              <option value="subtitulada">Subtitulada</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="formulario__acciones">
+        <app-boton variante="menu" tipo="submit" [disabled]="formulario.invalid || !puedeGuardar()">
+          {{ modo() === 'unica' ? 'Crear función' : 'Crear funciones' }}
+        </app-boton>
+
+        <app-boton variante="claro-negro" (clic)="cancelar()">Cancelar</app-boton>
+      </div>
+    </form>
+
+    @if (resultados(); as filas) {
+      <ul class="resultados">
+        @for (fila of filas; track fila.fecha) {
+          <li class="resultados__item" [class.resultados__item--error]="fila.error">
+            <strong>{{ fila.fecha | date: 'EEEE dd/MM' }}</strong> —
+            {{ fila.error ? fila.error : 'creada en ' + fila.sala }}
+          </li>
+        }
+      </ul>
+    }
+  </section>
+</main>

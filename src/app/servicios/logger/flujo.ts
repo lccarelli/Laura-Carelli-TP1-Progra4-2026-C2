@@ -12,4 +12,7 @@ export enum Flujo {
   AltaUsuario = 'AltaUsuario',
   ModificacionUsuario = 'ModificacionUsuario',
   BajaUsuario = 'BajaUsuario',
+  AltaGenero = 'AltaGenero',
+  BajaGenero = 'BajaGenero',
+  AltaResena = 'AltaResena',
 }

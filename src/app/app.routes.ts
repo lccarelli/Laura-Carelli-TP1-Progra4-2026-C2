@@ -4,7 +4,7 @@ import { adminGuard } from './guards/admin-guard';
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./pages/inicio/inicio').then((m) => m.Inicio),
+    loadComponent: () => import('./pages/peliculas-publico/cartelera').then((m) => m.Cartelera),
   },
   {
     path: 'login',
@@ -58,5 +58,29 @@ export const routes: Routes = [
     path: 'admin/funciones/:id',
     canActivate: [adminGuard],
     loadComponent: () => import('./pages/admin/funciones/detalle/detalle').then((m) => m.Detalle),
+  },
+  {
+    path: 'admin/generos',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./pages/admin/generos/generos').then((m) => m.Generos),
+  },
+  {
+    path: 'admin/generos/nueva',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./pages/admin/generos/formulario/formulario').then((m) => m.FormularioGenero),
+  },
+  {
+    path: 'registro',
+    loadComponent: () => import('./pages/registro/registro').then((m) => m.Registro),
+  },
+  {
+    path: 'peliculas',
+    loadComponent: () => import('./pages/peliculas-publico/cartelera').then((m) => m.Cartelera),
+  },
+  {
+    path: 'peliculas/:id',
+    loadComponent: () =>
+      import('./pages/peliculas-publico/detalle/detalle').then((m) => m.DetallePelicula),
   },
 ];

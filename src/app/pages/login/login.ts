@@ -4,13 +4,14 @@ import { Auth } from '../../servicios/auth/auth';
 import { Errores } from '../../servicios/errores/errores';
 import { Router } from '@angular/router';
 import { Boton } from '../../componentes/boton/boton';
+import { BotonLink } from '../../componentes/boton-link/boton-link';
 import { environment } from '../../../environments/environment';
 import { Logger } from '../../servicios/logger/logger';
 import { Flujo } from '../../servicios/logger/flujo';
 import { TipoEvento } from '../../servicios/logger/tipo-evento';
 
 @Component({
-  imports: [ReactiveFormsModule, Boton],
+  imports: [ReactiveFormsModule, Boton, BotonLink],
   selector: 'app-login',
   styleUrl: './login.css',
   templateUrl: './login.html',
@@ -29,14 +30,15 @@ export class Login {
 
   async enviar() {
     const { email, password } = this.formulario.getRawValue();
-    const { error } = await this.auth.loguear(email, password);
+    const { data, error } = await this.auth.loguear(email, password);
 
     if (error) {
       this.logger.registrar(Flujo.Login, TipoEvento.Error, error.message);
       this.errores.mostrar(error.message);
     } else {
       this.logger.registrar(Flujo.Login, TipoEvento.Exito, email);
-      await this.router.navigate(['/admin']);
+      const esAdmin = data.user?.user_metadata?.['role'] === 'admin';
+      await this.router.navigate([esAdmin ? '/admin' : '/peliculas']);
     }
   }
 

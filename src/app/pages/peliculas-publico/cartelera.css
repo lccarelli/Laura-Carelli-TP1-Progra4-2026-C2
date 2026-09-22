@@ -1,0 +1,51 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.panel__titulo {
+  margin-bottom: 2rem;
+}
+
+.grilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: 1.25rem;
+}
+
+.grilla__vacio {
+  color: color-mix(in srgb, var(--negro) 60%, transparent);
+}
+
+.tarjeta-pelicula {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  border: 2px solid var(--negro);
+  border-radius: 1rem;
+  overflow: hidden;
+  color: var(--negro);
+  font-size: 0.85rem;
+  transition: opacity 0.2s ease;
+}
+
+.tarjeta-pelicula:hover {
+  opacity: 0.85;
+}
+
+.tarjeta-pelicula__imagen {
+  width: 100%;
+  height: 13rem;
+  object-fit: cover;
+  display: block;
+}
+
+.tarjeta-pelicula__imagen--vacia {
+  background: var(--crema);
+}
+
+.tarjeta-pelicula__nombre {
+  padding: 0.6rem 0.75rem;
+  font-weight: 700;
+}

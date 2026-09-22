@@ -17,7 +17,7 @@ export class PeliculaServicio {
   }
 
   crear(pelicula: PeliculaPorCrear) {
-    return this.supabase.crear(this.tabla, pelicula);
+    return this.supabase.Supabase.from(this.tabla).insert(pelicula).select().returns<Pelicula[]>();
   }
 
   editar({ id, ...datos }: Pelicula) {

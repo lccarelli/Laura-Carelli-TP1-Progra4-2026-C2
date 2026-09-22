@@ -1,5 +1,9 @@
-<main class="pagina-peliculas">
-  <section class="panel">
+<main class="pagina">
+  <section class="panel panel--ancho">
+    <app-boton-link variante="claro-negro" ruta="/admin" class="panel__volver">
+      ← Volver
+    </app-boton-link>
+
     <div class="panel__encabezado">
       <h2 class="panel__titulo">Películas</h2>
       <app-boton-link variante="mas" ruta="/admin/peliculas/nueva" ariaLabel="Nueva película">
@@ -23,6 +27,7 @@
             <th>Película</th>
             <th>Duración</th>
             <th>Restricción</th>
+            <th>Géneros</th>
             <th></th>
           </tr>
         </thead>
@@ -30,13 +35,7 @@
           @for (pelicula of peliculasFiltradas(); track pelicula.id) {
             <tr>
               <td class="tabla__col-estado">
-                <span
-                  class="estado-punto"
-                  [class.estado-punto--activa]="pelicula.activa"
-                  [class.estado-punto--inactiva]="!pelicula.activa"
-                  [attr.aria-label]="pelicula.activa ? 'Activa' : 'Desactivada'"
-                  [title]="pelicula.activa ? 'Activa' : 'Desactivada'"
-                ></span>
+                <app-estado-punto [activa]="pelicula.activa" />
               </td>
               <td>
                 <div class="tabla__pelicula">
@@ -49,10 +48,13 @@
                 </div>
               </td>
               <td>{{ pelicula.duracion_minutos }} min</td>
-              <td class="tabla__restriccion">
-                {{
-                  pelicula.restriccion_edad ? '+' + pelicula.restriccion_edad : 'Sin restricción'
-                }}
+              <td class="tabla__restriccion">{{ pelicula.restriccion_edad | restriccionEdad }}</td>
+              <td class="tabla__generos">
+                @for (genero of generosDe(pelicula.id); track genero.id) {
+                  <span class="etiqueta-genero">{{ genero.nombre }}</span>
+                } @empty {
+                  <span class="tabla__sin-generos">—</span>
+                }
               </td>
               <td class="tabla__acciones">
                 <app-boton-link
@@ -68,7 +70,7 @@
             </tr>
           } @empty {
             <tr>
-              <td class="tabla__vacio" colspan="5">No hay películas cargadas todavía.</td>
+              <td class="tabla__vacio" colspan="6">No hay películas cargadas todavía.</td>
             </tr>
           }
         </tbody>

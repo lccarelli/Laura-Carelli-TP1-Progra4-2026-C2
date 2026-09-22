@@ -1,0 +1,104 @@
+<main class="pagina">
+  <section class="panel panel--ancho">
+    <app-boton-link variante="claro-negro" ruta="/peliculas" class="panel__volver">
+      ← Volver
+    </app-boton-link>
+
+    @if (pelicula(); as pelicula) {
+      <div class="encabezado">
+        <div class="encabezado__poster">
+          @if (pelicula.imagen_url) {
+            <img class="encabezado__imagen" [src]="pelicula.imagen_url" alt="" />
+          } @else {
+            <div class="encabezado__imagen encabezado__imagen--vacia"></div>
+          }
+        </div>
+
+        <div class="encabezado__info">
+          <h2 class="panel__titulo">{{ pelicula.nombre }}</h2>
+
+          <div class="etiquetas">
+            @for (genero of generos(); track genero.id) {
+              <span class="etiqueta-genero">{{ genero.nombre }}</span>
+            }
+          </div>
+
+          @if (promedio(); as promedio) {
+            <p class="promedio">
+              <span class="promedio__estrellas">{{ promedioRedondeado() | estrellas }}</span>
+              {{ promedio | number: '1.1-1' }} / 5 ({{ resenas().length }} reseñas)
+            </p>
+          } @else {
+            <p class="promedio promedio--vacio">Todavía no tiene reseñas.</p>
+          }
+
+          <p class="sinopsis">{{ pelicula.sinopsis }}</p>
+
+          <dl class="detalle">
+            <div class="detalle__fila">
+              <dt>Duración</dt>
+              <dd>{{ pelicula.duracion_minutos }} min</dd>
+            </div>
+            <div class="detalle__fila">
+              <dt>Restricción</dt>
+              <dd>{{ pelicula.restriccion_edad | restriccionEdad }}</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+
+      <section class="resenas-seccion">
+        <h3 class="resenas-seccion__titulo">Reseñas</h3>
+
+        @if (auth.esCliente() && !yaReseno()) {
+          <div class="form-resena">
+            <div class="selector-puntaje">
+              @for (puntaje of puntajes; track puntaje) {
+                <button
+                  class="selector-puntaje__boton"
+                  type="button"
+                  [class.selector-puntaje__boton--activo]="puntaje <= puntajeSeleccionado()"
+                  (click)="elegirPuntaje(puntaje)"
+                >
+                  ★
+                </button>
+              }
+            </div>
+
+            <textarea
+              class="form-resena__texto"
+              placeholder="Comentario (opcional)"
+              rows="3"
+              [value]="texto()"
+              (input)="escribirTexto($any($event.target).value)"
+            ></textarea>
+
+            <app-boton
+              variante="menu"
+              [disabled]="puntajeSeleccionado() === 0"
+              (clic)="enviarResena()"
+            >
+              Publicar reseña
+            </app-boton>
+          </div>
+        } @else if (yaReseno()) {
+          <p class="aviso-resena">Ya dejaste tu reseña de esta película.</p>
+        }
+
+        <div class="lista-resenas">
+          @for (resena of resenas(); track resena.id) {
+            <article class="resena">
+              <span class="resena__estrellas">{{ resena.puntaje | estrellas }}</span>
+              @if (resena.texto) {
+                <p class="resena__texto">{{ resena.texto }}</p>
+              }
+              <span class="resena__fecha">{{ resena.creada_en | date: 'dd/MM/yyyy' }}</span>
+            </article>
+          } @empty {
+            <p class="lista-resenas__vacio">Sé el primero en dejar una reseña.</p>
+          }
+        </div>
+      </section>
+    }
+  </section>
+</main>

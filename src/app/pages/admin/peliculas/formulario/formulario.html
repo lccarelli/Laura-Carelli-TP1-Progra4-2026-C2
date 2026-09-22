@@ -1,15 +1,9 @@
-<main class="pagina-formulario">
-  <section class="panel">
+<main class="pagina pagina--centrada">
+  <section class="panel panel--ancho">
     <div class="panel__encabezado">
       <div class="panel__titulo-fila">
         @if (id()) {
-          <span
-            class="estado-punto estado-punto--grande"
-            [class.estado-punto--activa]="activa()"
-            [class.estado-punto--inactiva]="!activa()"
-            [attr.aria-label]="activa() ? 'Activa' : 'Desactivada'"
-            [title]="activa() ? 'Activa' : 'Desactivada'"
-          ></span>
+          <app-estado-punto [activa]="activa()" />
         }
         <h2 class="panel__titulo">
           {{ id() ? 'Editar película' : 'Nueva película' }}
@@ -77,6 +71,19 @@
         <span class="campo__etiqueta">Imagen (URL)</span>
         <input class="campo__input" type="text" formControlName="imagen_url" />
       </label>
+
+      <div class="campo">
+        <span class="campo__etiqueta">Géneros</span>
+        @if (opcionesGenero().length > 0) {
+          <app-selector-chips
+            [opciones]="opcionesGenero()"
+            [seleccionados]="generosSeleccionados()"
+            (alternar)="alternarGenero($event)"
+          />
+        } @else {
+          <span class="generos__vacio">Todavía no hay géneros cargados.</span>
+        }
+      </div>
 
       <div class="formulario__acciones">
         <app-boton variante="menu" tipo="submit" [disabled]="formulario.invalid">

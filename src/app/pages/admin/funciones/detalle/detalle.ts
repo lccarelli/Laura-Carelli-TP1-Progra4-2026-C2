@@ -14,6 +14,7 @@ import { Boton } from '../../../../componentes/boton/boton';
 import { BotonLink } from '../../../../componentes/boton-link/boton-link';
 import { EstadoPunto } from '../../../../componentes/estado-punto/estado-punto';
 import { MapaButacas } from '../../../../componentes/mapa-butacas/mapa-butacas';
+import { Poster } from '../../../../componentes/poster/poster';
 import { Logger } from '../../../../servicios/logger/logger';
 import { Flujo } from '../../../../servicios/logger/flujo';
 import { TipoEvento } from '../../../../servicios/logger/tipo-evento';
@@ -21,7 +22,7 @@ import { TipoEvento } from '../../../../servicios/logger/tipo-evento';
 const TABLA_NO_ENCONTRADA = 'PGRST205';
 
 @Component({
-  imports: [Boton, BotonLink, EstadoPunto, MapaButacas, DatePipe, UpperCasePipe],
+  imports: [Boton, BotonLink, EstadoPunto, MapaButacas, Poster, DatePipe, UpperCasePipe],
   selector: 'app-detalle',
   styleUrl: './detalle.css',
   templateUrl: './detalle.html',

@@ -6,13 +6,7 @@
 
     @if (pelicula(); as pelicula) {
       <div class="encabezado">
-        <div class="encabezado__poster">
-          @if (pelicula.imagen_url) {
-            <img class="encabezado__imagen" [src]="pelicula.imagen_url" alt="" />
-          } @else {
-            <div class="encabezado__imagen encabezado__imagen--vacia"></div>
-          }
-        </div>
+        <app-poster [imagen]="pelicula.imagen_url" />
 
         <div class="encabezado__info">
           <h2 class="panel__titulo">{{ pelicula.nombre }}</h2>
@@ -46,6 +40,25 @@
           </dl>
         </div>
       </div>
+
+      <section class="funciones-seccion">
+        <h3 class="funciones-seccion__titulo">Funciones</h3>
+
+        <div class="lista-funciones">
+          @for (item of funciones(); track item.funcion.id) {
+            <a class="funcion" [routerLink]="['/funciones', item.funcion.id]">
+              <span class="funcion__fecha">{{
+                item.funcion.inicio | date: 'EEEE dd/MM HH:mm'
+              }}</span>
+              <span class="funcion__sala">{{ item.sala }}</span>
+              <span class="funcion__formato">{{ item.funcion.formato | uppercase }}</span>
+              <span class="funcion__idioma">{{ item.funcion.idioma }}</span>
+            </a>
+          } @empty {
+            <p class="lista-funciones__vacio">Todavía no hay funciones programadas.</p>
+          }
+        </div>
+      </section>
 
       <section class="resenas-seccion">
         <h3 class="resenas-seccion__titulo">Reseñas</h3>

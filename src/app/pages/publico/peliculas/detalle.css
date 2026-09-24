@@ -15,21 +15,9 @@
   margin-bottom: 2rem;
 }
 
-.encabezado__poster {
-  flex-shrink: 0;
-}
-
-.encabezado__imagen {
-  width: 10rem;
-  height: 14.5rem;
-  object-fit: cover;
-  display: block;
-  border: 2px solid var(--negro);
-  border-radius: 1rem;
-}
-
-.encabezado__imagen--vacia {
-  background: var(--crema);
+app-poster {
+  --poster-ancho: 10rem;
+  --poster-alto: 14.5rem;
 }
 
 .encabezado__info {
@@ -75,28 +63,64 @@
   color: color-mix(in srgb, var(--negro) 80%, transparent);
 }
 
-.detalle {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  margin: 0;
+.funciones-seccion {
+  border-top: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
+  padding-top: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
-.detalle__fila {
+.funciones-seccion__titulo {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0 0 1rem;
+  color: var(--negro);
+}
+
+.lista-funciones {
   display: flex;
-  justify-content: space-between;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.lista-funciones__vacio {
+  color: color-mix(in srgb, var(--negro) 60%, transparent);
   font-size: 0.85rem;
 }
 
-.detalle__fila dt {
-  font-weight: 700;
-  color: color-mix(in srgb, var(--negro) 60%, transparent);
+.funcion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  border: 2px solid var(--negro);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+  color: var(--negro);
+  transition: background 0.2s ease;
 }
 
-.detalle__fila dd {
-  margin: 0;
+.funcion:hover {
+  background: var(--crema);
+}
+
+.funcion__fecha {
   font-weight: 700;
+  text-transform: capitalize;
+}
+
+.funcion__sala,
+.funcion__idioma {
+  font-size: 0.85rem;
+  color: color-mix(in srgb, var(--negro) 65%, transparent);
+}
+
+.funcion__formato {
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1.5px solid var(--negro);
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
 }
 
 .resenas-seccion {

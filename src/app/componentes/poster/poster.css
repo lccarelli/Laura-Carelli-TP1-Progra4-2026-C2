@@ -1,0 +1,19 @@
+:host {
+  --poster-ancho: 9rem;
+  --poster-alto: 13rem;
+  display: block;
+  flex-shrink: 0;
+}
+
+.poster {
+  width: var(--poster-ancho);
+  height: var(--poster-alto);
+  object-fit: cover;
+  display: block;
+  border: 2px solid var(--negro);
+  border-radius: 1rem;
+}
+
+.poster--vacia {
+  background: var(--crema);
+}

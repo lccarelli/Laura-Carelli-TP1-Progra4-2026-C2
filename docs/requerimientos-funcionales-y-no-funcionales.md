@@ -12,6 +12,7 @@ De los 61 Pedidos de `cine/docs/analisis-correos-consigna.md`.
 | T007 \| Alta de salas                           | Pedido-03                                             |
 | T008 \| Asignación automática de sala           | Pedido-05, Pedido-06, Pedido-07, Pedido-09, Pedido-31 |
 | T010 \| Detalle de película                     | Pedido-08 (vía T006), Pedido-33                       |
+| T011 \| Funciones de una película               | Pedido-05, Pedido-06, Pedido-07                       |
 | T013 \| Reserva y compra sin registro           | Pedido-01, Pedido-12                                  |
 | T014 \| Confirmación con QR y PDF               | Pedido-02, Pedido-29                                  |
 | T015 \| Registro de cliente                     | Pedido-10                                             |
@@ -126,10 +127,11 @@ Milestone: etapa 2. Label : `feat`.
 
 **Título del issue:** `T011 | Funciones de una película`
 
-Listado de funciones disponibles con día, hora, formato e idioma.
+Listado de funciones disponibles con sala, día, hora, formato e idioma. Sólo las futuras.
 
 **Criterios de aceptación**
 
+- [ ] Sólo se listan funciones cuyo inicio sea futuro
 - [ ] Elegir una función lleva al mapa de butacas correcto
 
 Milestone: etapa 2. Label : `feat`.

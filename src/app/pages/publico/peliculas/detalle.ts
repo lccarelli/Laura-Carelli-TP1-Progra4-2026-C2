@@ -1,16 +1,21 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { DatePipe, DecimalPipe } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { DatePipe, DecimalPipe, UpperCasePipe } from '@angular/common';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { PeliculaServicio } from '../../../servicios/pelicula/pelicula';
 import { GeneroServicio } from '../../../servicios/genero/genero';
 import { ResenaServicio } from '../../../servicios/resena/resena';
+import { FuncionServicio } from '../../../servicios/funcion/funcion';
+import { SalaServicio } from '../../../servicios/sala/sala';
 import { Auth } from '../../../servicios/auth/auth';
 import { Errores } from '../../../servicios/errores/errores';
 import { Pelicula } from '../../../interfaces/pelicula';
 import { Genero } from '../../../interfaces/genero';
 import { Resena } from '../../../interfaces/resena';
+import { Funcion } from '../../../interfaces/funcion';
+import { Sala } from '../../../interfaces/sala';
 import { Boton } from '../../../componentes/boton/boton';
 import { BotonLink } from '../../../componentes/boton-link/boton-link';
+import { Poster } from '../../../componentes/poster/poster';
 import { EstrellasPipe } from '../../../pipes/estrellas/estrellas';
 import { RestriccionEdadPipe } from '../../../pipes/restriccion-edad/restriccion-edad';
 import { Logger } from '../../../servicios/logger/logger';
@@ -19,17 +24,34 @@ import { TipoEvento } from '../../../servicios/logger/tipo-evento';
 
 const PUNTAJES = [1, 2, 3, 4, 5];
 
+export interface FuncionConSala {
+  funcion: Funcion;
+  sala: string;
+}
+
 @Component({
-  imports: [Boton, BotonLink, DatePipe, DecimalPipe, EstrellasPipe, RestriccionEdadPipe],
+  imports: [
+    Boton,
+    BotonLink,
+    Poster,
+    RouterLink,
+    DatePipe,
+    DecimalPipe,
+    UpperCasePipe,
+    EstrellasPipe,
+    RestriccionEdadPipe,
+  ],
   selector: 'app-detalle-pelicula',
   styleUrl: './detalle.css',
   templateUrl: './detalle.html',
 })
-export class DetallePelicula {
+export class Detalle {
   private route = inject(ActivatedRoute);
   private peliculaServicio = inject(PeliculaServicio);
   private generoServicio = inject(GeneroServicio);
   private resenaServicio = inject(ResenaServicio);
+  private funcionServicio = inject(FuncionServicio);
+  private salaServicio = inject(SalaServicio);
   private errores = inject(Errores);
   private logger = inject(Logger);
   protected auth = inject(Auth);
@@ -39,6 +61,7 @@ export class DetallePelicula {
   protected pelicula = signal<Pelicula | null>(null);
   protected generos = signal<Genero[]>([]);
   protected resenas = signal<Resena[]>([]);
+  protected funciones = signal<FuncionConSala[]>([]);
   protected yaReseno = signal(false);
   protected puntajeSeleccionado = signal(0);
   protected texto = signal('');
@@ -64,10 +87,18 @@ export class DetallePelicula {
   }
 
   async cargar(id: string) {
-    const [{ data, error }, { data: generos }, { data: resenas }] = await Promise.all([
+    const [
+      { data, error },
+      { data: generos },
+      { data: resenas },
+      { data: funciones },
+      { data: salas },
+    ] = await Promise.all([
       this.peliculaServicio.buscarPorId(id),
       this.generoServicio.listarPorPelicula(id),
       this.resenaServicio.listarPorPelicula(id),
+      this.funcionServicio.listarFuturasDePelicula(id),
+      this.salaServicio.listar(),
     ]);
 
     if (error || !data) {
@@ -78,6 +109,7 @@ export class DetallePelicula {
     this.pelicula.set(data);
     this.generos.set(generos ?? []);
     this.resenas.set(resenas ?? []);
+    this.funciones.set(this.combinarConSala(funciones ?? [], salas ?? []));
 
     const usuarioId = this.auth.usuario()?.id;
 
@@ -85,6 +117,13 @@ export class DetallePelicula {
       const { data: propia } = await this.resenaServicio.buscarDeUsuario(id, usuarioId);
       this.yaReseno.set(!!propia);
     }
+  }
+
+  private combinarConSala(funciones: Funcion[], salas: Sala[]): FuncionConSala[] {
+    return funciones.map((funcion) => ({
+      funcion,
+      sala: salas.find((s) => s.id === funcion.sala_id)?.nombre ?? '—',
+    }));
   }
 
   elegirPuntaje(puntaje: number) {

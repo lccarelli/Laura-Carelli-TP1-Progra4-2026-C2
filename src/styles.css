@@ -196,6 +196,35 @@
   color: var(--negro);
 }
 
+.detalle {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 0;
+}
+
+.detalle__fila {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
+}
+
+.detalle__fila dt {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: color-mix(in srgb, var(--negro) 60%, transparent);
+}
+
+.detalle__fila dd {
+  margin: 0;
+  font-weight: 700;
+  color: var(--negro);
+}
+
 .tabla-contenedor {
   overflow-x: auto;
 }

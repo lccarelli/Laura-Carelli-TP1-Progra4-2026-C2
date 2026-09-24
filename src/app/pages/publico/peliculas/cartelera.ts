@@ -1,8 +1,8 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { PeliculaServicio } from '../../servicios/pelicula/pelicula';
-import { Errores } from '../../servicios/errores/errores';
-import { Pelicula } from '../../interfaces/pelicula';
+import { PeliculaServicio } from '../../../servicios/pelicula/pelicula';
+import { Errores } from '../../../servicios/errores/errores';
+import { Pelicula } from '../../../interfaces/pelicula';
 
 @Component({
   imports: [RouterLink],

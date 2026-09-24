@@ -1,0 +1,36 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.panel__volver {
+  margin-bottom: 1.5rem;
+}
+
+.encabezado {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.encabezado__info {
+  flex: 1;
+  min-width: 16rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.mapa-seccion {
+  border-top: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
+  padding-top: 1.5rem;
+}
+
+.mapa-seccion__titulo {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0 0 1rem;
+  color: var(--negro);
+}

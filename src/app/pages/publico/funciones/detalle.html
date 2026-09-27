@@ -1,0 +1,48 @@
+<main class="pagina">
+  <section class="panel panel--ancho">
+    @if (pelicula(); as pelicula) {
+      <app-boton-link
+        variante="claro-negro"
+        [ruta]="'/peliculas/' + pelicula.id"
+        class="panel__volver"
+      >
+        ← Volver a {{ pelicula.nombre }}
+      </app-boton-link>
+    }
+
+    @if (funcion(); as funcion) {
+      <div class="encabezado">
+        <app-poster [imagen]="pelicula()?.imagen_url ?? null" />
+
+        <div class="encabezado__info">
+          <h2 class="panel__titulo">{{ pelicula()?.nombre }}</h2>
+
+          <dl class="detalle">
+            <div class="detalle__fila">
+              <dt>Sala</dt>
+              <dd>{{ sala() }}</dd>
+            </div>
+            <div class="detalle__fila">
+              <dt>Día y hora</dt>
+              <dd>{{ funcion.inicio | date: 'EEEE dd/MM/yyyy HH:mm' }}</dd>
+            </div>
+            <div class="detalle__fila">
+              <dt>Formato</dt>
+              <dd>{{ funcion.formato | uppercase }}</dd>
+            </div>
+            <div class="detalle__fila">
+              <dt>Idioma</dt>
+              <dd>{{ funcion.idioma }}</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+
+      <section class="mapa-seccion">
+        <h3 class="mapa-seccion__titulo">Mapa de butacas</h3>
+
+        <app-mapa-butacas [butacas]="butacas()" [entradas]="entradas()" />
+      </section>
+    }
+  </section>
+</main>

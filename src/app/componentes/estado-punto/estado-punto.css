@@ -6,9 +6,9 @@
 }
 
 .estado-punto--activa {
-  background: #4caf50;
+  background: var(--verde);
 }
 
 .estado-punto--inactiva {
-  background: #c1443a;
+  background: var(--rojo);
 }

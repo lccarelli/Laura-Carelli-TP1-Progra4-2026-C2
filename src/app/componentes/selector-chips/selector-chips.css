@@ -6,8 +6,7 @@
 
 .chips__boton {
   border: 2px solid var(--negro);
-  border-radius: 999px;
-  padding: 0.35rem 0.7rem;
+  padding: 0.7rem 0.7rem;
   font-size: 0.75rem;
   font-weight: 700;
   font-family: inherit;

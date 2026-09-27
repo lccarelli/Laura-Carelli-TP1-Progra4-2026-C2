@@ -1,0 +1,68 @@
+<main class="pagina">
+  <div class="secciones">
+    <section class="panel-flotante panel--ancho destacadas">
+      <div class="tarjetas-grilla">
+        @for (pelicula of destacadas(); track pelicula.id) {
+          <app-tarjeta-pelicula
+            [pelicula]="pelicula"
+            [promedio]="promedioDe(pelicula.id)"
+            [esEstreno]="esEstreno(pelicula)"
+            [generos]="generosDe(pelicula.id)"
+          />
+        } @empty {
+          <p class="tarjetas-grilla__vacio">Todavía no hay películas destacadas.</p>
+        }
+      </div>
+    </section>
+
+    <section class="panel-flotante panel--ancho">
+      <h2 class="panel__titulo" #carteleraSeccion>Cartelera</h2>
+      <div class="buscador-fila">
+        <input
+          class="buscador"
+          type="search"
+          placeholder="Buscar por título…"
+          [value]="busqueda()"
+          (input)="actualizarBusqueda($any($event.target).value)"
+        />
+
+        @if (opcionesGenero().length > 0) {
+          <app-selector-chips
+            [opciones]="opcionesGenero()"
+            [seleccionados]="generosSeleccionados()"
+            (alternar)="alternarGenero($event)"
+          />
+        }
+      </div>
+
+      <div class="calendario">
+        <div class="calendario__dias">
+          @for (dia of diasCalendario; track dia.clave) {
+            <button
+              type="button"
+              class="dia-tile"
+              [class.dia-tile--activo]="diaSeleccionado() === dia.clave"
+              (click)="seleccionarDia(dia.clave)"
+            >
+              <span class="dia-tile__nombre">{{ dia.nombreDia }}</span>
+              <span class="dia-tile__fecha">{{ dia.etiquetaFecha }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="tarjetas-grilla">
+        @for (pelicula of peliculasFiltradas(); track pelicula.id) {
+          <app-tarjeta-pelicula
+            [pelicula]="pelicula"
+            [promedio]="promedioDe(pelicula.id)"
+            [esEstreno]="esEstreno(pelicula)"
+            [generos]="generosDe(pelicula.id)"
+          />
+        } @empty {
+          <p class="tarjetas-grilla__vacio">No encontramos películas con esos filtros.</p>
+        }
+      </div>
+    </section>
+  </div>
+</main>

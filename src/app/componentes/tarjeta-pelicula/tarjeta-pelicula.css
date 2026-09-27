@@ -1,0 +1,53 @@
+.tarjeta-pelicula {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  text-decoration: none;
+  color: var(--negro);
+  transition: opacity 0.2s ease;
+}
+
+.tarjeta-pelicula:hover {
+  opacity: 0.85;
+}
+
+.tarjeta-pelicula__poster-contenedor {
+  position: relative;
+  width: 100%;
+}
+
+.tarjeta-pelicula__poster-contenedor app-poster {
+  --poster-ancho: 100%;
+  --poster-alto: auto;
+  --poster-aspecto: 1;
+}
+
+.tarjeta-pelicula__insignias {
+  position: absolute;
+  top: 0.6rem;
+  left: 0.6rem;
+  right: 0.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.insignia {
+  background: var(--crema);
+  border: 1.5px solid var(--negro);
+  color: var(--negro);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.15rem 0.5rem;
+}
+
+.tarjeta-pelicula__nombre {
+  font-weight: 800;
+  font-size: 1rem;
+  line-height: 1;
+  text-align: center;
+}

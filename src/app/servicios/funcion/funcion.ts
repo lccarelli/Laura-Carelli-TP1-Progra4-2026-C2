@@ -50,6 +50,25 @@ export class FuncionServicio {
     return this.supabase.obtenerPorId<Funcion>(this.tabla, id);
   }
 
+  listarFuturasDePelicula(peliculaId: string) {
+    return this.supabase.Supabase.from(this.tabla)
+      .select('*')
+      .eq('pelicula_id', peliculaId)
+      .eq('activa', true)
+      .gte('inicio', new Date().toISOString())
+      .order('inicio')
+      .returns<Funcion[]>();
+  }
+
+  listarTodasFuturas() {
+    return this.supabase.Supabase.from(this.tabla)
+      .select('*')
+      .eq('activa', true)
+      .gte('inicio', new Date().toISOString())
+      .order('inicio')
+      .returns<Funcion[]>();
+  }
+
   cambiarEstado(id: string, activa: boolean) {
     return this.supabase.actualizar<Funcion>(this.tabla, id, { activa });
   }

@@ -6,13 +6,7 @@
 
     @if (funcion(); as funcion) {
       <div class="encabezado">
-        <div class="encabezado__poster">
-          @if (pelicula()?.imagen_url; as imagen) {
-            <img class="encabezado__imagen" [src]="imagen" alt="" />
-          } @else {
-            <div class="encabezado__imagen encabezado__imagen--vacia"></div>
-          }
-        </div>
+        <app-poster [imagen]="pelicula()?.imagen_url ?? null" />
 
         <div class="encabezado__info">
           <div class="panel__titulo-fila">

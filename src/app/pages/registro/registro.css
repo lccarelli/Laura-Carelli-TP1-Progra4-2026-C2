@@ -40,14 +40,91 @@
   border-bottom-color: var(--naranja);
 }
 
+.campo__con-boton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.campo__con-boton .campo__input {
+  flex: 1;
+}
+
+.campo__boton-ojo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: color-mix(in srgb, var(--negro) 60%, transparent);
+  cursor: pointer;
+  padding: 0.4rem;
+}
+
+.campo__boton-ojo:hover {
+  color: var(--negro);
+}
+
+.campo__boton-ojo svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.campo__error {
+  font-size: 0.8rem;
+  color: var(--rojo);
+}
+
+.campo__requisitos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin: 0.15rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.campo__requisitos li {
+  font-size: 0.75rem;
+  color: color-mix(in srgb, var(--negro) 50%, transparent);
+}
+
+.campo__requisitos li::before {
+  content: '○ ';
+}
+
+.campo__requisitos li.campo__requisito--cumplido {
+  color: var(--verde);
+}
+
+.campo__requisitos li.campo__requisito--cumplido::before {
+  content: '✓ ';
+}
+
+.campo-grupo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+@media (max-width: 520px) {
+  .campo-grupo {
+    grid-template-columns: 1fr;
+  }
+}
+
 .tarjeta__form > app-boton {
   margin-top: 0.5rem;
-  align-self: flex-start;
 }
 
 .acceso-login {
   display: block;
   margin-top: 1.25rem;
+}
+
+.tarjeta__asterisco {
+  width: 4rem;
+  height: 4rem;
 }
 
 .mensaje-exito {

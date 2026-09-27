@@ -8,6 +8,12 @@ export class ResenaServicio {
   private supabase = inject(Supabase);
   private readonly tabla = 'resena';
 
+  listarTodas() {
+    return this.supabase.Supabase.from(this.tabla)
+      .select('pelicula_id, puntaje')
+      .returns<Pick<Resena, 'pelicula_id' | 'puntaje'>[]>();
+  }
+
   listarPorPelicula(peliculaId: string) {
     return this.supabase.Supabase.from(this.tabla)
       .select('*')

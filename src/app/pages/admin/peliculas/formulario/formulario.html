@@ -64,6 +64,16 @@
               <option value="18">+18</option>
             </select>
           </label>
+
+          <label class="campo">
+            <span class="campo__etiqueta">Fecha de estreno</span>
+            <input class="campo__input" type="date" formControlName="fecha_estreno" />
+          </label>
+
+          <label class="campo campo--checkbox">
+            <input type="checkbox" [checked]="destacada()" (change)="alternarDestacada()" />
+            <span class="campo__etiqueta">Destacada en la home (modo manual)</span>
+          </label>
         </div>
       </div>
 

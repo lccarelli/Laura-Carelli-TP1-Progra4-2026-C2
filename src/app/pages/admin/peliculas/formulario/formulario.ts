@@ -31,6 +31,7 @@ export class Formulario {
 
   protected id = signal<string | null>(null);
   protected activa = signal(true);
+  protected destacada = signal(false);
   protected imagenRota = signal(false);
   protected generos = signal<Genero[]>([]);
   protected generosSeleccionados = signal<Set<string>>(new Set());
@@ -45,6 +46,7 @@ export class Formulario {
     duracion_minutos: [0, [Validators.required, Validators.min(1)]],
     imagen_url: [''],
     restriccion_edad: [''],
+    fecha_estreno: [''],
   });
 
   protected imagenUrl = toSignal(this.formulario.controls.imagen_url.valueChanges, {
@@ -111,9 +113,15 @@ export class Formulario {
       duracion_minutos: data.duracion_minutos,
       imagen_url: data.imagen_url ?? '',
       restriccion_edad: data.restriccion_edad ? String(data.restriccion_edad) : '',
+      fecha_estreno: data.fecha_estreno ?? '',
     });
     this.activa.set(data.activa);
+    this.destacada.set(data.destacada);
     this.generosSeleccionados.set(new Set((generosDePelicula ?? []).map((g) => g.id)));
+  }
+
+  alternarDestacada() {
+    this.destacada.update((valor) => !valor);
   }
 
   async cambiarEstado() {
@@ -209,6 +217,8 @@ export class Formulario {
       imagen_url: valores.imagen_url || null,
       restriccion_edad: valores.restriccion_edad ? Number(valores.restriccion_edad) : null,
       activa: this.activa(),
+      destacada: this.destacada(),
+      fecha_estreno: valores.fecha_estreno || null,
     };
   }
 }

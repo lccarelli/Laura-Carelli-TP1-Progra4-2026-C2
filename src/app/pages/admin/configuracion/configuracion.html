@@ -1,0 +1,50 @@
+<main class="pagina">
+  <section class="panel panel--ancho">
+    <app-boton-link variante="claro-negro" ruta="/admin" class="panel__volver">
+      ← Volver
+    </app-boton-link>
+
+    <div class="panel__encabezado">
+      <h2 class="panel__titulo">Configuración de la home</h2>
+    </div>
+
+    <section class="config-seccion">
+      <h3 class="config-seccion__titulo">Destacadas</h3>
+      <p class="config-seccion__ayuda">
+        Elegí qué 3 películas se muestran arriba de todo en la home del visitante.
+      </p>
+
+      <div class="modo-opciones">
+        <button
+          type="button"
+          class="modo-opcion"
+          [class.modo-opcion--activo]="modo() === 'automatico'"
+          (click)="elegirModo('automatico')"
+        >
+          <span class="modo-opcion__titulo">Automático</span>
+          <span class="modo-opcion__detalle">
+            Las 3 películas con más entradas vendidas en el último mes.
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="modo-opcion"
+          [class.modo-opcion--activo]="modo() === 'manual'"
+          (click)="elegirModo('manual')"
+        >
+          <span class="modo-opcion__titulo">Manual</span>
+          <span class="modo-opcion__detalle">
+            Las películas que marques como destacadas desde el ABM de películas.
+          </span>
+        </button>
+      </div>
+
+      @if (modo() === 'manual') {
+        <app-boton-link variante="claro-negro" ruta="/admin/peliculas">
+          Ir al ABM de películas
+        </app-boton-link>
+      }
+    </section>
+  </section>
+</main>

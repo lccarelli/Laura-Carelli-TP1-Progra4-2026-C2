@@ -1,0 +1,66 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.panel__volver {
+  margin-bottom: 1.5rem;
+}
+
+.config-seccion__titulo {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0 0 0.5rem;
+  color: var(--negro);
+}
+
+.config-seccion__ayuda {
+  margin: 0 0 1.25rem;
+  font-size: 0.9rem;
+  color: color-mix(in srgb, var(--negro) 65%, transparent);
+}
+
+.modo-opciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 520px) {
+  .modo-opciones {
+    grid-template-columns: 1fr;
+  }
+}
+
+.modo-opcion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  text-align: left;
+  border: 2px solid var(--negro);
+  border-radius: 1rem;
+  padding: 1rem;
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.modo-opcion--activo {
+  background: var(--negro);
+  color: #fff;
+}
+
+.modo-opcion__titulo {
+  font-weight: 800;
+  font-size: 1rem;
+}
+
+.modo-opcion__detalle {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}

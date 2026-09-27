@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { DatePipe } from '@angular/common';
 import { Cartelera } from './cartelera';
 
 describe('Cartelera', () => {
@@ -9,7 +10,7 @@ describe('Cartelera', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Cartelera],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), DatePipe],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Cartelera);

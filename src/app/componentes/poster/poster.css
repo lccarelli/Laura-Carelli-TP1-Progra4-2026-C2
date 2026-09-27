@@ -8,10 +8,9 @@
 .poster {
   width: var(--poster-ancho);
   height: var(--poster-alto);
+  aspect-ratio: var(--poster-aspecto, auto);
   object-fit: cover;
   display: block;
-  border: 2px solid var(--negro);
-  border-radius: 1rem;
 }
 
 .poster--vacia {

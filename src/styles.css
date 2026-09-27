@@ -6,6 +6,7 @@
   --naranja: #f2541a;
   --amarillo: #ffdca0;
   --rojo: #c1443a;
+  --verde: #4caf50;
 }
 
 .boton {
@@ -29,7 +30,6 @@
 
 .boton--claro-negro,
 .boton--claro-rojo {
-  border-radius: 999px;
   padding: 0.4rem 1rem;
   font-size: 0.8rem;
   background: transparent;
@@ -53,7 +53,6 @@
 }
 
 .boton--oscuro-blanco {
-  border-radius: 999px;
   padding: 0.4rem 1rem;
   font-size: 0.85rem;
   background: transparent;
@@ -104,6 +103,10 @@
   overflow: hidden;
 }
 
+.tarjeta--ancha {
+  max-width: 42rem;
+}
+
 .tarjeta__asterisco {
   position: absolute;
   top: 1.25rem;
@@ -148,8 +151,6 @@
 .pagina {
   flex: 1;
   display: flex;
-  padding: 2rem 1rem;
-  background-color: var(--crema);
 }
 
 .pagina--centrada {
@@ -171,7 +172,7 @@
 }
 
 .panel--ancho {
-  max-width: 70rem;
+  max-width: 100%;
 }
 
 .panel__volver {
@@ -223,6 +224,19 @@
   margin: 0;
   font-weight: 700;
   color: var(--negro);
+}
+
+.etiquetas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.etiqueta-genero {
+  border: 1.5px solid var(--negro);
+  padding: 0.15rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 700;
 }
 
 .tabla-contenedor {

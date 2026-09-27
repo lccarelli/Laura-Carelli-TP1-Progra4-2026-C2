@@ -17,7 +17,6 @@
 .modo-toggle__boton {
   flex: 1;
   border: 2px solid var(--negro);
-  border-radius: 999px;
   padding: 0.5rem 1rem;
   font-size: 0.85rem;
   font-weight: 700;

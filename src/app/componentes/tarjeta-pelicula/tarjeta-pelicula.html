@@ -1,0 +1,19 @@
+<a class="tarjeta-pelicula" [routerLink]="['/peliculas', pelicula.id]">
+  <div class="tarjeta-pelicula__poster-contenedor">
+    <app-poster [imagen]="pelicula.imagen_url" />
+
+    <div class="tarjeta-pelicula__insignias">
+      @if (promedio !== null) {
+        <span class="insignia">{{ promedio | estrellas }}</span>
+      }
+      @if (esEstreno) {
+        <span class="insignia">Estreno</span>
+      }
+      @for (genero of generos; track genero.id) {
+        <span class="insignia">{{ genero.nombre }}</span>
+      }
+    </div>
+  </div>
+
+  <span class="tarjeta-pelicula__nombre">{{ pelicula.nombre }}</span>
+</a>

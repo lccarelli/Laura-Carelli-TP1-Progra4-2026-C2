@@ -71,6 +71,12 @@ export const routes: Routes = [
       import('./pages/admin/generos/formulario/formulario').then((m) => m.FormularioGenero),
   },
   {
+    path: 'admin/configuracion',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./pages/admin/configuracion/configuracion').then((m) => m.Configuracion),
+  },
+  {
     path: 'registro',
     loadComponent: () => import('./pages/registro/registro').then((m) => m.Registro),
   },

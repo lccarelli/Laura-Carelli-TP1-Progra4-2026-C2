@@ -27,6 +27,12 @@
   gap: 0.35rem;
 }
 
+.campo--checkbox {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.6rem;
+}
+
 .campo__etiqueta {
   font-size: 0.75rem;
   font-weight: 700;

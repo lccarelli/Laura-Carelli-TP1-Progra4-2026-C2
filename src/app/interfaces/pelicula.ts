@@ -6,4 +6,6 @@ export interface Pelicula {
   imagen_url: string | null;
   restriccion_edad: number | null;
   activa: boolean;
+  destacada: boolean;
+  fecha_estreno: string | null;
 }

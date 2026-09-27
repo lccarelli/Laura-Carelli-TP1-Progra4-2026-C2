@@ -14,16 +14,6 @@
   width: 100%;
 }
 
-.panel-flotante {
-  width: 100%;
-  margin-inline: auto;
-  background: #fff;
-  padding: 1rem 1rem;
-  border: 1rem solid var(--negro);
-  outline-offset: 0.5rem;
-  box-shadow: 0 1rem 2.5rem rgba(19, 19, 19, 0.18);
-}
-
 /* Grilla de tarjetas (destacadas y cartelera completa) */
 
 .tarjetas-grilla {

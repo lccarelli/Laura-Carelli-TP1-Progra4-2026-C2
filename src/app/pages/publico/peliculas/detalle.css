@@ -9,38 +9,28 @@
 }
 
 .encabezado {
-  display: flex;
+  display: grid;
+  grid-template-columns: 10rem 1fr;
   gap: 1.5rem;
-  flex-wrap: wrap;
   margin-bottom: 2rem;
 }
 
-app-poster {
-  --poster-ancho: 10rem;
-  --poster-alto: 14.5rem;
+.encabezado__poster {
+  --poster-ancho: 100%;
+  --poster-alto: auto;
+  --poster-aspecto: 1;
 }
 
 .encabezado__info {
-  flex: 1;
-  min-width: 16rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
 
-.promedio {
-  margin: 0;
-  font-size: 0.9rem;
-  color: color-mix(in srgb, var(--negro) 70%, transparent);
-}
-
-.promedio--vacio {
-  font-style: italic;
-}
-
-.promedio__estrellas {
-  color: var(--naranja);
-  letter-spacing: 0.1em;
+.encabezado__insignias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
 }
 
 .sinopsis {
@@ -49,63 +39,118 @@ app-poster {
   color: color-mix(in srgb, var(--negro) 80%, transparent);
 }
 
-.funciones-seccion {
+@media (max-width: 640px) {
+  .encabezado {
+    grid-template-columns: 1fr;
+  }
+}
+
+.selector-funciones {
   border-top: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
   padding-top: 1.5rem;
   margin-bottom: 1.5rem;
 }
 
-.funciones-seccion__titulo {
+.selector-funciones__titulo {
   font-size: 1.1rem;
   font-weight: 800;
   margin: 0 0 1rem;
   color: var(--negro);
 }
 
-.lista-funciones {
+.selector-funciones__tiles {
+  display: flex;
+  overflow-x: auto;
+  border: 2px solid var(--negro);
+}
+
+.funcion-tile {
+  flex: 1 0 4.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  border: none;
+  border-right: 1px solid var(--negro);
+  background: transparent;
+  font-family: inherit;
+  color: var(--negro);
+  cursor: pointer;
+  padding: 0;
 }
 
-.lista-funciones__vacio {
-  color: color-mix(in srgb, var(--negro) 60%, transparent);
-  font-size: 0.85rem;
+.funcion-tile:last-child {
+  border-right: none;
 }
 
-.funcion {
+.funcion-tile:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.funcion-tile__fecha {
+  background: var(--negro);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.35rem 0.25rem;
+}
+
+.funcion-tile__hora {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.4rem 0.25rem;
+}
+
+.funcion-tile:not(:disabled):hover .funcion-tile__fecha {
+  background: var(--naranja);
+}
+
+.funcion-tile--activo .funcion-tile__fecha {
+  background: var(--naranja);
+}
+
+.selector-funciones__horarios {
   display: flex;
   flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.horario-tile {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.15rem;
   border: 2px solid var(--negro);
-  border-radius: 0.75rem;
-  padding: 0.75rem 1rem;
-  text-decoration: none;
+  background: transparent;
+  font-family: inherit;
   color: var(--negro);
-  transition: background 0.2s ease;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
 }
 
-.funcion:hover {
-  background: var(--crema);
+.horario-tile:hover {
+  background: var(--negro);
+  color: #fff;
 }
 
-.funcion__fecha {
-  font-weight: 700;
-  text-transform: capitalize;
+.horario-tile__hora {
+  font-size: 1.1rem;
+  font-weight: 800;
 }
 
-.funcion__sala,
-.funcion__idioma {
-  font-size: 0.85rem;
-  color: color-mix(in srgb, var(--negro) 65%, transparent);
-}
-
-.funcion__formato {
+.horario-tile__sala {
   font-size: 0.75rem;
   font-weight: 700;
-  border: 1.5px solid var(--negro);
-  padding: 0.1rem 0.5rem;
+}
+
+.horario-tile__formato {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
 }
 
 .resenas-seccion {
@@ -126,7 +171,6 @@ app-poster {
   gap: 0.75rem;
   background: var(--crema);
   border: 2px solid var(--negro);
-  border-radius: 1rem;
   padding: 1rem;
   margin-bottom: 1.5rem;
 }
@@ -152,7 +196,6 @@ app-poster {
 
 .form-resena__texto {
   border: 2px solid var(--negro);
-  border-radius: 0.5rem;
   padding: 0.6rem;
   font-family: inherit;
   font-size: 0.9rem;

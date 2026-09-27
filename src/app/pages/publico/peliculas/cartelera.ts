@@ -11,7 +11,7 @@ import { Genero } from '../../../interfaces/genero';
 import { TarjetaPelicula } from '../../../componentes/tarjeta-pelicula/tarjeta-pelicula';
 import { SelectorChips } from '../../../componentes/selector-chips/selector-chips';
 
-const DIAS_CALENDARIO = 10;
+const DIAS_CALENDARIO = 14;
 const DIAS_VENTANA_ESTRENO = 7;
 
 interface DiaCalendario {

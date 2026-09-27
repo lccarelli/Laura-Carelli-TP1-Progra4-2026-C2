@@ -175,6 +175,27 @@
   max-width: 100%;
 }
 
+.panel-flotante {
+  width: 100%;
+  margin-inline: auto;
+  background: #fff;
+  padding: 1rem 1rem;
+  border: 1rem solid var(--negro);
+  outline-offset: 0.5rem;
+  box-shadow: 0 1rem 2.5rem rgba(19, 19, 19, 0.18);
+}
+
+.insignia {
+  background: var(--crema);
+  border: 1.5px solid var(--negro);
+  color: var(--negro);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.15rem 0.5rem;
+}
+
 .panel__volver {
   display: inline-flex;
   margin-bottom: 1rem;

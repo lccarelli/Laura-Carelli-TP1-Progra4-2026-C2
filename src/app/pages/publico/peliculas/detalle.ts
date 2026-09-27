@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { DatePipe, DecimalPipe, UpperCasePipe } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { DatePipe } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PeliculaServicio } from '../../../servicios/pelicula/pelicula';
 import { GeneroServicio } from '../../../servicios/genero/genero';
 import { ResenaServicio } from '../../../servicios/resena/resena';
@@ -23,30 +23,35 @@ import { Flujo } from '../../../servicios/logger/flujo';
 import { TipoEvento } from '../../../servicios/logger/tipo-evento';
 
 const PUNTAJES = [1, 2, 3, 4, 5];
+const DIAS_CALENDARIO = 14;
 
 export interface FuncionConSala {
   funcion: Funcion;
   sala: string;
 }
 
+interface DiaCalendario {
+  clave: string;
+  nombreDia: string;
+  etiquetaFecha: string;
+}
+
+function claveDia(fecha: Date): string {
+  const anio = fecha.getFullYear();
+  const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+  const dia = String(fecha.getDate()).padStart(2, '0');
+  return `${anio}-${mes}-${dia}`;
+}
+
 @Component({
-  imports: [
-    Boton,
-    BotonLink,
-    Poster,
-    RouterLink,
-    DatePipe,
-    DecimalPipe,
-    UpperCasePipe,
-    EstrellasPipe,
-    RestriccionEdadPipe,
-  ],
+  imports: [Boton, BotonLink, Poster, DatePipe, EstrellasPipe, RestriccionEdadPipe],
   selector: 'app-detalle-pelicula',
   styleUrl: './detalle.css',
   templateUrl: './detalle.html',
 })
 export class Detalle {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private peliculaServicio = inject(PeliculaServicio);
   private generoServicio = inject(GeneroServicio);
   private resenaServicio = inject(ResenaServicio);
@@ -54,6 +59,7 @@ export class Detalle {
   private salaServicio = inject(SalaServicio);
   private errores = inject(Errores);
   private logger = inject(Logger);
+  private datePipe = inject(DatePipe);
   protected auth = inject(Auth);
 
   protected puntajes = PUNTAJES;
@@ -65,6 +71,30 @@ export class Detalle {
   protected yaReseno = signal(false);
   protected puntajeSeleccionado = signal(0);
   protected texto = signal('');
+  protected diasCalendario: DiaCalendario[] = this.construirDiasCalendario();
+  protected diaSeleccionado = signal<string | null>(null);
+
+  protected funcionesPorDia = computed(() => {
+    const mapa = new Map<string, FuncionConSala[]>();
+
+    for (const item of this.funciones()) {
+      const clave = claveDia(new Date(item.funcion.inicio));
+      const lista = mapa.get(clave) ?? [];
+      lista.push(item);
+      mapa.set(clave, lista);
+    }
+
+    for (const lista of mapa.values()) {
+      lista.sort((a, b) => a.funcion.inicio.localeCompare(b.funcion.inicio));
+    }
+
+    return mapa;
+  });
+
+  protected horariosDelDia = computed(() => {
+    const dia = this.diaSeleccionado();
+    return dia ? (this.funcionesPorDia().get(dia) ?? []) : [];
+  });
 
   protected promedio = computed(() => {
     const resenas = this.resenas();
@@ -124,6 +154,37 @@ export class Detalle {
       funcion,
       sala: salas.find((s) => s.id === funcion.sala_id)?.nombre ?? '—',
     }));
+  }
+
+  elegirDia(clave: string) {
+    if (!this.funcionesPorDia().has(clave)) {
+      return;
+    }
+
+    this.diaSeleccionado.update((actual) => (actual === clave ? null : clave));
+  }
+
+  async elegirFuncion(id: string) {
+    await this.router.navigate(['/funciones', id]);
+  }
+
+  private construirDiasCalendario(): DiaCalendario[] {
+    const dias: DiaCalendario[] = [];
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    for (let i = 0; i < DIAS_CALENDARIO; i++) {
+      const fecha = new Date(hoy);
+      fecha.setDate(fecha.getDate() + i);
+
+      dias.push({
+        clave: claveDia(fecha),
+        nombreDia: i === 0 ? 'Hoy' : (this.datePipe.transform(fecha, 'EEEE') ?? ''),
+        etiquetaFecha: this.datePipe.transform(fecha, 'dd/MM') ?? '',
+      });
+    }
+
+    return dias;
   }
 
   elegirPuntaje(puntaje: number) {

@@ -1,63 +1,59 @@
 <main class="pagina">
-  <section class="panel panel--ancho">
+  <section class="panel-flotante panel--ancho">
     <app-boton-link variante="claro-negro" ruta="/peliculas" class="panel__volver">
       ← Volver
     </app-boton-link>
 
     @if (pelicula(); as pelicula) {
       <div class="encabezado">
-        <app-poster [imagen]="pelicula.imagen_url" />
+        <app-poster class="encabezado__poster" [imagen]="pelicula.imagen_url" />
 
         <div class="encabezado__info">
-          <h2 class="panel__titulo">{{ pelicula.nombre }}</h2>
-
-          <div class="etiquetas">
-            @for (genero of generos(); track genero.id) {
-              <span class="etiqueta-genero">{{ genero.nombre }}</span>
+          <div class="encabezado__insignias">
+            @if (promedio(); as promedio) {
+              <span class="insignia">{{ promedioRedondeado() | estrellas }}</span>
             }
+            @for (genero of generos(); track genero.id) {
+              <span class="insignia">{{ genero.nombre }}</span>
+            }
+            <span class="insignia">{{ pelicula.restriccion_edad | restriccionEdad }}</span>
           </div>
 
-          @if (promedio(); as promedio) {
-            <p class="promedio">
-              <span class="promedio__estrellas">{{ promedioRedondeado() | estrellas }}</span>
-              {{ promedio | number: '1.1-1' }} / 5 ({{ resenas().length }} reseñas)
-            </p>
-          } @else {
-            <p class="promedio promedio--vacio">Todavía no tiene reseñas.</p>
-          }
+          <h2 class="panel__titulo">{{ pelicula.nombre }}</h2>
 
           <p class="sinopsis">{{ pelicula.sinopsis }}</p>
-
-          <dl class="detalle">
-            <div class="detalle__fila">
-              <dt>Duración</dt>
-              <dd>{{ pelicula.duracion_minutos }} min</dd>
-            </div>
-            <div class="detalle__fila">
-              <dt>Restricción</dt>
-              <dd>{{ pelicula.restriccion_edad | restriccionEdad }}</dd>
-            </div>
-          </dl>
         </div>
       </div>
 
-      <section class="funciones-seccion">
-        <h3 class="funciones-seccion__titulo">Funciones</h3>
+      <section class="selector-funciones">
+        <h3 class="selector-funciones__titulo">Elegí función</h3>
 
-        <div class="lista-funciones">
-          @for (item of funciones(); track item.funcion.id) {
-            <a class="funcion" [routerLink]="['/funciones', item.funcion.id]">
-              <span class="funcion__fecha">{{
-                item.funcion.inicio | date: 'EEEE dd/MM HH:mm'
-              }}</span>
-              <span class="funcion__sala">{{ item.sala }}</span>
-              <span class="funcion__formato">{{ item.funcion.formato | uppercase }}</span>
-              <span class="funcion__idioma">{{ item.funcion.idioma }}</span>
-            </a>
-          } @empty {
-            <p class="lista-funciones__vacio">Todavía no hay funciones programadas.</p>
+        <div class="selector-funciones__tiles">
+          @for (dia of diasCalendario; track dia.clave) {
+            <button
+              type="button"
+              class="funcion-tile"
+              [class.funcion-tile--activo]="diaSeleccionado() === dia.clave"
+              [disabled]="!funcionesPorDia().has(dia.clave)"
+              (click)="elegirDia(dia.clave)"
+            >
+              <span class="funcion-tile__fecha">{{ dia.nombreDia }}</span>
+              <span class="funcion-tile__hora">{{ dia.etiquetaFecha }}</span>
+            </button>
           }
         </div>
+
+        @if (horariosDelDia().length > 0) {
+          <div class="selector-funciones__horarios">
+            @for (item of horariosDelDia(); track item.funcion.id) {
+              <button type="button" class="horario-tile" (click)="elegirFuncion(item.funcion.id)">
+                <span class="horario-tile__hora">{{ item.funcion.inicio | date: 'HH:mm' }}</span>
+                <span class="horario-tile__sala">{{ item.sala }}</span>
+                <span class="horario-tile__formato">{{ item.funcion.formato }}</span>
+              </button>
+            }
+          </div>
+        }
       </section>
 
       <section class="resenas-seccion">

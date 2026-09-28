@@ -1,0 +1,9 @@
+@if (actualizacion.disponible()) {
+  <div class="toast-actualizacion" role="status">
+    <span class="toast-actualizacion__texto">Hay una nueva versión disponible.</span>
+
+    <button class="toast-actualizacion__boton" type="button" (click)="actualizacion.actualizar()">
+      Actualizar
+    </button>
+  </div>
+}

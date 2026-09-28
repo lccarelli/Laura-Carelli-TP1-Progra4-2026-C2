@@ -5,4 +5,5 @@ export interface CompraPorCrear {
   email: string;
   edad_declarada: number | null;
   total: number;
+  descuento_cupon: number;
 }

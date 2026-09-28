@@ -8,6 +8,42 @@
   margin-bottom: 1.5rem;
 }
 
+.config-seccion--separada {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-width: 22rem;
+  margin-bottom: 1rem;
+}
+
+.campo__etiqueta {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--negro);
+}
+
+.campo__input {
+  border: none;
+  border-bottom: 2px solid var(--negro);
+  background: transparent;
+  padding: 0.5rem 0.1rem;
+  font-size: 1rem;
+  color: var(--negro);
+  font-family: inherit;
+}
+
+.campo__input:focus {
+  outline: none;
+}
+
 .config-seccion__titulo {
   font-size: 1.1rem;
   font-weight: 800;

@@ -24,6 +24,7 @@ interface DatosEnvio {
   butacasTexto: string[];
   candyTexto: string[];
   total: number;
+  descuentoCupon: number;
 }
 
 function armarHtml(datos: DatosEnvio): string {
@@ -56,7 +57,9 @@ function armarHtml(datos: DatosEnvio): string {
     <div style="font-family: 'Helvetica Neue', Arial, sans-serif; background:#f2f0ea; padding:24px;">
       <div style="max-width:560px; margin:0 auto; background:#ffffff; border:3px solid #131313;">
         <div style="background:#131313; padding:16px 24px; display:flex; align-items:center; gap:12px;">
-          <img src="${LOGO_URL}" alt="kínema" width="36" height="36" style="display:inline-block; vertical-align:middle;" />
+          <span style="display:inline-block; background:#ffffff; padding:6px; border-radius:8px; line-height:0;">
+            <img src="${LOGO_URL}" alt="kínema" width="24" height="24" style="display:block;" />
+          </span>
           <span style="color:#f2f0ea; font-size:20px; font-weight:800; vertical-align:middle;">KÍNEMA</span>
         </div>
 
@@ -85,7 +88,14 @@ function armarHtml(datos: DatosEnvio): string {
 
           ${candyHtml}
 
-          <p style="font-size:18px; font-weight:800; margin:20px 0; border-top:1px solid #ddd; padding-top:12px;">
+          ${
+            datos.descuentoCupon > 0
+              ? `<p style="font-size:14px; font-weight:700; color:#2e7d32; margin:20px 0 0; border-top:1px solid #ddd; padding-top:12px;">
+                  Cupón de bienvenida: -$${datos.descuentoCupon}
+                </p>`
+              : ''
+          }
+          <p style="font-size:18px; font-weight:800; margin:${datos.descuentoCupon > 0 ? '4px' : '20px'} 0 20px;">
             Total: $${datos.total}
           </p>
 

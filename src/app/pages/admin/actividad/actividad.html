@@ -1,0 +1,45 @@
+<main class="pagina">
+  <section class="panel-flotante panel--ancho">
+    <app-boton-link variante="claro-negro" ruta="/admin" class="panel__volver">
+      ← Volver
+    </app-boton-link>
+
+    <h2 class="panel__titulo">Actividad</h2>
+
+    <div class="tabla-contenedor">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Fecha y hora</th>
+            <th>Usuario</th>
+            <th>Acción</th>
+            <th>Entidad afectada</th>
+            <th>Resultado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (registro of registros(); track registro.id) {
+            <tr>
+              <td>{{ registro.creada_en | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+              <td>{{ registro.usuario_email ?? '—' }}</td>
+              <td>{{ registro.flujo }}</td>
+              <td>{{ registro.entidad_afectada ?? '—' }}</td>
+              <td>
+                <span
+                  class="actividad__evento"
+                  [class.actividad__evento--error]="registro.evento === 'Error'"
+                >
+                  {{ registro.evento }}
+                </span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="tabla__vacio" colspan="5">Todavía no hay actividad registrada.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>

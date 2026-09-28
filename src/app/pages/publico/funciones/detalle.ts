@@ -30,9 +30,9 @@ const ORDEN_PASOS = ['butacas', 'candy', 'pago', 'listo'] as const;
 type Paso = (typeof ORDEN_PASOS)[number];
 const EMAIL_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-function calcularEdad(fechaNacimiento: string): number {
+function calcularEdad(fechaNacimiento: string, fechaReferencia: Date): number {
   const nacimiento = new Date(fechaNacimiento);
-  const hoy = new Date();
+  const hoy = fechaReferencia;
   let edad = hoy.getFullYear() - nacimiento.getFullYear();
   const noCumplioTodavia =
     hoy.getMonth() < nacimiento.getMonth() ||
@@ -216,7 +216,13 @@ export class Detalle {
   protected edadCliente = computed(() => {
     const fechaNacimiento = this.auth.usuario()?.user_metadata?.['fecha_nacimiento'] as
       string | undefined;
-    return fechaNacimiento ? calcularEdad(fechaNacimiento) : null;
+    const funcion = this.funcion();
+
+    if (!fechaNacimiento || !funcion) {
+      return null;
+    }
+
+    return calcularEdad(fechaNacimiento, new Date(funcion.inicio));
   });
 
   protected emailValido = computed(() => EMAIL_VALIDO.test(this.emailAnonimo().trim()));

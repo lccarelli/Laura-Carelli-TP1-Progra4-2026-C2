@@ -130,6 +130,12 @@
                 pelicula()?.restriccion_edad ?? null | restriccionEdad
               }}</span>
 
+              @if (restriccionEdad(); as restriccion) {
+                <p class="aviso-adulto">
+                  Esta función es +{{ restriccion }}: debe ir acompañado de un adulto responsable.
+                </p>
+              }
+
               <h3 class="resumen-compra__titulo">Butacas</h3>
               <ul class="resumen-compra__lista">
                 @for (butaca of butacasElegidas(); track butaca.id) {
@@ -218,6 +224,11 @@
               <span class="insignia">{{
                 pelicula()?.restriccion_edad ?? null | restriccionEdad
               }}</span>
+              @if (restriccionEdad(); as restriccion) {
+                <p class="aviso-adulto">
+                  Esta función es +{{ restriccion }}: debe ir acompañado de un adulto responsable.
+                </p>
+              }
               @if (qrDataUrl(); as qr) {
                 <img class="confirmacion__qr" [src]="qr" alt="Código QR de la compra" />
               }

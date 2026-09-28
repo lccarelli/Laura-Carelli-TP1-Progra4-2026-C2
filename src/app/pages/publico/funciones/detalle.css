@@ -292,6 +292,16 @@
   margin: 0;
 }
 
+.aviso-adulto {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--negro);
+  background: var(--amarillo);
+  border: 1.5px solid var(--negro);
+  padding: 0.5rem 0.75rem;
+  margin: 0.5rem 0 0;
+}
+
 .acceso-compra__cuenta {
   display: flex;
   align-items: center;

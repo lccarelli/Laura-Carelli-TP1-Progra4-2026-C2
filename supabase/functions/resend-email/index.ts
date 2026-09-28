@@ -45,6 +45,13 @@ function armarHtml(datos: DatosEnvio): string {
     ? `<img src="cid:butacas" alt="Ubicación de las butacas" style="display:block; max-width:100%; width:100%; height:auto; margin:10px 0; border:2px solid #131313; padding:6px; background:#ffffff; box-sizing:border-box;" />`
     : '';
 
+  const avisoAdultoHtml =
+    datos.restriccionTexto !== 'Sin restricción'
+      ? `<p style="background:#ffdca0; border:1.5px solid #131313; color:#131313; font-weight:700; font-size:13px; padding:8px 12px; margin:0 0 16px;">
+          Esta función es ${datos.restriccionTexto}: debe ir acompañado de un adulto responsable.
+        </p>`
+      : '';
+
   return `
     <div style="font-family: 'Helvetica Neue', Arial, sans-serif; background:#f2f0ea; padding:24px;">
       <div style="max-width:560px; margin:0 auto; background:#ffffff; border:3px solid #131313;">
@@ -58,6 +65,8 @@ function armarHtml(datos: DatosEnvio): string {
           <p style="display:inline-block; border:1.5px solid #131313; padding:2px 8px; font-size:12px; font-weight:700; text-transform:uppercase; margin:0 0 16px;">
             ${datos.restriccionTexto}
           </p>
+
+          ${avisoAdultoHtml}
 
           ${posterHtml}
 

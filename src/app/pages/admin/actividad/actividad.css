@@ -1,0 +1,25 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.panel__titulo {
+  margin-bottom: 1.5rem;
+}
+
+.tabla {
+  min-width: 40rem;
+}
+
+.actividad__evento {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--verde);
+}
+
+.actividad__evento--error {
+  color: var(--rojo);
+}

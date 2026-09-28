@@ -36,8 +36,9 @@ export class Login {
       this.errores.mostrar(error.message);
     } else {
       this.logger.registrar(Flujo.Login, TipoEvento.Exito, email);
-      const esAdmin = data.user?.user_metadata?.['role'] === 'admin';
-      await this.router.navigate([esAdmin ? '/admin' : '/peliculas']);
+      const rol = data.user?.user_metadata?.['role'];
+      const destino = rol === 'admin' ? '/admin' : rol === 'empleado' ? '/boleteria' : '/peliculas';
+      await this.router.navigate([destino]);
     }
   }
 }

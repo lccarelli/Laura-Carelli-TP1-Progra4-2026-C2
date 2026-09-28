@@ -1,0 +1,79 @@
+<main class="pagina">
+  <section class="panel-flotante panel--ancho">
+    <h2 class="panel__titulo">Boletería</h2>
+    <p class="boleteria__ayuda">Buscá una compra por su código para validar el ingreso.</p>
+
+    <div class="boleteria__busqueda">
+      <label class="campo">
+        <span class="campo__etiqueta">Código de compra</span>
+        <input
+          class="campo__input"
+          type="text"
+          [value]="codigo()"
+          (input)="actualizarCodigo($any($event.target).value)"
+          (keydown.enter)="buscar()"
+        />
+      </label>
+
+      <div class="boleteria__acciones">
+        <app-boton variante="menu" [disabled]="buscando()" (clic)="buscar()">Buscar</app-boton>
+        <app-boton variante="claro-negro" (clic)="alternarEscaner()">
+          {{ escaneando() ? 'Cancelar escaneo' : 'Escanear con cámara' }}
+        </app-boton>
+      </div>
+    </div>
+
+    <div id="lector-qr" class="boleteria__lector" [hidden]="!escaneando()"></div>
+
+    @if (noEncontrada()) {
+      <p class="boleteria__error">Código no encontrado.</p>
+    }
+
+    @if (compra(); as compra) {
+      <div class="boleteria__resultado">
+        <h3 class="boleteria__pelicula">{{ compra.funcion?.pelicula?.nombre ?? '—' }}</h3>
+        <p class="boleteria__detalle">
+          {{ compra.funcion?.sala?.nombre ?? '—' }} ·
+          {{ compra.funcion?.inicio | date: 'EEEE dd/MM/yyyy HH:mm' }}
+        </p>
+
+        @if (butacas().length > 0) {
+          <h4 class="boleteria__subtitulo">Butacas</h4>
+          <ul class="boleteria__lista">
+            @for (item of butacas(); track $index) {
+              @if (item.butaca; as butaca) {
+                <li>{{ butaca.fila }}{{ butaca.numero }} ({{ butaca.tipo }})</li>
+              }
+            }
+          </ul>
+        }
+
+        @if (candy().length > 0) {
+          <h4 class="boleteria__subtitulo">Candy</h4>
+          <ul class="boleteria__lista">
+            @for (item of candy(); track $index) {
+              <li>{{ item.cantidad }}x {{ item.producto_candy?.nombre ?? '—' }}</li>
+            }
+          </ul>
+        }
+
+        <p class="boleteria__total">Total: ${{ compra.total }}</p>
+
+        @if (compra.validada_en) {
+          @if (validacionExitosa()) {
+            <p class="boleteria__ok">Ingreso validado ✔.</p>
+          } @else {
+            <p class="boleteria__error">
+              Ya se usó este código el {{ compra.validada_en | date: 'dd/MM/yyyy HH:mm' }}. No debe
+              reingresar.
+            </p>
+          }
+        } @else {
+          <app-boton variante="menu" [disabled]="validando()" (clic)="confirmarIngreso()">
+            Confirmar ingreso
+          </app-boton>
+        }
+      </div>
+    }
+  </section>
+</main>

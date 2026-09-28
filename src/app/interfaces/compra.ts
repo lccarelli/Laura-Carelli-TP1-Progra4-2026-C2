@@ -7,4 +7,6 @@ export interface Compra {
   edad_declarada: number | null;
   total: number;
   creada_en: string;
+  validada_en: string | null;
+  validada_por: string | null;
 }

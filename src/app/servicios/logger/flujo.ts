@@ -19,4 +19,5 @@ export enum Flujo {
   AltaCandy = 'AltaCandy',
   BajaCandy = 'BajaCandy',
   AltaCompra = 'AltaCompra',
+  ValidacionQr = 'ValidacionQr',
 }

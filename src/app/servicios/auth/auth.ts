@@ -40,4 +40,8 @@ export class Auth {
   esCliente(): boolean {
     return this.usuario()?.user_metadata?.['role'] === 'cliente';
   }
+
+  esEmpleado(): boolean {
+    return this.usuario()?.user_metadata?.['role'] === 'empleado';
+  }
 }

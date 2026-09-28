@@ -6,6 +6,11 @@ export interface ItemCandy {
   cantidad: number;
 }
 
+export interface ItemCandyDeCompra {
+  cantidad: number;
+  producto_candy: { nombre: string } | null;
+}
+
 @Service()
 export class CompraCandyServicio {
   private supabase = inject(Supabase);
@@ -19,5 +24,12 @@ export class CompraCandyServicio {
     return this.supabase.Supabase.from(this.tabla).insert(
       items.map((item) => ({ codigo_compra: codigoCompra, ...item })),
     );
+  }
+
+  listarPorCodigo(codigoCompra: string) {
+    return this.supabase.Supabase.from(this.tabla)
+      .select('cantidad, producto_candy(nombre)')
+      .eq('codigo_compra', codigoCompra)
+      .returns<ItemCandyDeCompra[]>();
   }
 }

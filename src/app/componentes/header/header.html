@@ -7,6 +7,9 @@
     @if (auth.esCliente()) {
       <app-boton-link variante="oscuro-blanco" ruta="/mis-compras">Mis compras</app-boton-link>
     }
+    @if (auth.esEmpleado() || auth.esAdmin()) {
+      <app-boton-link variante="oscuro-blanco" ruta="/boleteria">Boletería</app-boton-link>
+    }
     @if (auth.usuario()) {
       <app-boton variante="oscuro-blanco" (clic)="cerrarSesion()"> Cerrar sesión </app-boton>
     } @else {

@@ -1,6 +1,11 @@
 import { inject, Service } from '@angular/core';
 import { Supabase } from '../supabase/supabase';
 import { Entrada } from '../../interfaces/entrada';
+import { Butaca } from '../../interfaces/butaca';
+
+export interface ButacaDeEntrada {
+  butaca: Pick<Butaca, 'fila' | 'numero' | 'tipo'> | null;
+}
 
 const MINUTOS_RESERVA = 10;
 
@@ -86,6 +91,13 @@ export class EntradaServicio {
     }
 
     return { error: null };
+  }
+
+  listarPorCodigoCompra(codigoCompra: string) {
+    return this.supabase.Supabase.from(this.tabla)
+      .select('butaca(fila, numero, tipo)')
+      .eq('codigo_compra', codigoCompra)
+      .returns<ButacaDeEntrada[]>();
   }
 
   suscribirCambios(funcionId: string, alCambiar: () => void) {

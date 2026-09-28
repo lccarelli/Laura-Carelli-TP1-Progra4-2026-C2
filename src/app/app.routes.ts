@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { adminGuard } from './guards/admin-guard';
 import { clienteGuard } from './guards/cliente-guard';
+import { empleadoGuard } from './guards/empleado-guard';
 
 export const routes: Routes = [
   {
@@ -114,5 +115,10 @@ export const routes: Routes = [
     canActivate: [clienteGuard],
     loadComponent: () =>
       import('./pages/publico/mis-compras/mis-compras').then((m) => m.MisCompras),
+  },
+  {
+    path: 'boleteria',
+    canActivate: [empleadoGuard],
+    loadComponent: () => import('./pages/publico/boleteria/boleteria').then((m) => m.Boleteria),
   },
 ];

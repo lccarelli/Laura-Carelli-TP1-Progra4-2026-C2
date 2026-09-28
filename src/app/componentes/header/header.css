@@ -10,6 +10,17 @@
   background: var(--negro);
 }
 
+.header__acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.header__titulo-enlace {
+  text-decoration: none;
+  display: inline-flex;
+}
+
 .header__titulo {
   font-size: 1.5rem;
   font-weight: 800;

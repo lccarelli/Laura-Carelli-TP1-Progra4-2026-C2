@@ -16,4 +16,7 @@ export enum Flujo {
   BajaGenero = 'BajaGenero',
   AltaResena = 'AltaResena',
   ModificacionConfiguracionHome = 'ModificacionConfiguracionHome',
+  AltaCandy = 'AltaCandy',
+  BajaCandy = 'BajaCandy',
+  AltaCompra = 'AltaCompra',
 }

@@ -51,7 +51,6 @@
   text-transform: uppercase;
   color: color-mix(in srgb, var(--negro) 55%, transparent);
   border-bottom: 3px solid var(--negro);
-  border-radius: 999px 999px 0 0;
   padding-bottom: 0.5rem;
   margin-bottom: 1.25rem;
 }
@@ -59,6 +58,7 @@
 .mapa__fila {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: clamp(0.15rem, calc(var(--u) * 0.35), 0.5rem);
   margin-bottom: 0.22rem;
 }
@@ -83,14 +83,27 @@
 }
 
 .butaca {
+  position: relative;
   display: inline-block;
   box-sizing: border-box;
+  appearance: none;
   width: 0.85rem;
   height: 0.85rem;
   padding: 0;
-  border-radius: 3px;
+  margin: 0;
   border: 1.5px solid var(--negro);
   background: #fff;
+  font: inherit;
+  cursor: default;
+}
+
+.butaca--clickeable {
+  cursor: pointer;
+}
+
+.butaca--seleccionada {
+  background-color: var(--negro);
+  border-color: var(--negro);
 }
 
 .mapa__grilla .butaca {
@@ -99,19 +112,32 @@
 }
 
 .butaca--reservada {
-  background: var(--amarillo);
-  border-color: var(--amarillo);
+  background-color: var(--gris);
+  border-color: var(--gris);
 }
 
 .butaca--vendida {
-  background: var(--rojo);
+  background-color: var(--rojo);
   border-color: var(--rojo);
 }
 
 .butaca--accesible {
   width: 1.9rem;
   height: 1.9rem;
-  border-radius: 999px;
+}
+
+.butaca--accesible::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('/wheelchair.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 65%;
+}
+
+.butaca--accesible.butaca--seleccionada::after {
+  filter: invert(1);
 }
 
 .mapa__grilla .butaca--accesible {
@@ -119,8 +145,18 @@
   height: clamp(1.1rem, calc(var(--u) * 1.9), 2.9rem);
 }
 
-.butaca--vip {
-  box-shadow: inset 0 0 0 1.5px var(--naranja);
+.butaca--vip::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('/crown.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 65%;
+}
+
+.butaca--vip.butaca--seleccionada::after {
+  filter: invert(1);
 }
 
 .mapa__columna-resumen {
@@ -168,6 +204,7 @@
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
+  justify-content: center;
   gap: clamp(0.4rem, 3cqw, 1rem);
   margin-top: 1.5rem;
   font-size: clamp(0.55rem, 2.6cqw, 0.75rem);

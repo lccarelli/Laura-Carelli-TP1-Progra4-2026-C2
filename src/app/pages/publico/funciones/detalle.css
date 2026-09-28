@@ -13,24 +13,291 @@
   gap: 1.5rem;
   flex-wrap: wrap;
   margin-bottom: 2rem;
+  max-width: 40rem;
+  margin-inline: auto;
+}
+
+.encabezado__poster {
+  width: 10rem;
+  flex-shrink: 0;
+  --poster-ancho: 100%;
+  --poster-alto: auto;
 }
 
 .encabezado__info {
   flex: 1;
-  min-width: 16rem;
+  min-width: 10rem;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 }
 
-.mapa-seccion {
+.compra {
   border-top: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
   padding-top: 1.5rem;
 }
 
-.mapa-seccion__titulo {
-  font-size: 1.1rem;
-  font-weight: 800;
-  margin: 0 0 1rem;
+.compra__tabs {
+  display: flex;
+  border: 2px solid var(--negro);
+  margin-bottom: 1.5rem;
+}
+
+.compra__tab {
+  flex: 1;
+  border: none;
+  border-right: 1px solid var(--negro);
+  background: transparent;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
   color: var(--negro);
+  padding: 0.75rem 0.5rem;
+  cursor: pointer;
+}
+
+.compra__tab:last-child {
+  border-right: none;
+}
+
+.compra__tab:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.compra__tab--activo {
+  background: var(--negro);
+  color: #fff;
+}
+
+.compra__barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
+}
+
+.compra__resumen {
+  font-weight: 700;
+  color: var(--negro);
+}
+
+.candy-grilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: 1rem;
+}
+
+.candy-grilla__vacio {
+  color: color-mix(in srgb, var(--negro) 60%, transparent);
+  font-size: 0.85rem;
+}
+
+.candy-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  border: 2px solid var(--negro);
+  padding: 1rem 0.75rem;
+  text-align: center;
+}
+
+.candy-item__imagen {
+  width: 4rem;
+  height: 4rem;
+  object-fit: contain;
+}
+
+.candy-item__nombre {
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.candy-item__precio {
+  font-size: 0.8rem;
+  color: color-mix(in srgb, var(--negro) 65%, transparent);
+}
+
+.candy-item__stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.35rem;
+}
+
+.candy-item__stepper button {
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 2px solid var(--negro);
+  background: transparent;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--negro);
+  cursor: pointer;
+}
+
+.candy-item__stepper span {
+  font-weight: 700;
+  min-width: 1rem;
+  text-align: center;
+}
+
+.resumen-compra {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.resumen-compra > .insignia {
+  align-self: flex-start;
+}
+
+.resumen-compra__titulo {
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0.5rem 0 0;
+  color: var(--negro);
+}
+
+.resumen-compra__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.9rem;
+}
+
+.resumen-compra__total {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin: 1rem 0 0;
+  color: var(--negro);
+}
+
+.confirmacion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.confirmacion__titulo {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin: 0;
+  color: var(--negro);
+}
+
+.confirmacion__qr {
+  width: 12rem;
+  height: 12rem;
+  border: 2px solid var(--negro);
+}
+
+.confirmacion__codigo {
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: var(--negro);
+  word-break: break-all;
+}
+
+.confirmacion__ayuda {
+  font-size: 0.85rem;
+  color: color-mix(in srgb, var(--negro) 65%, transparent);
+  margin: 0;
+}
+
+.confirmacion__mail {
+  font-size: 0.85rem;
+  color: color-mix(in srgb, var(--negro) 65%, transparent);
+  margin: 0;
+}
+
+.confirmacion__mail--error {
+  color: var(--rojo);
+}
+
+.confirmacion__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+@media print {
+  .panel__volver,
+  .compra__tabs,
+  .confirmacion__acciones {
+    display: none !important;
+  }
+}
+
+.acceso-compra {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-width: 22rem;
+}
+
+.campo__etiqueta {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--negro);
+}
+
+.campo__input {
+  border: none;
+  border-bottom: 2px solid var(--negro);
+  background: transparent;
+  padding: 0.5rem 0.1rem;
+  font-size: 1rem;
+  color: var(--negro);
+  font-family: inherit;
+}
+
+.campo__input:focus {
+  outline: none;
+  border-bottom-color: var(--negro);
+}
+
+.acceso-compra__cliente {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.acceso-compra__error {
+  font-size: 0.85rem;
+  color: var(--rojo);
+  margin: 0;
+}
+
+.acceso-compra__cuenta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: color-mix(in srgb, var(--negro) 65%, transparent);
+  margin-top: 0.5rem;
 }

@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { adminGuard } from './guards/admin-guard';
+import { clienteGuard } from './guards/cliente-guard';
 
 export const routes: Routes = [
   {
@@ -77,6 +78,17 @@ export const routes: Routes = [
       import('./pages/admin/configuracion/configuracion').then((m) => m.Configuracion),
   },
   {
+    path: 'admin/candy',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./pages/admin/candy/candy').then((m) => m.Candy),
+  },
+  {
+    path: 'admin/candy/nueva',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./pages/admin/candy/formulario/formulario').then((m) => m.FormularioCandy),
+  },
+  {
     path: 'registro',
     loadComponent: () => import('./pages/registro/registro').then((m) => m.Registro),
   },
@@ -91,5 +103,11 @@ export const routes: Routes = [
   {
     path: 'funciones/:id',
     loadComponent: () => import('./pages/publico/funciones/detalle').then((m) => m.Detalle),
+  },
+  {
+    path: 'mis-compras',
+    canActivate: [clienteGuard],
+    loadComponent: () =>
+      import('./pages/publico/mis-compras/mis-compras').then((m) => m.MisCompras),
   },
 ];

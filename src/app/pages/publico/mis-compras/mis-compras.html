@@ -1,0 +1,37 @@
+<main class="pagina">
+  <section class="panel-flotante panel--ancho">
+    <app-boton-link variante="claro-negro" ruta="/peliculas" class="panel__volver">
+      ← Volver
+    </app-boton-link>
+
+    <h2 class="panel__titulo">Mis compras</h2>
+
+    <div class="lista-compras">
+      @for (compra of compras(); track compra.id) {
+        <article class="compra-item">
+          <div class="compra-item__info">
+            <span class="compra-item__pelicula">{{ compra.funcion?.pelicula?.nombre ?? '—' }}</span>
+            <span class="compra-item__detalle">
+              {{ compra.funcion?.sala?.nombre ?? '—' }} ·
+              {{ compra.funcion?.inicio | date: 'EEEE dd/MM/yyyy HH:mm' }}
+            </span>
+            <span class="compra-item__codigo">Código: {{ compra.codigo_compra }}</span>
+          </div>
+
+          <div class="compra-item__acciones">
+            <span class="compra-item__total">${{ compra.total }}</span>
+            <button type="button" class="compra-item__boton" (click)="verQr(compra.codigo_compra)">
+              {{ qrDe(compra.codigo_compra) ? 'Ocultar QR' : 'Ver QR' }}
+            </button>
+          </div>
+
+          @if (qrDe(compra.codigo_compra); as qr) {
+            <img class="compra-item__qr" [src]="qr" alt="Código QR de la compra" />
+          }
+        </article>
+      } @empty {
+        <p class="lista-compras__vacio">Todavía no hiciste ninguna compra.</p>
+      }
+    </div>
+  </section>
+</main>

@@ -15,14 +15,19 @@
                 }
                 <div class="mapa__bloque">
                   @for (v of bloque; track v.butaca.id) {
-                    <span
+                    <button
+                      type="button"
                       class="butaca"
                       [class.butaca--accesible]="v.butaca.tipo === 'accesible'"
                       [class.butaca--vip]="v.butaca.tipo === 'vip'"
                       [class.butaca--reservada]="v.estado === 'reservada'"
                       [class.butaca--vendida]="v.estado === 'vendida'"
+                      [class.butaca--seleccionada]="v.seleccionada"
+                      [class.butaca--clickeable]="interactiva && v.estado === 'libre'"
+                      [disabled]="!interactiva || v.estado !== 'libre'"
                       [title]="fila.fila + v.butaca.numero"
-                    ></span>
+                      (click)="clic(v)"
+                    ></button>
                   }
                 </div>
               }
@@ -46,40 +51,42 @@
       </div>
     </div>
 
-    <div class="mapa__columna-resumen">
-      <table class="mapa__resumen">
-        <thead>
-          <tr>
-            <th></th>
-            <th>Normal</th>
-            <th>Accesible</th>
-            <th>VIP</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (fila of resumen(); track fila.etiqueta) {
+    @if (!interactiva) {
+      <div class="mapa__columna-resumen">
+        <table class="mapa__resumen">
+          <thead>
             <tr>
-              <th>{{ fila.etiqueta }}</th>
-              <td>{{ fila.normal }}</td>
-              <td>{{ fila.accesible }}</td>
-              <td>{{ fila.vip }}</td>
-              <td>{{ fila.total }}</td>
+              <th></th>
+              <th>Normal</th>
+              <th>Accesible</th>
+              <th>VIP</th>
+              <th>Total</th>
             </tr>
+          </thead>
+          <tbody>
+            @for (fila of resumen(); track fila.etiqueta) {
+              <tr>
+                <th>{{ fila.etiqueta }}</th>
+                <td>{{ fila.normal }}</td>
+                <td>{{ fila.accesible }}</td>
+                <td>{{ fila.vip }}</td>
+                <td>{{ fila.total }}</td>
+              </tr>
+            }
+          </tbody>
+          @if (resumenTotal(); as total) {
+            <tfoot>
+              <tr>
+                <th>{{ total.etiqueta }}</th>
+                <td>{{ total.normal }}</td>
+                <td>{{ total.accesible }}</td>
+                <td>{{ total.vip }}</td>
+                <td>{{ total.total }}</td>
+              </tr>
+            </tfoot>
           }
-        </tbody>
-        @if (resumenTotal(); as total) {
-          <tfoot>
-            <tr>
-              <th>{{ total.etiqueta }}</th>
-              <td>{{ total.normal }}</td>
-              <td>{{ total.accesible }}</td>
-              <td>{{ total.vip }}</td>
-              <td>{{ total.total }}</td>
-            </tr>
-          </tfoot>
-        }
-      </table>
-    </div>
+        </table>
+      </div>
+    }
   </div>
 </div>

@@ -12,7 +12,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .campo {
@@ -46,12 +46,6 @@
 
 .tarjeta__form > app-boton {
   margin-top: 0.5rem;
-  align-self: flex-start;
-}
-
-app-boton.acceso-profesor {
-  display: block;
-  margin-top: 1.25rem;
 }
 
 .acceso-registro {

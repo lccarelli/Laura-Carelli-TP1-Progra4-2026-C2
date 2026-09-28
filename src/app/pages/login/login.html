@@ -1,9 +1,9 @@
 <main class="pagina pagina--centrada pagina-login">
   <section class="tarjeta">
-    <img class="tarjeta__asterisco" src="pop-corn.png" alt="" aria-hidden="true" />
+    <img class="tarjeta__icon" src="pop-corn.png" alt="" aria-hidden="true" />
     <span class="tarjeta__circulo" aria-hidden="true"></span>
 
-    <h2 class="tarjeta__titulo">Iniciar<br />sesión</h2>
+    <h2 class="tarjeta__titulo">iniciar<br />sesión</h2>
 
     <form class="tarjeta__form" [formGroup]="formulario" (ngSubmit)="enviar()">
       <label class="campo">
@@ -25,10 +25,6 @@
         Ingresar
       </app-boton>
     </form>
-
-    <app-boton class="acceso-profesor" variante="claro-negro" (clic)="ingresarComoProfesor()">
-      Ingresar como Administrador
-    </app-boton>
 
     <app-boton-link class="acceso-registro" variante="claro-negro" ruta="/registro">
       Registrarme

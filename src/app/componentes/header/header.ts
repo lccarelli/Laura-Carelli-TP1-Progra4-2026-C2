@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../servicios/auth/auth';
 import { Boton } from '../boton/boton';
 import { BotonLink } from '../boton-link/boton-link';
@@ -8,7 +8,7 @@ import { Flujo } from '../../servicios/logger/flujo';
 import { TipoEvento } from '../../servicios/logger/tipo-evento';
 
 @Component({
-  imports: [Boton, BotonLink],
+  imports: [Boton, BotonLink, RouterLink],
   selector: 'app-header',
   styleUrl: './header.css',
   templateUrl: './header.html',

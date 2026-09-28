@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, signal } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, signal } from '@angular/core';
 import { Butaca } from '../../interfaces/butaca';
 import { Entrada } from '../../interfaces/entrada';
 
@@ -7,6 +7,15 @@ type EstadoButaca = 'libre' | 'reservada' | 'vendida';
 interface ButacaConEstado {
   butaca: Butaca;
   estado: EstadoButaca;
+  seleccionada: boolean;
+}
+
+function entradaVigente(entrada: Entrada): boolean {
+  if (entrada.estado === 'vendida') {
+    return true;
+  }
+
+  return !entrada.reservada_hasta || new Date(entrada.reservada_hasta) > new Date();
 }
 
 interface FilaDeButacas {
@@ -41,13 +50,18 @@ function porNumero(a: ButacaConEstado, b: ButacaConEstado): number {
 export class MapaButacas implements OnChanges {
   @Input() butacas: Butaca[] = [];
   @Input() entradas: Entrada[] = [];
+  @Input() interactiva = false;
+  @Input() seleccionadas = new Set<string>();
+  @Output() alternar = new EventEmitter<string>();
 
   protected filas = signal<FilaDeButacas[]>([]);
   protected resumen = signal<FilaDeResumen[]>([]);
   protected resumenTotal = signal<FilaDeResumen | null>(null);
 
   ngOnChanges() {
-    const entradaPorButaca = new Map(this.entradas.map((entrada) => [entrada.butaca_id, entrada]));
+    const entradaPorButaca = new Map(
+      this.entradas.filter(entradaVigente).map((entrada) => [entrada.butaca_id, entrada]),
+    );
     const butacasPorFila = new Map<string, ButacaConEstado[]>();
     const conteo: Record<EstadoButaca, Record<Butaca['tipo'], number>> = {
       libre: { normal: 0, accesible: 0, vip: 0 },
@@ -57,7 +71,11 @@ export class MapaButacas implements OnChanges {
 
     for (const butaca of this.butacas) {
       const estado = entradaPorButaca.get(butaca.id)?.estado ?? 'libre';
-      const butacaConEstado: ButacaConEstado = { butaca, estado };
+      const butacaConEstado: ButacaConEstado = {
+        butaca,
+        estado,
+        seleccionada: this.seleccionadas.has(butaca.id),
+      };
       const butacasDeFila = butacasPorFila.get(butaca.fila) ?? [];
       butacasDeFila.push(butacaConEstado);
       butacasPorFila.set(butaca.fila, butacasDeFila);
@@ -96,5 +114,13 @@ export class MapaButacas implements OnChanges {
         { etiqueta: 'Total', normal: 0, accesible: 0, vip: 0, total: 0 },
       ),
     );
+  }
+
+  protected clic(v: ButacaConEstado) {
+    if (!this.interactiva || v.estado !== 'libre') {
+      return;
+    }
+
+    this.alternar.emit(v.butaca.id);
   }
 }

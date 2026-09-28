@@ -1,9 +1,16 @@
 <header class="header">
-  <h1 class="header__titulo">CINEOPOLIS</h1>
+  <a routerLink="/" class="header__titulo-enlace">
+    <h1 class="header__titulo">CINE KIMENA</h1>
+  </a>
 
-  @if (auth.usuario()) {
-    <app-boton variante="oscuro-blanco" (clic)="cerrarSesion()"> Cerrar sesión </app-boton>
-  } @else {
-    <app-boton-link variante="oscuro-blanco" ruta="/login">Iniciar sesión</app-boton-link>
-  }
+  <div class="header__acciones">
+    @if (auth.esCliente()) {
+      <app-boton-link variante="oscuro-blanco" ruta="/mis-compras">Mis compras</app-boton-link>
+    }
+    @if (auth.usuario()) {
+      <app-boton variante="oscuro-blanco" (clic)="cerrarSesion()"> Cerrar sesión </app-boton>
+    } @else {
+      <app-boton-link variante="oscuro-blanco" ruta="/login">Iniciar sesión</app-boton-link>
+    }
+  </div>
 </header>

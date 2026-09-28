@@ -1,0 +1,35 @@
+<main class="pagina pagina--centrada">
+  <section class="panel panel--angosto">
+    <h2 class="panel__titulo">Nuevo producto de candy</h2>
+
+    <form class="formulario" [formGroup]="formulario" (ngSubmit)="guardar()">
+      <label class="campo">
+        <span class="campo__etiqueta">Nombre</span>
+        <input class="campo__input" type="text" formControlName="nombre" />
+      </label>
+
+      <label class="campo">
+        <span class="campo__etiqueta">Precio</span>
+        <input class="campo__input" type="number" min="0" formControlName="precio" />
+      </label>
+
+      <label class="campo">
+        <span class="campo__etiqueta">Imagen (URL)</span>
+        <input class="campo__input" type="text" formControlName="imagen_url" />
+      </label>
+
+      <label class="campo campo--checkbox">
+        <input type="checkbox" [checked]="activo()" (change)="alternarActivo()" />
+        <span class="campo__etiqueta">Activo (visible al comprar candy)</span>
+      </label>
+
+      <div class="formulario__acciones">
+        <app-boton variante="menu" tipo="submit" [disabled]="formulario.invalid">
+          Crear producto
+        </app-boton>
+
+        <app-boton variante="claro-negro" (clic)="cancelar()">Cancelar</app-boton>
+      </div>
+    </form>
+  </section>
+</main>

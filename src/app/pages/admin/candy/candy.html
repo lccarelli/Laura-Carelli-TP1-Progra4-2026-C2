@@ -1,0 +1,45 @@
+<main class="pagina">
+  <section class="panel panel--ancho">
+    <app-boton-link variante="claro-negro" ruta="/admin" class="panel__volver">
+      ← Volver
+    </app-boton-link>
+
+    <div class="panel__encabezado">
+      <h2 class="panel__titulo">Candy</h2>
+      <app-boton-link variante="mas" ruta="/admin/candy/nueva" ariaLabel="Nuevo producto">
+        +
+      </app-boton-link>
+    </div>
+
+    <div class="tabla-contenedor">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Precio</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (producto of productos(); track producto.id) {
+            <tr>
+              <td class="tabla__nombre">{{ producto.nombre }}</td>
+              <td>{{ producto.precio | number: '1.0-0' }}</td>
+              <td>{{ producto.activo ? 'Activo' : 'Inactivo' }}</td>
+              <td class="tabla__acciones">
+                <app-boton variante="claro-negro" (clic)="eliminar(producto.id)">
+                  Eliminar
+                </app-boton>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="tabla__vacio" colspan="4">No hay productos de candy cargados todavía.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>

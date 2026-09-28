@@ -22,7 +22,7 @@
 
 .encabezado__info {
   flex: 1;
-  min-width: 16rem;
+  min-width: 10rem;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;

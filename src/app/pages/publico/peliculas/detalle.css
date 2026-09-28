@@ -10,15 +10,16 @@
 
 .encabezado {
   display: grid;
-  grid-template-columns: 10rem 1fr;
+  grid-template-columns: 10rem 30rem;
   gap: 1.5rem;
   margin-bottom: 2rem;
+  max-width: 40rem;
+  margin-inline: auto;
 }
 
 .encabezado__poster {
   --poster-ancho: 100%;
   --poster-alto: auto;
-  --poster-aspecto: 1;
 }
 
 .encabezado__info {

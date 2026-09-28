@@ -31,7 +31,7 @@
 
 .boton--claro-negro,
 .boton--claro-rojo {
-  padding: 0.4rem 1rem;
+  padding: 0.85rem 2rem;
   font-size: 0.8rem;
   background: transparent;
   border: 2px solid var(--negro);
@@ -69,7 +69,6 @@
 .boton--mas {
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: 50%;
   background: var(--negro);
   color: #fff;
   font-size: 1.5rem;
@@ -86,62 +85,46 @@
   font-size: 0.95rem;
   font-weight: 800;
   color: var(--crema);
-  text-shadow: 0 1px 2px rgba(19, 19, 19, 0.7);
   background-color: var(--negro);
-  background-image:
-    radial-gradient(ellipse 55% 40% at 8% 15%, var(--crema) 0%, transparent 62%),
-    radial-gradient(ellipse 45% 65% at 75% 65%, var(--crema) 0%, transparent 58%),
-    radial-gradient(ellipse 35% 30% at 40% 90%, var(--crema) 0%, transparent 66%),
-    radial-gradient(ellipse 30% 50% at 92% 15%, var(--crema) 0%, transparent 60%),
-    radial-gradient(ellipse 25% 40% at 25% 50%, var(--crema) 0%, transparent 55%);
-  background-blend-mode: screen;
 }
 
 .boton--menu:not(:disabled):hover {
   opacity: 0.85;
 }
 
-.compra__barra .boton--menu {
-  border-color: var(--negro);
-  background-color: var(--negro);
-  background-image: none;
-  color: var(--crema);
-  text-shadow: none;
+.boton--menu:disabled {
+  background-color: var(--gris);
+  border-color: var(--gris);
+  color: var(--negro);
+  opacity: 1;
+}
+
+.tarjeta__form > app-boton .boton {
+  width: 100%;
 }
 
 .tarjeta {
   position: relative;
   width: 100%;
-  max-width: 26rem;
+  max-width: 40rem;
   background: #fff;
-  border: 2px solid var(--negro);
-  border-radius: 1.75rem;
+  border: 10px solid var(--negro);
   padding: 2.5rem 2rem;
   overflow: hidden;
 }
 
 .tarjeta--ancha {
   max-width: 42rem;
+  margin-top: 1rem;
 }
 
-.tarjeta__asterisco {
+.tarjeta__icon {
   position: absolute;
   top: 1.25rem;
   right: 1.5rem;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 4rem;
+  height: 4rem;
   object-fit: contain;
-}
-
-.tarjeta__circulo {
-  position: absolute;
-  bottom: -3rem;
-  right: -3rem;
-  width: 8rem;
-  height: 8rem;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--amarillo) 0%, var(--naranja) 100%);
-  opacity: 0.7;
 }
 
 .tarjeta__titulo {

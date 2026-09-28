@@ -34,6 +34,7 @@ export interface DatosEnvioQr {
   butacasTexto: string[];
   candyTexto: string[];
   total: number;
+  descuentoCupon: number;
 }
 
 @Service()

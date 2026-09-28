@@ -5,7 +5,7 @@
     </app-boton-link>
 
     <div class="panel__encabezado">
-      <h2 class="panel__titulo">Configuración de la home</h2>
+      <h2 class="panel__titulo">Configuración general</h2>
     </div>
 
     <section class="config-seccion">
@@ -45,6 +45,38 @@
           Ir al ABM de películas
         </app-boton-link>
       }
+    </section>
+
+    <section class="config-seccion config-seccion--separada">
+      <h3 class="config-seccion__titulo">Cupón de bienvenida</h3>
+      <p class="config-seccion__ayuda">
+        Descuento que se aplica solo en la primera compra de cada cliente registrado.
+      </p>
+
+      <label class="campo">
+        <span class="campo__etiqueta">Porcentaje de descuento</span>
+        <input
+          class="campo__input"
+          type="number"
+          min="1"
+          max="100"
+          [value]="porcentajeCupon()"
+          (input)="actualizarPorcentajeCupon($any($event.target).value)"
+        />
+      </label>
+
+      <label class="campo">
+        <span class="campo__etiqueta">Edad mínima (vacío = sin restricción)</span>
+        <input
+          class="campo__input"
+          type="number"
+          min="0"
+          [value]="edadMinimaCupon() ?? ''"
+          (input)="actualizarEdadMinimaCupon($any($event.target).value)"
+        />
+      </label>
+
+      <app-boton variante="menu" (clic)="guardarCupon()">Guardar cupón</app-boton>
     </section>
   </section>
 </main>

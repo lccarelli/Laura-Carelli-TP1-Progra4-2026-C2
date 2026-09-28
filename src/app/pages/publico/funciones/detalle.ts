@@ -9,6 +9,8 @@ import { EntradaServicio } from '../../../servicios/entrada/entrada';
 import { ProductoCandyServicio } from '../../../servicios/producto-candy/producto-candy';
 import { CompraCandyServicio } from '../../../servicios/compra-candy/compra-candy';
 import { CompraServicio } from '../../../servicios/compra/compra';
+import { ClienteServicio } from '../../../servicios/cliente/cliente';
+import { ConfiguracionCuponServicio } from '../../../servicios/configuracion-cupon/configuracion-cupon';
 import { Auth } from '../../../servicios/auth/auth';
 import { Errores } from '../../../servicios/errores/errores';
 import { Funcion } from '../../../interfaces/funcion';
@@ -16,6 +18,8 @@ import { Pelicula } from '../../../interfaces/pelicula';
 import { Butaca } from '../../../interfaces/butaca';
 import { Entrada } from '../../../interfaces/entrada';
 import { ProductoCandy } from '../../../interfaces/producto-candy';
+import { Cliente } from '../../../interfaces/cliente';
+import { ConfiguracionCupon } from '../../../interfaces/configuracion-cupon';
 import { Boton } from '../../../componentes/boton/boton';
 import { BotonLink } from '../../../componentes/boton-link/boton-link';
 import { MapaButacas } from '../../../componentes/mapa-butacas/mapa-butacas';
@@ -160,6 +164,8 @@ export class Detalle implements OnDestroy {
   private productoCandyServicio = inject(ProductoCandyServicio);
   private compraCandyServicio = inject(CompraCandyServicio);
   private compraServicio = inject(CompraServicio);
+  private clienteServicio = inject(ClienteServicio);
+  private configuracionCuponServicio = inject(ConfiguracionCuponServicio);
   private datePipe = inject(DatePipe);
   protected auth = inject(Auth);
   private errores = inject(Errores);
@@ -182,6 +188,9 @@ export class Detalle implements OnDestroy {
   protected emailAnonimo = signal('');
   protected edadAnonima = signal<number | null>(null);
   protected mailEnviado = signal<boolean | null>(null);
+  protected descuentoAplicado = signal(0);
+  protected cliente = signal<Cliente | null>(null);
+  protected cuponConfig = signal<ConfiguracionCupon | null>(null);
 
   private canalEntradas: ReturnType<EntradaServicio['suscribirCambios']> | null = null;
 
@@ -212,6 +221,28 @@ export class Detalle implements OnDestroy {
   );
 
   protected total = computed(() => this.subtotalButacas() + this.subtotalCandy());
+
+  protected cuponAplicable = computed(() => {
+    const cliente = this.cliente();
+    const config = this.cuponConfig();
+
+    if (!this.auth.esCliente() || !cliente || cliente.cupon_bienvenida_usado || !config) {
+      return false;
+    }
+
+    if (config.edad_minima === null) {
+      return true;
+    }
+
+    const edad = this.edadCliente();
+    return edad !== null && edad >= config.edad_minima;
+  });
+
+  protected descuentoCupon = computed(() =>
+    this.cuponAplicable() ? Math.round((this.total() * this.cuponConfig()!.porcentaje) / 100) : 0,
+  );
+
+  protected totalFinal = computed(() => this.total() - this.descuentoCupon());
 
   protected restriccionEdad = computed(() => this.pelicula()?.restriccion_edad ?? null);
 
@@ -318,6 +349,16 @@ export class Detalle implements OnDestroy {
     this.canalEntradas = this.entradaServicio.suscribirCambios(id, () =>
       this.actualizarEntradas(id),
     );
+
+    const { data: cuponConfig } = await this.configuracionCuponServicio.obtener();
+    this.cuponConfig.set(cuponConfig ?? null);
+
+    const clienteId = this.auth.usuario()?.id;
+
+    if (this.auth.esCliente() && clienteId) {
+      const { data: cliente } = await this.clienteServicio.obtenerOCrear(clienteId);
+      this.cliente.set(cliente ?? null);
+    }
   }
 
   private async actualizarEntradas(funcionId: string) {
@@ -448,6 +489,24 @@ export class Detalle implements OnDestroy {
       this.errores.mostrar(errorCandy.message);
     }
 
+    let descuento = 0;
+
+    if (this.cuponAplicable()) {
+      const descuentoCalculado = this.descuentoCupon();
+      const { data: aplicado } = await this.clienteServicio.usarCuponBienvenida();
+
+      if (aplicado) {
+        descuento = descuentoCalculado;
+      } else {
+        this.errores.mostrar(
+          'Tu cupón de bienvenida ya se había usado, se cobra el precio completo.',
+        );
+      }
+    }
+
+    const totalCobrado = this.total() - descuento;
+    this.descuentoAplicado.set(descuento);
+
     const email = this.emailFinal();
     const { error: errorCompra } = await this.compraServicio.crear({
       codigo_compra: codigo,
@@ -455,7 +514,8 @@ export class Detalle implements OnDestroy {
       cliente_id: this.auth.usuario()?.id ?? null,
       email,
       edad_declarada: this.edadParaGuardar(),
-      total: this.total(),
+      total: totalCobrado,
+      descuento_cupon: descuento,
     });
 
     if (errorCompra) {
@@ -484,7 +544,8 @@ export class Detalle implements OnDestroy {
       idioma: funcion.idioma,
       butacasTexto: this.butacasElegidas().map((b) => `${b.fila}${b.numero} (${b.tipo})`),
       candyTexto: this.itemsCandy().map((item) => `${item.cantidad}x ${item.producto.nombre}`),
-      total: this.total(),
+      total: totalCobrado,
+      descuentoCupon: descuento,
     });
     this.mailEnviado.set(!errorMail);
 

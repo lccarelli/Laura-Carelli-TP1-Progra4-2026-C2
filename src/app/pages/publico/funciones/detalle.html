@@ -152,7 +152,13 @@
                 </ul>
               }
 
-              <p class="resumen-compra__total">Total: ${{ total() }}</p>
+              @if (cuponAplicable()) {
+                <p class="resumen-compra__descuento">
+                  Cupón de bienvenida (-{{ cuponConfig()!.porcentaje }}%): -${{ descuentoCupon() }}
+                </p>
+              }
+
+              <p class="resumen-compra__total">Total: ${{ totalFinal() }}</p>
             </div>
 
             <div class="acceso-compra">
@@ -231,6 +237,11 @@
               }
               @if (qrDataUrl(); as qr) {
                 <img class="confirmacion__qr" [src]="qr" alt="Código QR de la compra" />
+              }
+              @if (descuentoAplicado() > 0) {
+                <p class="confirmacion__cupon">
+                  Se aplicó tu cupón de bienvenida: -${{ descuentoAplicado() }}
+                </p>
               }
               <p class="confirmacion__codigo">Código: {{ codigoCompra() }}</p>
               <p class="confirmacion__ayuda">Mostrá este código en boletería para retirar.</p>

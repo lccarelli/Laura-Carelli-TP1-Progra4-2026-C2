@@ -87,4 +87,23 @@ export class EntradaServicio {
 
     return { error: null };
   }
+
+  suscribirCambios(funcionId: string, alCambiar: () => void) {
+    return this.supabase.Supabase.channel(`entrada-funcion-${funcionId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: this.tabla,
+          filter: `funcion_id=eq.${funcionId}`,
+        },
+        alCambiar,
+      )
+      .subscribe();
+  }
+
+  desuscribir(canal: ReturnType<EntradaServicio['suscribirCambios']>) {
+    this.supabase.Supabase.removeChannel(canal);
+  }
 }

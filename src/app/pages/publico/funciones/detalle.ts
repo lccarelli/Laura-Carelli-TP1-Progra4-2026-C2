@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnDestroy, signal } from '@angular/core';
 import { DatePipe, UpperCasePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { toDataURL } from 'qrcode';
@@ -151,7 +151,7 @@ function quitarPrefijoBase64(dataUrl: string): string {
   styleUrl: './detalle.css',
   templateUrl: './detalle.html',
 })
-export class Detalle {
+export class Detalle implements OnDestroy {
   private route = inject(ActivatedRoute);
   private funcionServicio = inject(FuncionServicio);
   private peliculaServicio = inject(PeliculaServicio);
@@ -182,6 +182,8 @@ export class Detalle {
   protected emailAnonimo = signal('');
   protected edadAnonima = signal<number | null>(null);
   protected mailEnviado = signal<boolean | null>(null);
+
+  private canalEntradas: ReturnType<EntradaServicio['suscribirCambios']> | null = null;
 
   protected butacasElegidas = computed(() =>
     this.butacas().filter((butaca) => this.butacasSeleccionadas().has(butaca.id)),
@@ -311,6 +313,24 @@ export class Detalle {
       this.errores.mostrar(errorEntradas.message);
     } else {
       this.entradas.set(entradas ?? []);
+    }
+
+    this.canalEntradas = this.entradaServicio.suscribirCambios(id, () =>
+      this.actualizarEntradas(id),
+    );
+  }
+
+  private async actualizarEntradas(funcionId: string) {
+    const { data: entradas, error } = await this.entradaServicio.listarPorFuncion(funcionId);
+
+    if (!error) {
+      this.entradas.set(entradas ?? []);
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.canalEntradas) {
+      this.entradaServicio.desuscribir(this.canalEntradas);
     }
   }
 

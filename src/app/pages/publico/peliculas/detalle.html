@@ -25,6 +25,24 @@
         </div>
       </div>
 
+      @if (trailerEmbebido(); as trailer) {
+        <section class="trailer">
+          <div class="trailer__media">
+            @if (!trailerCargado()) {
+              <app-cargando class="trailer__cargando" />
+            }
+            <iframe
+              class="trailer__iframe"
+              [src]="trailer"
+              title="Tráiler de {{ pelicula.nombre }}"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+              (load)="trailerCargo()"
+            ></iframe>
+          </div>
+        </section>
+      }
+
       <section class="selector-funciones">
         <h3 class="selector-funciones__titulo">Elegí función</h3>
 
@@ -83,7 +101,7 @@
             ></textarea>
 
             <app-boton
-              variante="menu"
+              variante="oscuro-blanco"
               [disabled]="puntajeSeleccionado() === 0"
               (clic)="enviarResena()"
             >

@@ -1,0 +1,37 @@
+@if (!auth.usuario() && !cerrado() && config(); as config) {
+  <div class="popup-cupon__fondo">
+    <div class="popup-cupon">
+      <button class="popup-cupon__cerrar" type="button" aria-label="Cerrar" (click)="cerrar()">
+        ×
+      </button>
+
+      <img class="popup-cupon__icono" src="coupon-black.png" alt="" aria-hidden="true" />
+
+      <p class="popup-cupon__titulo">{{ config.porcentaje }}% OFF en tu primera compra</p>
+
+      @if (config.descripcion) {
+        <p class="popup-cupon__texto">{{ config.descripcion }}</p>
+      } @else if (config.edad_minima) {
+        <p class="popup-cupon__texto">
+          Registrate gratis y usalo cuando quieras (para mayores de {{ config.edad_minima }}
+          años).
+        </p>
+      } @else {
+        <p class="popup-cupon__texto">Registrate gratis y usalo cuando quieras.</p>
+      }
+
+      @if (config.descripcion && config.edad_minima) {
+        <p class="popup-cupon__texto popup-cupon__texto--chica">
+          Válido para mayores de {{ config.edad_minima }} años.
+        </p>
+      }
+
+      <div class="popup-cupon__acciones">
+        <app-boton-link variante="menu" ruta="/registro" (click)="cerrar()">
+          Registrarme
+        </app-boton-link>
+        <app-boton variante="claro-negro" (clic)="cerrar()">Ahora no</app-boton>
+      </div>
+    </div>
+  </div>
+}

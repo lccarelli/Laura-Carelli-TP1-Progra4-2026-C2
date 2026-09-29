@@ -54,6 +54,17 @@
       </p>
 
       <label class="campo">
+        <span class="campo__etiqueta">Descripción</span>
+        <textarea
+          class="campo__input"
+          rows="2"
+          placeholder="Ej: Registrate y llevate 20% OFF en tu primera compra"
+          [value]="descripcionCupon()"
+          (input)="actualizarDescripcionCupon($any($event.target).value)"
+        ></textarea>
+      </label>
+
+      <label class="campo">
         <span class="campo__etiqueta">Porcentaje de descuento</span>
         <input
           class="campo__input"

@@ -5,7 +5,8 @@
 }
 
 .panel__titulo {
-  margin-bottom: 1rem;
+  max-width: 50rem;
+  margin: 0 auto 1rem;
 }
 
 .secciones {
@@ -14,22 +15,30 @@
   width: 100%;
 }
 
+.destacadas app-carrusel-destacadas {
+  max-width: 50rem;
+  margin-inline: auto;
+  display: block;
+}
+
 /* Grilla de tarjetas (destacadas y cartelera completa) */
 
 .tarjetas-grilla {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
+  max-width: 50rem;
+  margin-inline: auto;
+}
+
+@media (max-width: 480px) {
+  .tarjetas-grilla {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .tarjetas-grilla__vacio {
   color: color-mix(in srgb, var(--negro) 60%, transparent);
-}
-
-@media (max-width: 640px) {
-  .tarjetas-grilla {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* Buscador + filtros */
@@ -39,7 +48,8 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 1rem;
+  max-width: 50rem;
+  margin: 0 auto 1rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
 }
@@ -63,7 +73,8 @@
 /* Calendario de días */
 
 .calendario {
-  margin-bottom: 2rem;
+  max-width: 50rem;
+  margin: 0 auto 2rem;
 }
 
 .calendario__dias {

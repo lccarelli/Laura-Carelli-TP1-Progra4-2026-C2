@@ -2,11 +2,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.6rem;
   width: 100%;
   text-decoration: none;
   color: var(--negro);
   transition: opacity 0.2s ease;
+  border-width: 1px;
+  border-color: var(--negro);
 }
 
 .tarjeta-pelicula:hover {
@@ -39,4 +40,5 @@
   font-size: 1rem;
   line-height: 1;
   text-align: center;
+  padding: 0.5rem 0.25rem;
 }

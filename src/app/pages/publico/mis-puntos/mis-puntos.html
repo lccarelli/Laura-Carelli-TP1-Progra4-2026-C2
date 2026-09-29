@@ -1,0 +1,52 @@
+<main class="pagina">
+  <section class="panel-flotante panel--ancho">
+    <app-boton-link variante="claro-negro" ruta="/peliculas" class="panel__volver">
+      ← Volver
+    </app-boton-link>
+
+    <h2 class="panel__titulo">Mis puntos</h2>
+
+    <p class="puntos-saldo">{{ cliente()?.puntos ?? 0 }} puntos</p>
+
+    <h3 class="mis-puntos__subtitulo">Premios disponibles</h3>
+    <div class="lista-premios">
+      @for (premio of premios(); track premio.id) {
+        <article class="premio-item">
+          <div class="premio-item__info">
+            <span class="premio-item__nombre">{{ premio.nombre }}</span>
+            <span class="premio-item__costo">{{ premio.costo_puntos }} puntos</span>
+            <span class="premio-item__condiciones">
+              {{ premio.dias_validos | diasValidos }}
+              @if (premio.cantidad_entradas) {
+                · {{ premio.cantidad_entradas }} entradas
+              }
+            </span>
+          </div>
+
+          <app-boton
+            variante="claro-negro"
+            [disabled]="!alcanzaSaldo(premio.costo_puntos) || canjeando() === premio.id"
+            (clic)="canjear(premio)"
+          >
+            Canjear
+          </app-boton>
+        </article>
+      } @empty {
+        <p class="lista-premios__vacio">Todavía no hay premios disponibles.</p>
+      }
+    </div>
+
+    <h3 class="mis-puntos__subtitulo">Historial de canjes</h3>
+    <div class="lista-canjes">
+      @for (canje of canjes(); track canje.id) {
+        <div class="canje-item">
+          <span class="canje-item__nombre">{{ canje.premio?.nombre ?? '—' }}</span>
+          <span class="canje-item__fecha">{{ canje.creada_en | date: 'dd/MM/yyyy HH:mm' }}</span>
+          <span class="canje-item__puntos">-{{ canje.puntos_gastados }} puntos</span>
+        </div>
+      } @empty {
+        <p class="lista-canjes__vacio">Todavía no canjeaste ningún premio.</p>
+      }
+    </div>
+  </section>
+</main>

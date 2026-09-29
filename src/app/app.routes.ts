@@ -90,6 +90,17 @@ export const routes: Routes = [
       import('./pages/admin/candy/formulario/formulario').then((m) => m.FormularioCandy),
   },
   {
+    path: 'admin/premios',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./pages/admin/premios/premios').then((m) => m.Premios),
+  },
+  {
+    path: 'admin/premios/nueva',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./pages/admin/premios/formulario/formulario').then((m) => m.FormularioPremio),
+  },
+  {
     path: 'admin/actividad',
     canActivate: [adminGuard],
     loadComponent: () => import('./pages/admin/actividad/actividad').then((m) => m.Actividad),
@@ -120,5 +131,10 @@ export const routes: Routes = [
     path: 'boleteria',
     canActivate: [empleadoGuard],
     loadComponent: () => import('./pages/publico/boleteria/boleteria').then((m) => m.Boleteria),
+  },
+  {
+    path: 'mis-puntos',
+    canActivate: [clienteGuard],
+    loadComponent: () => import('./pages/publico/mis-puntos/mis-puntos').then((m) => m.MisPuntos),
   },
 ];

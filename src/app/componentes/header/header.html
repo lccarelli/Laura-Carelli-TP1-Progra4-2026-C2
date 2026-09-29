@@ -6,6 +6,7 @@
   <div class="header__acciones">
     @if (auth.esCliente()) {
       <app-boton-link variante="oscuro-blanco" ruta="/mis-compras">Mis compras</app-boton-link>
+      <app-boton-link variante="oscuro-blanco" ruta="/mis-puntos">Mis puntos</app-boton-link>
     }
     @if (auth.esEmpleado() || auth.esAdmin()) {
       <app-boton-link variante="oscuro-blanco" ruta="/boleteria">Boletería</app-boton-link>

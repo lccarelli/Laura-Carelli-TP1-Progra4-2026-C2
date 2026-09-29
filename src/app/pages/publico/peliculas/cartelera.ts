@@ -10,6 +10,8 @@ import { Pelicula } from '../../../interfaces/pelicula';
 import { Genero } from '../../../interfaces/genero';
 import { TarjetaPelicula } from '../../../componentes/tarjeta-pelicula/tarjeta-pelicula';
 import { SelectorChips } from '../../../componentes/selector-chips/selector-chips';
+import { CarruselDestacadas } from '../../../componentes/carrusel-destacadas/carrusel-destacadas';
+import { DestacadaVista } from '../../../componentes/carrusel-destacadas/destacada-vista';
 
 const DIAS_CALENDARIO = 14;
 const DIAS_VENTANA_ESTRENO = 7;
@@ -28,7 +30,7 @@ function claveDia(fecha: Date): string {
 }
 
 @Component({
-  imports: [TarjetaPelicula, SelectorChips],
+  imports: [TarjetaPelicula, SelectorChips, CarruselDestacadas],
   selector: 'app-cartelera',
   styleUrl: './cartelera.css',
   templateUrl: './cartelera.html',
@@ -189,6 +191,15 @@ export class Cartelera {
   protected generosDe(peliculaId: string): Genero[] {
     return this.generosPorPelicula().get(peliculaId) ?? [];
   }
+
+  protected destacadasVista = computed<DestacadaVista[]>(() =>
+    this.destacadas().map((pelicula) => ({
+      pelicula,
+      promedio: this.promedioDe(pelicula.id),
+      esEstreno: this.esEstreno(pelicula),
+      generos: this.generosDe(pelicula.id),
+    })),
+  );
 
   protected esEstreno(pelicula: Pelicula): boolean {
     if (!pelicula.fecha_estreno) {

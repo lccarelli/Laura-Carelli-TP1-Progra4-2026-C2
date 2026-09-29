@@ -18,7 +18,7 @@
 }
 
 .encabezado__poster {
-  width: 10rem;
+  width: clamp(6rem, 25vw, 10rem);
   flex-shrink: 0;
   --poster-ancho: 100%;
   --poster-alto: auto;

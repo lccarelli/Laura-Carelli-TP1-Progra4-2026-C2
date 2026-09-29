@@ -5,13 +5,16 @@
 }
 
 .panel__titulo {
-  margin-bottom: 1.5rem;
+  max-width: 40rem;
+  margin: 0 auto 1.5rem;
 }
 
 .lista-compras {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  max-width: 40rem;
+  margin-inline: auto;
 }
 
 .lista-compras__vacio {

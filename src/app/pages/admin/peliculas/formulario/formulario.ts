@@ -47,6 +47,7 @@ export class Formulario {
     imagen_url: [''],
     restriccion_edad: [''],
     fecha_estreno: [''],
+    trailer_url: [''],
   });
 
   protected imagenUrl = toSignal(this.formulario.controls.imagen_url.valueChanges, {
@@ -114,6 +115,7 @@ export class Formulario {
       imagen_url: data.imagen_url ?? '',
       restriccion_edad: data.restriccion_edad ? String(data.restriccion_edad) : '',
       fecha_estreno: data.fecha_estreno ?? '',
+      trailer_url: data.trailer_url ?? '',
     });
     this.activa.set(data.activa);
     this.destacada.set(data.destacada);
@@ -219,6 +221,7 @@ export class Formulario {
       activa: this.activa(),
       destacada: this.destacada(),
       fecha_estreno: valores.fecha_estreno || null,
+      trailer_url: valores.trailer_url || null,
     };
   }
 }

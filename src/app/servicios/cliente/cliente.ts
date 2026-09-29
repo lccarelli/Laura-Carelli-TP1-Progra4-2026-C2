@@ -27,4 +27,8 @@ export class ClienteServicio {
   usarCuponBienvenida() {
     return this.supabase.Supabase.rpc('usar_cupon_bienvenida');
   }
+
+  sumarPuntosCompra(monto: number) {
+    return this.supabase.Supabase.rpc('sumar_puntos_compra', { monto });
+  }
 }

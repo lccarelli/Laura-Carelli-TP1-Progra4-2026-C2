@@ -1,0 +1,74 @@
+@if (items.length > 0) {
+  <div class="carrusel">
+    @for (item of items; track item.pelicula.id; let i = $index) {
+      <a
+        class="carrusel__slide"
+        [hidden]="i !== indiceActual()"
+        [routerLink]="['/peliculas', item.pelicula.id]"
+      >
+        <div class="carrusel__media">
+          @if (trailersEmbebidos()[i]; as trailer) {
+            @if (!trailersCargados().has(i)) {
+              <app-cargando class="carrusel__cargando" />
+            }
+            <iframe
+              class="carrusel__trailer"
+              [src]="trailer"
+              title="Tráiler de {{ item.pelicula.nombre }}"
+              allow="autoplay; encrypted-media"
+              allowfullscreen
+              (load)="trailerCargo(i)"
+            ></iframe>
+          } @else {
+            <app-poster class="carrusel__poster" [imagen]="item.pelicula.imagen_url" />
+          }
+
+          <div class="carrusel__insignias">
+            @if (item.promedio !== null) {
+              <span class="insignia">{{ item.promedio | estrellas }}</span>
+            }
+            @if (item.esEstreno) {
+              <span class="insignia">Estreno</span>
+            }
+            @for (genero of item.generos; track genero.id) {
+              <span class="insignia">{{ genero.nombre }}</span>
+            }
+          </div>
+        </div>
+
+        <span class="carrusel__nombre">{{ item.pelicula.nombre }}</span>
+      </a>
+    }
+
+    @if (items.length > 1) {
+      <button
+        type="button"
+        class="carrusel__flecha carrusel__flecha--anterior"
+        aria-label="Anterior"
+        (click)="anterior()"
+      >
+        ‹
+      </button>
+      <button
+        type="button"
+        class="carrusel__flecha carrusel__flecha--siguiente"
+        aria-label="Siguiente"
+        (click)="siguiente()"
+      >
+        ›
+      </button>
+
+      <div class="carrusel__puntos">
+        @for (item of items; track item.pelicula.id; let indice = $index) {
+          <button
+            type="button"
+            class="carrusel__punto"
+            [class.carrusel__punto--activo]="indice === indiceActual()"
+            [attr.aria-label]="'Ir a ' + item.pelicula.nombre"
+            (click)="irA(indice)"
+          ></button>
+        }
+      </div>
+    }
+  </div>
+}

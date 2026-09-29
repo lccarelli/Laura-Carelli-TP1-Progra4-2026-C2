@@ -8,4 +8,5 @@ export interface Pelicula {
   activa: boolean;
   destacada: boolean;
   fecha_estreno: string | null;
+  trailer_url: string | null;
 }

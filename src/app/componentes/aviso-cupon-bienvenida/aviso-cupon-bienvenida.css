@@ -1,0 +1,76 @@
+:host {
+  display: contents;
+}
+
+.popup-cupon__fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(19, 19, 19, 0.75);
+  padding: 1.5rem;
+}
+
+.popup-cupon {
+  position: relative;
+  width: 100%;
+  max-width: 40rem;
+  max-height: 100vh;
+  background: var(--crema);
+  border: 8px solid var(--negro);
+  padding: 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 2rem;
+}
+
+.popup-cupon__cerrar {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  border: none;
+  background: transparent;
+  font-size: 1.75rem;
+  line-height: 1;
+  color: var(--negro);
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+.popup-cupon__icono {
+  width: 4.5rem;
+  height: 4.5rem;
+  object-fit: contain;
+  margin-bottom: 0.5rem;
+}
+
+.popup-cupon__titulo {
+  font-size: 1.4rem;
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--negro);
+  margin: 0;
+}
+
+.popup-cupon__texto {
+  font-size: 0.9rem;
+  color: color-mix(in srgb, var(--negro) 65%, transparent);
+  margin: 0;
+}
+
+.popup-cupon__texto--chica {
+  font-size: 0.8rem;
+}
+
+.popup-cupon__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  width: 100%;
+}

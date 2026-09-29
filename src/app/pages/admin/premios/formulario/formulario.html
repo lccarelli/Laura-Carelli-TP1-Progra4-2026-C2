@@ -1,0 +1,50 @@
+<main class="pagina pagina--centrada">
+  <section class="panel-flotante panel--angosto">
+    <h2 class="panel__titulo">Nuevo premio</h2>
+
+    <form class="formulario" [formGroup]="formulario" (ngSubmit)="guardar()">
+      <label class="campo">
+        <span class="campo__etiqueta">Nombre</span>
+        <input class="campo__input" type="text" formControlName="nombre" />
+      </label>
+
+      <label class="campo">
+        <span class="campo__etiqueta">Costo en puntos</span>
+        <input class="campo__input" type="number" min="1" formControlName="costo_puntos" />
+      </label>
+
+      <div class="campo">
+        <span class="campo__etiqueta">Días válidos (vacío = todos los días)</span>
+        <app-selector-chips
+          [opciones]="diasSemana"
+          [seleccionados]="diasSeleccionados()"
+          (alternar)="alternarDia($event)"
+        />
+      </div>
+
+      <label class="campo">
+        <span class="campo__etiqueta">Cantidad de entradas (vacío = sin restricción)</span>
+        <input
+          class="campo__input"
+          type="number"
+          min="1"
+          [value]="formulario.controls.cantidad_entradas.value ?? ''"
+          (input)="actualizarCantidadEntradas($any($event.target).value)"
+        />
+      </label>
+
+      <label class="campo campo--checkbox">
+        <input type="checkbox" [checked]="activa()" (change)="alternarActiva()" />
+        <span class="campo__etiqueta">Activo (visible para canjear)</span>
+      </label>
+
+      <div class="formulario__acciones">
+        <app-boton variante="menu" tipo="submit" [disabled]="formulario.invalid">
+          Crear premio
+        </app-boton>
+
+        <app-boton variante="claro-negro" (clic)="cancelar()">Cancelar</app-boton>
+      </div>
+    </form>
+  </section>
+</main>

@@ -1,0 +1,47 @@
+<main class="pagina">
+  <section class="panel-flotante panel--ancho">
+    <app-boton-link variante="claro-negro" ruta="/admin" class="panel__volver">
+      ← Volver
+    </app-boton-link>
+
+    <div class="panel__encabezado">
+      <h2 class="panel__titulo">Premios</h2>
+      <app-boton-link variante="mas" ruta="/admin/premios/nueva" ariaLabel="Nuevo premio">
+        +
+      </app-boton-link>
+    </div>
+
+    <div class="tabla-contenedor">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Premio</th>
+            <th>Costo en puntos</th>
+            <th>Condiciones</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (premio of premios(); track premio.id) {
+            <tr>
+              <td class="tabla__nombre">{{ premio.nombre }}</td>
+              <td>{{ premio.costo_puntos }}</td>
+              <td>{{ condicionesDe(premio) }}</td>
+              <td>{{ premio.activa ? 'Activo' : 'Inactivo' }}</td>
+              <td class="tabla__acciones">
+                <app-boton variante="claro-negro" (clic)="eliminar(premio.id)">
+                  Eliminar
+                </app-boton>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="tabla__vacio" colspan="5">No hay premios cargados todavía.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>

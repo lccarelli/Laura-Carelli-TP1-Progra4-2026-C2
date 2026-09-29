@@ -24,6 +24,7 @@ export class Configuracion {
   protected modo = signal<ConfiguracionHome['modo_destacadas']>('automatico');
   protected porcentajeCupon = signal(20);
   protected edadMinimaCupon = signal<number | null>(null);
+  protected descripcionCupon = signal('');
 
   constructor() {
     this.cargar();
@@ -48,6 +49,7 @@ export class Configuracion {
 
     this.porcentajeCupon.set(cupon.porcentaje);
     this.edadMinimaCupon.set(cupon.edad_minima);
+    this.descripcionCupon.set(cupon.descripcion ?? '');
   }
 
   async elegirModo(modo: ConfiguracionHome['modo_destacadas']) {
@@ -77,10 +79,15 @@ export class Configuracion {
     this.edadMinimaCupon.set(valor.trim() !== '' && Number.isFinite(numero) ? numero : null);
   }
 
+  actualizarDescripcionCupon(valor: string) {
+    this.descripcionCupon.set(valor);
+  }
+
   async guardarCupon() {
     const { error } = await this.configuracionCuponServicio.actualizar(
       this.porcentajeCupon(),
       this.edadMinimaCupon(),
+      this.descripcionCupon().trim() || null,
     );
 
     if (error) {

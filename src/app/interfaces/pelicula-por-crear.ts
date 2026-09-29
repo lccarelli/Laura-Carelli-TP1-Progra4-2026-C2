@@ -7,4 +7,5 @@ export interface PeliculaPorCrear {
   activa: boolean;
   destacada: boolean;
   fecha_estreno: string | null;
+  trailer_url: string | null;
 }

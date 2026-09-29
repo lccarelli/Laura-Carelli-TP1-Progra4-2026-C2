@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnDestroy, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnDestroy, signal } from '@angular/core';
 import { DatePipe, UpperCasePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { toDataURL } from 'qrcode';
@@ -298,6 +298,19 @@ export class Detalle implements OnDestroy {
     if (id) {
       this.cargar(id);
     }
+
+    effect(() => {
+      const clienteId = this.auth.usuario()?.id;
+
+      if (!this.auth.esCliente() || !clienteId) {
+        this.cliente.set(null);
+        return;
+      }
+
+      this.clienteServicio.obtenerOCrear(clienteId).then(({ data }) => {
+        this.cliente.set(data ?? null);
+      });
+    });
   }
 
   async cargar(id: string) {
@@ -352,13 +365,6 @@ export class Detalle implements OnDestroy {
 
     const { data: cuponConfig } = await this.configuracionCuponServicio.obtener();
     this.cuponConfig.set(cuponConfig ?? null);
-
-    const clienteId = this.auth.usuario()?.id;
-
-    if (this.auth.esCliente() && clienteId) {
-      const { data: cliente } = await this.clienteServicio.obtenerOCrear(clienteId);
-      this.cliente.set(cliente ?? null);
-    }
   }
 
   private async actualizarEntradas(funcionId: string) {
@@ -521,6 +527,14 @@ export class Detalle implements OnDestroy {
     if (errorCompra) {
       this.logger.registrar(Flujo.AltaCompra, TipoEvento.Error, errorCompra.message);
       this.errores.mostrar(errorCompra.message);
+    }
+
+    if (this.auth.esCliente()) {
+      const { error: errorPuntos } = await this.clienteServicio.sumarPuntosCompra(totalCobrado);
+
+      if (errorPuntos) {
+        this.logger.registrar(Flujo.AltaCompra, TipoEvento.Error, errorPuntos.message);
+      }
     }
 
     this.codigoCompra.set(codigo);

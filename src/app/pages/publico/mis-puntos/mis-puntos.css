@@ -1,0 +1,107 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.panel__volver {
+  margin-bottom: 1.5rem;
+}
+
+.panel__titulo,
+.puntos-saldo,
+.mis-puntos__subtitulo,
+.lista-premios,
+.lista-canjes {
+  max-width: 40rem;
+  margin-inline: auto;
+}
+
+.panel__titulo {
+  margin-bottom: 0.5rem;
+}
+
+.puntos-saldo {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--negro);
+  margin: 0 0 2rem;
+}
+
+.mis-puntos__subtitulo {
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 0.75rem;
+  color: var(--negro);
+}
+
+.lista-premios,
+.lista-canjes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.lista-premios__vacio,
+.lista-canjes__vacio {
+  color: color-mix(in srgb, var(--negro) 60%, transparent);
+  font-size: 0.9rem;
+}
+
+.premio-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 2px solid var(--negro);
+  padding: 1rem;
+}
+
+.premio-item__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.premio-item__nombre {
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+
+.premio-item__costo {
+  font-size: 0.85rem;
+  color: color-mix(in srgb, var(--negro) 65%, transparent);
+}
+
+.premio-item__condiciones {
+  font-size: 0.8rem;
+  color: color-mix(in srgb, var(--negro) 55%, transparent);
+}
+
+.canje-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
+  padding: 0.6rem 0.1rem;
+  font-size: 0.9rem;
+}
+
+.canje-item__nombre {
+  font-weight: 700;
+}
+
+.canje-item__fecha {
+  color: color-mix(in srgb, var(--negro) 60%, transparent);
+}
+
+.canje-item__puntos {
+  font-weight: 800;
+  color: var(--rojo);
+}

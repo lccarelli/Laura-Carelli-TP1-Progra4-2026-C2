@@ -1,18 +1,11 @@
 <main class="pagina">
   <div class="secciones">
     <section class="panel-flotante panel--ancho destacadas">
-      <div class="tarjetas-grilla">
-        @for (pelicula of destacadas(); track pelicula.id) {
-          <app-tarjeta-pelicula
-            [pelicula]="pelicula"
-            [promedio]="promedioDe(pelicula.id)"
-            [esEstreno]="esEstreno(pelicula)"
-            [generos]="generosDe(pelicula.id)"
-          />
-        } @empty {
-          <p class="tarjetas-grilla__vacio">Todavía no hay películas destacadas.</p>
-        }
-      </div>
+      @if (destacadasVista().length > 0) {
+        <app-carrusel-destacadas [items]="destacadasVista()" />
+      } @else {
+        <p class="tarjetas-grilla__vacio">Todavía no hay películas destacadas.</p>
+      }
     </section>
 
     <section class="panel-flotante panel--ancho">

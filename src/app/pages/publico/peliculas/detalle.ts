@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PeliculaServicio } from '../../../servicios/pelicula/pelicula';
 import { GeneroServicio } from '../../../servicios/genero/genero';
@@ -16,11 +17,13 @@ import { Sala } from '../../../interfaces/sala';
 import { Boton } from '../../../componentes/boton/boton';
 import { BotonLink } from '../../../componentes/boton-link/boton-link';
 import { Poster } from '../../../componentes/poster/poster';
+import { Cargando } from '../../../componentes/cargando/cargando';
 import { EstrellasPipe } from '../../../pipes/estrellas/estrellas';
 import { RestriccionEdadPipe } from '../../../pipes/restriccion-edad/restriccion-edad';
 import { Logger } from '../../../servicios/logger/logger';
 import { Flujo } from '../../../servicios/logger/flujo';
 import { TipoEvento } from '../../../servicios/logger/tipo-evento';
+import { extraerIdYoutube } from '../../../utilidades/youtube';
 
 const PUNTAJES = [1, 2, 3, 4, 5];
 const DIAS_CALENDARIO = 14;
@@ -44,7 +47,7 @@ function claveDia(fecha: Date): string {
 }
 
 @Component({
-  imports: [Boton, BotonLink, Poster, DatePipe, EstrellasPipe, RestriccionEdadPipe],
+  imports: [Boton, BotonLink, Poster, Cargando, DatePipe, EstrellasPipe, RestriccionEdadPipe],
   selector: 'app-detalle-pelicula',
   styleUrl: './detalle.css',
   templateUrl: './detalle.html',
@@ -60,6 +63,7 @@ export class Detalle {
   private errores = inject(Errores);
   private logger = inject(Logger);
   private datePipe = inject(DatePipe);
+  private sanitizer = inject(DomSanitizer);
   protected auth = inject(Auth);
 
   protected puntajes = PUNTAJES;
@@ -107,6 +111,25 @@ export class Detalle {
   });
 
   protected promedioRedondeado = computed(() => Math.round(this.promedio() ?? 0));
+  protected trailerCargado = signal(false);
+
+  protected trailerEmbebido = computed<SafeResourceUrl | null>(() => {
+    const trailerUrl = this.pelicula()?.trailer_url;
+
+    if (!trailerUrl) {
+      return null;
+    }
+
+    const idYoutube = extraerIdYoutube(trailerUrl);
+
+    if (!idYoutube) {
+      return null;
+    }
+
+    return this.sanitizer.bypassSecurityTrustResourceUrl(
+      `https://www.youtube.com/embed/${idYoutube}`,
+    );
+  });
 
   constructor() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -137,6 +160,7 @@ export class Detalle {
     }
 
     this.pelicula.set(data);
+    this.trailerCargado.set(false);
     this.generos.set(generos ?? []);
     this.resenas.set(resenas ?? []);
     this.funciones.set(this.combinarConSala(funciones ?? [], salas ?? []));
@@ -154,6 +178,10 @@ export class Detalle {
       funcion,
       sala: salas.find((s) => s.id === funcion.sala_id)?.nombre ?? '—',
     }));
+  }
+
+  trailerCargo() {
+    this.trailerCargado.set(true);
   }
 
   elegirDia(clave: string) {

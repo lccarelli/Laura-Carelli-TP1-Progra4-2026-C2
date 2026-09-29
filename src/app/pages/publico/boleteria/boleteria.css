@@ -1,7 +1,16 @@
+.panel__titulo,
+.boleteria__ayuda,
+.boleteria__busqueda,
+.boleteria__lector,
+.boleteria__resultado {
+  max-width: 50rem;
+  margin-inline: auto;
+}
+
 .boleteria__ayuda {
   font-size: 0.9rem;
   color: color-mix(in srgb, var(--negro) 65%, transparent);
-  margin: 0 0 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .boleteria__busqueda {
@@ -49,7 +58,7 @@
 
 .boleteria__lector {
   max-width: 24rem;
-  margin: 1.5rem 0;
+  margin-block: 1.5rem;
   border: 2px solid var(--negro);
 }
 

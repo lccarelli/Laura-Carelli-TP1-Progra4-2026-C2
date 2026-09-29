@@ -13,10 +13,11 @@ export class ConfiguracionCuponServicio {
     return this.supabase.obtenerPorId<ConfiguracionCupon>(this.tabla, ID_GLOBAL);
   }
 
-  actualizar(porcentaje: number, edadMinima: number | null) {
+  actualizar(porcentaje: number, edadMinima: number | null, descripcion: string | null) {
     return this.supabase.actualizar<ConfiguracionCupon>(this.tabla, ID_GLOBAL, {
       porcentaje,
       edad_minima: edadMinima,
+      descripcion,
     });
   }
 }

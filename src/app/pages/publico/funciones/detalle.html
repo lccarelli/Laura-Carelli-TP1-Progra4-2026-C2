@@ -1,3 +1,9 @@
+@if (enviando()) {
+  <div class="overlay-cargando">
+    <app-cargando class="overlay-cargando__icono" />
+  </div>
+}
+
 <main class="pagina">
   <section class="panel-flotante panel--ancho">
     @if (pelicula(); as pelicula) {
@@ -107,6 +113,24 @@
             </div>
           }
           @case ('candy') {
+            @if (combos().length > 0) {
+              <h3 class="combos-destacados__titulo">Combos</h3>
+              <div class="combos-destacados">
+                @for (combo of combos(); track combo.id) {
+                  <div class="combo-item">
+                    <span class="combo-item__nombre">{{ combo.nombre }}</span>
+                    <span class="combo-item__incluye">{{ productosDeCombo(combo) }}</span>
+                    <span class="combo-item__precio">${{ combo.precio }}</span>
+                    <div class="candy-item__stepper">
+                      <button type="button" (click)="restarCombo(combo.id)">−</button>
+                      <span>{{ cantidadComboDe(combo.id) }}</span>
+                      <button type="button" (click)="sumarCombo(combo.id)">+</button>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+
             <div class="candy-grilla">
               @for (producto of productosCandy(); track producto.id) {
                 <div class="candy-item">
@@ -127,7 +151,9 @@
             </div>
 
             <div class="compra__barra">
-              <span class="compra__resumen">Candy — ${{ subtotalCandy() }}</span>
+              <span class="compra__resumen">
+                Candy y combos — ${{ subtotalCandy() + subtotalCombos() }}
+              </span>
               <app-boton variante="menu" (clic)="seguirACandy()">Siguiente</app-boton>
             </div>
           }
@@ -149,6 +175,15 @@
                   <li>{{ butaca.fila }}{{ butaca.numero }} ({{ butaca.tipo }})</li>
                 }
               </ul>
+
+              @if (itemsCombo().length > 0) {
+                <h3 class="resumen-compra__titulo">Combos</h3>
+                <ul class="resumen-compra__lista">
+                  @for (item of itemsCombo(); track item.combo.id) {
+                    <li>{{ item.cantidad }}x {{ item.combo.nombre }}</li>
+                  }
+                </ul>
+              }
 
               @if (itemsCandy().length > 0) {
                 <h3 class="resumen-compra__titulo">Candy</h3>
@@ -229,13 +264,15 @@
             </div>
 
             <div class="compra__barra">
-              <app-boton variante="claro-negro" (clic)="irA('candy')">Atrás</app-boton>
+              <app-boton variante="claro-negro" [disabled]="enviando()" (clic)="irA('candy')">
+                Atrás
+              </app-boton>
               <app-boton
                 variante="menu"
                 [disabled]="enviando() || !puedeConfirmarPago()"
                 (clic)="confirmarPago()"
               >
-                Confirmar pago
+                {{ enviando() ? 'Confirmando…' : 'Confirmar pago' }}
               </app-boton>
             </div>
           }

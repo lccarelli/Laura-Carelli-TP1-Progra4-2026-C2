@@ -90,6 +90,17 @@ export const routes: Routes = [
       import('./pages/admin/candy/formulario/formulario').then((m) => m.FormularioCandy),
   },
   {
+    path: 'admin/combos',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./pages/admin/combos/combos').then((m) => m.Combos),
+  },
+  {
+    path: 'admin/combos/nuevo',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./pages/admin/combos/formulario/formulario').then((m) => m.FormularioCombo),
+  },
+  {
     path: 'admin/premios',
     canActivate: [adminGuard],
     loadComponent: () => import('./pages/admin/premios/premios').then((m) => m.Premios),

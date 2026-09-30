@@ -1,0 +1,45 @@
+<main class="pagina">
+  <section class="panel-flotante panel--ancho">
+    <app-boton-link variante="claro-negro" ruta="/admin" class="panel__volver">
+      ← Volver
+    </app-boton-link>
+
+    <div class="panel__encabezado">
+      <h2 class="panel__titulo">Combos</h2>
+      <app-boton-link variante="mas" ruta="/admin/combos/nuevo" ariaLabel="Nuevo combo">
+        +
+      </app-boton-link>
+    </div>
+
+    <div class="tabla-contenedor">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Combo</th>
+            <th>Incluye</th>
+            <th>Precio</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (combo of combos(); track combo.id) {
+            <tr>
+              <td class="tabla__nombre">{{ combo.nombre }}</td>
+              <td>{{ productosDe(combo) }}</td>
+              <td>{{ combo.precio | number: '1.0-0' }}</td>
+              <td>{{ combo.activo ? 'Activo' : 'Inactivo' }}</td>
+              <td class="tabla__acciones">
+                <app-boton variante="claro-negro" (clic)="eliminar(combo.id)"> Eliminar </app-boton>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="tabla__vacio" colspan="5">No hay combos cargados todavía.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>

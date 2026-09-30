@@ -10,6 +10,7 @@ import { Flujo } from '../../../servicios/logger/flujo';
 import { TipoEvento } from '../../../servicios/logger/tipo-evento';
 import { Cliente } from '../../../interfaces/cliente';
 import { Premio } from '../../../interfaces/premio';
+import { MovimientoCredito } from '../../../interfaces/movimiento-credito';
 import { BotonLink } from '../../../componentes/boton-link/boton-link';
 import { Boton } from '../../../componentes/boton/boton';
 import { DiasValidosPipe } from '../../../pipes/dias-validos/dias-validos';
@@ -32,6 +33,7 @@ export class MisPuntos {
   protected premios = signal<Premio[]>([]);
   protected canjes = signal<CanjeConDetalle[]>([]);
   protected canjeando = signal<string | null>(null);
+  protected movimientosCredito = signal<MovimientoCredito[]>([]);
 
   constructor() {
     this.cargar();
@@ -54,11 +56,15 @@ export class MisPuntos {
 
     this.cliente.set(cliente);
 
-    const [{ data: premios, error: errorPremios }, { data: canjes, error: errorCanjes }] =
-      await Promise.all([
-        this.premioServicio.listarActivas(),
-        this.canjeServicio.listarPorCliente(clienteId),
-      ]);
+    const [
+      { data: premios, error: errorPremios },
+      { data: canjes, error: errorCanjes },
+      { data: movimientos, error: errorMovimientos },
+    ] = await Promise.all([
+      this.premioServicio.listarActivas(),
+      this.canjeServicio.listarPorCliente(clienteId),
+      this.clienteServicio.listarMovimientosCredito(clienteId),
+    ]);
 
     if (errorPremios) {
       this.errores.mostrar(errorPremios.message);
@@ -70,6 +76,12 @@ export class MisPuntos {
       this.errores.mostrar(errorCanjes.message);
     } else {
       this.canjes.set(canjes ?? []);
+    }
+
+    if (errorMovimientos) {
+      this.errores.mostrar(errorMovimientos.message);
+    } else {
+      this.movimientosCredito.set(movimientos ?? []);
     }
   }
 

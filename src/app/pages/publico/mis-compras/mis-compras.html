@@ -18,11 +18,32 @@
             <span class="compra-item__codigo">Código: {{ compra.codigo_compra }}</span>
           </div>
 
+          @if (compra.cancelada_en) {
+            <span class="compra-item__cancelada">Cancelada</span>
+          }
+
           <div class="compra-item__acciones">
             <span class="compra-item__total">${{ compra.total }}</span>
-            <button type="button" class="compra-item__boton" (click)="verQr(compra.codigo_compra)">
-              {{ qrDe(compra.codigo_compra) ? 'Ocultar QR' : 'Ver QR' }}
-            </button>
+
+            @if (!compra.cancelada_en) {
+              <button
+                type="button"
+                class="compra-item__boton"
+                (click)="verQr(compra.codigo_compra)"
+              >
+                {{ qrDe(compra.codigo_compra) ? 'Ocultar QR' : 'Ver QR' }}
+              </button>
+            }
+
+            @if (puedeCancelar(compra)) {
+              <app-boton
+                variante="menu"
+                [disabled]="cancelando() === compra.codigo_compra"
+                (clic)="cancelar(compra)"
+              >
+                Cancelar
+              </app-boton>
+            }
           </div>
 
           @if (qrDe(compra.codigo_compra); as qr) {

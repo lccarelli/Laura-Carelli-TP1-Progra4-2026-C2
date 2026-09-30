@@ -208,6 +208,12 @@
                 </p>
               }
 
+              @if (creditoAplicado() > 0) {
+                <p class="resumen-compra__descuento">
+                  Crédito disponible: -${{ creditoAplicado() }}
+                </p>
+              }
+
               <p class="resumen-compra__total">Total: ${{ totalFinal() }}</p>
             </div>
 
@@ -294,6 +300,9 @@
                 <p class="confirmacion__cupon">
                   Se aplicó tu cupón de bienvenida: -${{ descuentoAplicado() }}
                 </p>
+              }
+              @if (creditoUsado() > 0) {
+                <p class="confirmacion__cupon">Usaste tu crédito: -${{ creditoUsado() }}</p>
               }
               <p class="confirmacion__codigo">Código: {{ codigoCompra() }}</p>
               <p class="confirmacion__ayuda">Mostrá este código en boletería para retirar.</p>

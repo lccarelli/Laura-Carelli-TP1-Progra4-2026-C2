@@ -117,6 +117,7 @@ export class Detalle implements OnDestroy {
   protected edadAnonima = signal<number | null>(null);
   protected mailEnviado = signal<boolean | null>(null);
   protected descuentoAplicado = signal(0);
+  protected creditoUsado = signal(0);
   protected cliente = signal<Cliente | null>(null);
   protected cuponConfig = signal<ConfiguracionCupon | null>(null);
 
@@ -211,7 +212,17 @@ export class Detalle implements OnDestroy {
     this.cuponAplicable() ? Math.round((this.total() * this.cuponConfig()!.porcentaje) / 100) : 0,
   );
 
-  protected totalFinal = computed(() => this.total() - this.descuentoCupon());
+  protected creditoDisponible = computed(() =>
+    this.auth.esCliente() ? (this.cliente()?.credito ?? 0) : 0,
+  );
+
+  protected creditoAplicado = computed(() =>
+    Math.min(this.creditoDisponible(), this.total() - this.descuentoCupon()),
+  );
+
+  protected totalFinal = computed(
+    () => this.total() - this.descuentoCupon() - this.creditoAplicado(),
+  );
 
   protected restriccionEdad = computed(() => this.pelicula()?.restriccion_edad ?? null);
 
@@ -527,8 +538,28 @@ export class Detalle implements OnDestroy {
       }
     }
 
-    const totalCobrado = this.total() - descuento;
+    let creditoAplicado = 0;
+
+    if (this.auth.esCliente()) {
+      const montoCredito = Math.min(this.creditoDisponible(), this.total() - descuento);
+
+      if (montoCredito > 0) {
+        const { error: errorCredito } = await this.clienteServicio.usarCredito(
+          codigo,
+          montoCredito,
+        );
+
+        if (errorCredito) {
+          this.errores.mostrar('No se pudo aplicar tu crédito, se cobra sin ese descuento.');
+        } else {
+          creditoAplicado = montoCredito;
+        }
+      }
+    }
+
+    const totalCobrado = this.total() - descuento - creditoAplicado;
     this.descuentoAplicado.set(descuento);
+    this.creditoUsado.set(creditoAplicado);
 
     const email = this.emailFinal();
     const { error: errorCompra } = await this.compraServicio.crear({

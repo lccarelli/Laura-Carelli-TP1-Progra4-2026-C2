@@ -194,9 +194,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  background: var(--crema);
+  background: white;
   color: var(--negro);
-  padding: 1rem;
   margin-bottom: 1.5rem;
 }
 
@@ -230,7 +229,7 @@
 }
 
 .form-resena__texto::placeholder {
-  color: color-mix(in srgb, var(--crema) 55%, transparent);
+  color: var(--gris);
 }
 
 .form-resena__texto:focus {

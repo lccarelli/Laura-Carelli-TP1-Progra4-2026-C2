@@ -3,4 +3,5 @@ export const environment = {
   SUPABASE_KEY: '',
   PROFESOR_EMAIL: '',
   PROFESOR_PASSWORD: '',
+  VAPID_PUBLIC_KEY: '',
 };

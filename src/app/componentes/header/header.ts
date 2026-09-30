@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../servicios/auth/auth';
+import { PushServicio } from '../../servicios/push/push';
 import { Errores } from '../../servicios/errores/errores';
 import { Boton } from '../boton/boton';
 import { BotonLink } from '../boton-link/boton-link';
@@ -17,6 +18,8 @@ import { TipoEvento } from '../../servicios/logger/tipo-evento';
 })
 export class Header {
   protected auth = inject(Auth);
+  // se inyecta sin usarlo para activar su escucha global de clicks en notificaciones
+  private push = inject(PushServicio);
   private router = inject(Router);
   private errores = inject(Errores);
   private logger = inject(Logger);

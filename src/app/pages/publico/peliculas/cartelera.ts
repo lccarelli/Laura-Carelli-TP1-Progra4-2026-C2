@@ -62,7 +62,9 @@ export class Cartelera {
     this.generos().map((genero) => ({ valor: genero.id, etiqueta: genero.nombre })),
   );
 
-  private peliculasActivas = computed(() => this.peliculas().filter((p) => p.activa));
+  private peliculasActivas = computed(() =>
+    this.peliculas().filter((p) => p.activa && this.diasConFuncionPorPelicula().has(p.id)),
+  );
 
   protected peliculasFiltradas = computed(() => {
     const texto = this.busqueda().trim().toLowerCase();

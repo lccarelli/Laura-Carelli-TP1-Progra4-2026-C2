@@ -1,0 +1,30 @@
+.tarjetas-grilla {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  max-width: 56rem;
+  margin-inline: auto;
+}
+
+@media (max-width: 480px) {
+  .tarjetas-grilla {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.tarjetas-grilla__vacio {
+  color: color-mix(in srgb, var(--negro) 60%, transparent);
+}
+
+.proximamente-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.proximamente-item__estreno {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--negro) 70%, transparent);
+  text-align: center;
+}

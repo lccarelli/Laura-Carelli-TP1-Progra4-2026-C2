@@ -8,6 +8,8 @@ import { ResenaServicio } from '../../../servicios/resena/resena';
 import { FuncionServicio } from '../../../servicios/funcion/funcion';
 import { SalaServicio } from '../../../servicios/sala/sala';
 import { Auth } from '../../../servicios/auth/auth';
+import { PushServicio } from '../../../servicios/push/push';
+import { AlertaDisponibilidadServicio } from '../../../servicios/alerta-disponibilidad/alerta-disponibilidad';
 import { Errores } from '../../../servicios/errores/errores';
 import { Pelicula } from '../../../interfaces/pelicula';
 import { Genero } from '../../../interfaces/genero';
@@ -59,6 +61,8 @@ export class Detalle {
   private resenaServicio = inject(ResenaServicio);
   private funcionServicio = inject(FuncionServicio);
   private salaServicio = inject(SalaServicio);
+  private pushServicio = inject(PushServicio);
+  private alertaDisponibilidadServicio = inject(AlertaDisponibilidadServicio);
   private errores = inject(Errores);
   private logger = inject(Logger);
   private datePipe = inject(DatePipe);
@@ -75,6 +79,18 @@ export class Detalle {
   protected puntajeSeleccionado = signal(0);
   protected texto = signal('');
   protected diaSeleccionado = signal<string | null>(null);
+  protected alertaActiva = signal(false);
+  protected activandoAlerta = signal(false);
+
+  protected esProximamente = computed(() => {
+    const pelicula = this.pelicula();
+
+    if (!pelicula?.fecha_estreno) {
+      return false;
+    }
+
+    return new Date(pelicula.fecha_estreno) > new Date() && this.funciones().length === 0;
+  });
 
   protected funcionesPorDia = computed(() => {
     const mapa = new Map<string, FuncionConSala[]>();
@@ -193,6 +209,9 @@ export class Detalle {
     if (usuarioId) {
       const { data: propia } = await this.resenaServicio.buscarDeUsuario(id, usuarioId);
       this.yaReseno.set(!!propia);
+
+      const { data: alerta } = await this.alertaDisponibilidadServicio.buscar(id);
+      this.alertaActiva.set(!!alerta);
     }
   }
 
@@ -253,5 +272,54 @@ export class Detalle {
     this.puntajeSeleccionado.set(0);
     this.texto.set('');
     await this.cargar(pelicula.id);
+  }
+
+  async alternarAlerta() {
+    const pelicula = this.pelicula();
+
+    if (!pelicula || this.activandoAlerta()) {
+      return;
+    }
+
+    this.activandoAlerta.set(true);
+
+    if (this.alertaActiva()) {
+      const { error } = await this.alertaDisponibilidadServicio.desactivar(pelicula.id);
+      this.activandoAlerta.set(false);
+
+      if (error) {
+        this.errores.mostrar(error.message);
+        return;
+      }
+
+      this.alertaActiva.set(false);
+      this.logger.registrar(
+        Flujo.AlertaDisponibilidad,
+        TipoEvento.Exito,
+        `cancelada: ${pelicula.nombre}`,
+      );
+      return;
+    }
+
+    const { error: errorPush } = await this.pushServicio.suscribir();
+
+    if (errorPush) {
+      this.activandoAlerta.set(false);
+      this.logger.registrar(Flujo.AlertaDisponibilidad, TipoEvento.Error, errorPush.message);
+      this.errores.mostrar(errorPush.message);
+      return;
+    }
+
+    const { error } = await this.alertaDisponibilidadServicio.activar(pelicula.id);
+    this.activandoAlerta.set(false);
+
+    if (error) {
+      this.logger.registrar(Flujo.AlertaDisponibilidad, TipoEvento.Error, error.message);
+      this.errores.mostrar(error.message);
+      return;
+    }
+
+    this.alertaActiva.set(true);
+    this.logger.registrar(Flujo.AlertaDisponibilidad, TipoEvento.Exito, pelicula.nombre);
   }
 }

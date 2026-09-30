@@ -27,4 +27,5 @@ export enum Flujo {
   AltaCompra = 'AltaCompra',
   CancelacionCompra = 'CancelacionCompra',
   ValidacionQr = 'ValidacionQr',
+  AlertaDisponibilidad = 'AlertaDisponibilidad',
 }

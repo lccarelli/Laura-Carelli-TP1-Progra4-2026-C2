@@ -92,6 +92,8 @@ export class FuncionServicio {
       return { error: contexto.error };
     }
 
+    const teniaFuncionesFuturas = this.tieneFuncionesFuturas(datos.pelicula_id, contexto.funciones);
+
     const resultado = await this.crearOcurrencia(
       datos,
       pelicula,
@@ -99,6 +101,10 @@ export class FuncionServicio {
       contexto.funciones,
       contexto.peliculas,
     );
+
+    if (resultado.creada && !teniaFuncionesFuturas) {
+      await this.avisarDisponibilidad(pelicula);
+    }
 
     return { error: resultado.error ? { message: resultado.error } : undefined };
   }
@@ -121,8 +127,11 @@ export class FuncionServicio {
       return { error: contexto.error };
     }
 
+    const teniaFuncionesFuturas = this.tieneFuncionesFuturas(datos.pelicula_id, contexto.funciones);
+
     const [horas, minutos] = datos.hora.split(':').map(Number);
     const resultados: ResultadoOcurrencia[] = [];
+    let seCreoAlguna = false;
 
     for (const fecha of fechasEntre(datos.desde, datos.hasta)) {
       if (!datos.dias.includes(fecha.getDay())) {
@@ -155,10 +164,32 @@ export class FuncionServicio {
 
       if (resultado.creada) {
         contexto.funciones.push(resultado.creada);
+        seCreoAlguna = true;
       }
     }
 
+    if (seCreoAlguna && !teniaFuncionesFuturas) {
+      await this.avisarDisponibilidad(pelicula);
+    }
+
     return { resultados };
+  }
+
+  private tieneFuncionesFuturas(peliculaId: string, funciones: Funcion[]): boolean {
+    const ahora = Date.now();
+    return funciones.some(
+      (funcion) => funcion.pelicula_id === peliculaId && new Date(funcion.inicio).getTime() > ahora,
+    );
+  }
+
+  private async avisarDisponibilidad(pelicula: Pelicula) {
+    try {
+      await this.supabase.Supabase.functions.invoke('enviar-alertas-disponibilidad', {
+        body: { peliculaId: pelicula.id, peliculaNombre: pelicula.nombre },
+      });
+    } catch {
+      // best-effort: si falla el aviso push no queremos romper el alta de la función
+    }
   }
 
   private async cargarContexto() {

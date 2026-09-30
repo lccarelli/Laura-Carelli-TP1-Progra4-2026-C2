@@ -1,0 +1,18 @@
+<main class="pagina">
+  <section class="panel-flotante panel--ancho">
+    <h2 class="panel__titulo">Próximamente</h2>
+
+    <div class="tarjetas-grilla">
+      @for (pelicula of peliculasProximas(); track pelicula.id) {
+        <div class="proximamente-item">
+          <app-tarjeta-pelicula [pelicula]="pelicula" [generos]="generosDe(pelicula.id)" />
+          <span class="proximamente-item__estreno">
+            Se estrena el {{ pelicula.fecha_estreno | date: 'dd/MM/yyyy' }}
+          </span>
+        </div>
+      } @empty {
+        <p class="tarjetas-grilla__vacio">No hay estrenos anunciados por ahora.</p>
+      }
+    </div>
+  </section>
+</main>

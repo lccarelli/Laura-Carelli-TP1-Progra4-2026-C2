@@ -129,6 +129,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/publico/peliculas/detalle').then((m) => m.Detalle),
   },
   {
+    path: 'proximamente',
+    loadComponent: () =>
+      import('./pages/publico/peliculas/proximamente').then((m) => m.Proximamente),
+  },
+  {
     path: 'funciones/:id',
     loadComponent: () => import('./pages/publico/funciones/detalle').then((m) => m.Detalle),
   },

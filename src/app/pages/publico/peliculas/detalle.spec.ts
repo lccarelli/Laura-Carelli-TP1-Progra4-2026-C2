@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { provideServiceWorker } from '@angular/service-worker';
 import { Detalle } from './detalle';
 
 describe('Detalle', () => {
@@ -10,7 +11,11 @@ describe('Detalle', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Detalle],
-      providers: [provideRouter([]), DatePipe],
+      providers: [
+        provideRouter([]),
+        DatePipe,
+        provideServiceWorker('ngsw-worker.js', { enabled: false }),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Detalle);

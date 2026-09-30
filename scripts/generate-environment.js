@@ -7,6 +7,7 @@ const contenido = `export const environment = {
   SUPABASE_KEY: '${process.env.SUPABASE_KEY}',
   PROFESOR_EMAIL: '${process.env.PROFESOR_EMAIL}',
   PROFESOR_PASSWORD: '${process.env.PROFESOR_PASSWORD}',
+  VAPID_PUBLIC_KEY: '${process.env.VAPID_PUBLIC_KEY}',
 };
 `;
 

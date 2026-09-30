@@ -44,33 +44,52 @@
       }
 
       <section class="selector-funciones">
-        <h3 class="selector-funciones__titulo">Elegí función</h3>
+        @if (esProximamente()) {
+          <h3 class="selector-funciones__titulo">Próximamente</h3>
+          <p class="aviso-proximamente">
+            Se estrena el {{ pelicula.fecha_estreno | date: 'dd/MM/yyyy' }}. Todavía no hay
+            funciones a la venta.
+          </p>
 
-        <div class="selector-funciones__tiles">
-          @for (dia of diasCalendario(); track dia.clave) {
-            <button
-              type="button"
-              class="funcion-tile"
-              [class.funcion-tile--activo]="diaSeleccionado() === dia.clave"
-              [disabled]="!funcionesPorDia().has(dia.clave)"
-              (click)="elegirDia(dia.clave)"
-            >
-              <span class="funcion-tile__fecha">{{ dia.nombreDia }}</span>
-              <span class="funcion-tile__hora">{{ dia.etiquetaFecha }}</span>
-            </button>
+          @if (auth.esCliente()) {
+            <app-boton variante="menu" [disabled]="activandoAlerta()" (clic)="alternarAlerta()">
+              {{ alertaActiva() ? 'Cancelar aviso' : 'Avisarme cuando haya entradas' }}
+            </app-boton>
+          } @else {
+            <p class="aviso-proximamente__login">
+              <app-boton-link variante="claro-negro" ruta="/login">Iniciá sesión</app-boton-link>
+              para activar el aviso.
+            </p>
           }
-        </div>
+        } @else {
+          <h3 class="selector-funciones__titulo">Elegí función</h3>
 
-        @if (horariosDelDia().length > 0) {
-          <div class="selector-funciones__horarios">
-            @for (item of horariosDelDia(); track item.funcion.id) {
-              <button type="button" class="horario-tile" (click)="elegirFuncion(item.funcion.id)">
-                <span class="horario-tile__hora">{{ item.funcion.inicio | date: 'HH:mm' }}</span>
-                <span class="horario-tile__sala">{{ item.sala }}</span>
-                <span class="horario-tile__formato">{{ item.funcion.formato }}</span>
+          <div class="selector-funciones__tiles">
+            @for (dia of diasCalendario(); track dia.clave) {
+              <button
+                type="button"
+                class="funcion-tile"
+                [class.funcion-tile--activo]="diaSeleccionado() === dia.clave"
+                [disabled]="!funcionesPorDia().has(dia.clave)"
+                (click)="elegirDia(dia.clave)"
+              >
+                <span class="funcion-tile__fecha">{{ dia.nombreDia }}</span>
+                <span class="funcion-tile__hora">{{ dia.etiquetaFecha }}</span>
               </button>
             }
           </div>
+
+          @if (horariosDelDia().length > 0) {
+            <div class="selector-funciones__horarios">
+              @for (item of horariosDelDia(); track item.funcion.id) {
+                <button type="button" class="horario-tile" (click)="elegirFuncion(item.funcion.id)">
+                  <span class="horario-tile__hora">{{ item.funcion.inicio | date: 'HH:mm' }}</span>
+                  <span class="horario-tile__sala">{{ item.sala }}</span>
+                  <span class="horario-tile__formato">{{ item.funcion.formato }}</span>
+                </button>
+              }
+            </div>
+          }
         }
       </section>
 

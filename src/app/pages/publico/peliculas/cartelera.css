@@ -5,7 +5,7 @@
 }
 
 .panel__titulo {
-  max-width: 50rem;
+  max-width: 56rem;
   margin: 0 auto 1rem;
 }
 
@@ -16,7 +16,7 @@
 }
 
 .destacadas app-carrusel-destacadas {
-  max-width: 50rem;
+  max-width: 56rem;
   margin-inline: auto;
   display: block;
 }
@@ -27,7 +27,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
-  max-width: 50rem;
+  max-width: 56rem;
   margin-inline: auto;
 }
 
@@ -48,7 +48,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 1rem;
-  max-width: 50rem;
+  max-width: 56rem;
   margin: 0 auto 1rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
@@ -73,7 +73,7 @@
 /* Calendario de días */
 
 .calendario {
-  max-width: 50rem;
+  max-width: 56rem;
   margin: 0 auto 2rem;
 }
 

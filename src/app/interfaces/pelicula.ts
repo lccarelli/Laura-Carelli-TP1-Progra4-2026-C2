@@ -9,4 +9,6 @@ export interface Pelicula {
   destacada: boolean;
   fecha_estreno: string | null;
   trailer_url: string | null;
+  dias_preventa: number | null;
+  porcentaje_preventa: number | null;
 }

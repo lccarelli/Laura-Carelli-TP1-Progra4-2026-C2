@@ -26,7 +26,6 @@ import { TipoEvento } from '../../../servicios/logger/tipo-evento';
 import { extraerIdYoutube } from '../../../utilidades/youtube';
 
 const PUNTAJES = [1, 2, 3, 4, 5];
-const DIAS_CALENDARIO = 14;
 
 export interface FuncionConSala {
   funcion: Funcion;
@@ -75,7 +74,6 @@ export class Detalle {
   protected yaReseno = signal(false);
   protected puntajeSeleccionado = signal(0);
   protected texto = signal('');
-  protected diasCalendario: DiaCalendario[] = this.construirDiasCalendario();
   protected diaSeleccionado = signal<string | null>(null);
 
   protected funcionesPorDia = computed(() => {
@@ -93,6 +91,31 @@ export class Detalle {
     }
 
     return mapa;
+  });
+
+  protected diasCalendario = computed<DiaCalendario[]>(() => {
+    const claves = [...this.funcionesPorDia().keys()].sort();
+
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    const ultimaFecha = claves.length > 0 ? new Date(`${claves[claves.length - 1]}T00:00:00`) : hoy;
+
+    const dias: DiaCalendario[] = [];
+    const fecha = new Date(hoy);
+    let i = 0;
+
+    while (fecha <= ultimaFecha) {
+      dias.push({
+        clave: claveDia(fecha),
+        nombreDia: i === 0 ? 'Hoy' : (this.datePipe.transform(fecha, 'EEEE') ?? ''),
+        etiquetaFecha: this.datePipe.transform(fecha, 'dd/MM') ?? '',
+      });
+      fecha.setDate(fecha.getDate() + 1);
+      i++;
+    }
+
+    return dias;
   });
 
   protected horariosDelDia = computed(() => {
@@ -194,25 +217,6 @@ export class Detalle {
 
   async elegirFuncion(id: string) {
     await this.router.navigate(['/funciones', id]);
-  }
-
-  private construirDiasCalendario(): DiaCalendario[] {
-    const dias: DiaCalendario[] = [];
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0);
-
-    for (let i = 0; i < DIAS_CALENDARIO; i++) {
-      const fecha = new Date(hoy);
-      fecha.setDate(fecha.getDate() + i);
-
-      dias.push({
-        clave: claveDia(fecha),
-        nombreDia: i === 0 ? 'Hoy' : (this.datePipe.transform(fecha, 'EEEE') ?? ''),
-        etiquetaFecha: this.datePipe.transform(fecha, 'dd/MM') ?? '',
-      });
-    }
-
-    return dias;
   }
 
   elegirPuntaje(puntaje: number) {

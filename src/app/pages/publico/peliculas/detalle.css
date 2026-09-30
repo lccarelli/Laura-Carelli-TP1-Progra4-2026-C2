@@ -85,8 +85,10 @@
 
 .selector-funciones__tiles {
   display: flex;
-  overflow-x: auto;
-  border: 2px solid var(--negro);
+  flex-wrap: wrap;
+  gap: 1px;
+  background: var(--negro);
+  border: 1px solid var(--negro);
 }
 
 .funcion-tile {
@@ -94,16 +96,11 @@
   display: flex;
   flex-direction: column;
   border: none;
-  border-right: 1px solid var(--negro);
-  background: transparent;
+  background: var(--crema);
   font-family: inherit;
   color: var(--negro);
   cursor: pointer;
   padding: 0;
-}
-
-.funcion-tile:last-child {
-  border-right: none;
 }
 
 .funcion-tile:disabled {

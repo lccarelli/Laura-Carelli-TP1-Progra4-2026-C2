@@ -47,7 +47,7 @@
         <h3 class="selector-funciones__titulo">Elegí función</h3>
 
         <div class="selector-funciones__tiles">
-          @for (dia of diasCalendario; track dia.clave) {
+          @for (dia of diasCalendario(); track dia.clave) {
             <button
               type="button"
               class="funcion-tile"

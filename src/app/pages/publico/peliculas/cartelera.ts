@@ -12,6 +12,7 @@ import { TarjetaPelicula } from '../../../componentes/tarjeta-pelicula/tarjeta-p
 import { SelectorChips } from '../../../componentes/selector-chips/selector-chips';
 import { CarruselDestacadas } from '../../../componentes/carrusel-destacadas/carrusel-destacadas';
 import { DestacadaVista } from '../../../componentes/carrusel-destacadas/destacada-vista';
+import { estaEnPreventa } from '../../../utilidades/preventa';
 
 const DIAS_CALENDARIO = 14;
 const DIAS_VENTANA_ESTRENO = 7;
@@ -214,6 +215,10 @@ export class Cartelera {
     limite.setDate(limite.getDate() + DIAS_VENTANA_ESTRENO);
 
     return hoy >= estreno && hoy < limite;
+  }
+
+  protected esPreventa(pelicula: Pelicula): boolean {
+    return estaEnPreventa(pelicula);
   }
 
   private construirDiasCalendario(): DiaCalendario[] {

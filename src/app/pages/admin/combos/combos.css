@@ -1,0 +1,15 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.panel__encabezado,
+.tabla-contenedor {
+  max-width: 40rem;
+  margin-inline: auto;
+}
+
+.tabla {
+  min-width: 24rem;
+}

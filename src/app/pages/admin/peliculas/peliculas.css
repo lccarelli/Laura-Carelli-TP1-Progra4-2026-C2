@@ -4,6 +4,13 @@
   flex: 1;
 }
 
+.panel__encabezado,
+.buscador,
+.tabla-contenedor {
+  max-width: 40rem;
+  margin-inline: auto;
+}
+
 .buscador {
   width: 100%;
   border: none;

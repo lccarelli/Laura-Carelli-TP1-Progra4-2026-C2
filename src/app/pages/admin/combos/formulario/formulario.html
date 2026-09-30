@@ -1,0 +1,52 @@
+<main class="pagina pagina--centrada">
+  <section class="panel-flotante panel--angosto">
+    <h2 class="panel__titulo">Nuevo combo</h2>
+
+    <form class="formulario" [formGroup]="formulario" (ngSubmit)="guardar()">
+      <label class="campo">
+        <span class="campo__etiqueta">Nombre</span>
+        <input class="campo__input" type="text" formControlName="nombre" />
+      </label>
+
+      <label class="campo">
+        <span class="campo__etiqueta">Precio del combo</span>
+        <input class="campo__input" type="number" min="0" formControlName="precio" />
+      </label>
+
+      <label class="campo campo--checkbox">
+        <input type="checkbox" [checked]="activo()" (change)="alternarActivo()" />
+        <span class="campo__etiqueta">Activo (visible al comprar candy)</span>
+      </label>
+
+      <div class="campo">
+        <span class="campo__etiqueta">Productos que incluye</span>
+        @if (productosCandy().length > 0) {
+          <ul class="combo-productos">
+            @for (producto of productosCandy(); track producto.id) {
+              <li class="combo-productos__fila">
+                <span class="combo-productos__nombre">{{ producto.nombre }}</span>
+                <input
+                  class="campo__input combo-productos__cantidad"
+                  type="number"
+                  min="0"
+                  [value]="cantidadDe(producto.id) || ''"
+                  (input)="actualizarCantidad(producto.id, $any($event.target).value)"
+                />
+              </li>
+            }
+          </ul>
+        } @else {
+          <span class="generos__vacio">Todavía no hay candy cargado.</span>
+        }
+      </div>
+
+      <div class="formulario__acciones">
+        <app-boton variante="menu" tipo="submit" [disabled]="formulario.invalid">
+          Crear combo
+        </app-boton>
+
+        <app-boton variante="claro-negro" (clic)="cancelar()">Cancelar</app-boton>
+      </div>
+    </form>
+  </section>
+</main>

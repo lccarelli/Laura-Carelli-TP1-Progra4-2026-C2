@@ -22,6 +22,7 @@ interface DatosEnvio {
   idioma: string;
   butacasTexto: string[];
   candyTexto: string[];
+  combosTexto: string[];
   total: number;
   descuentoCupon: number;
 }
@@ -30,6 +31,16 @@ function armarHtml(datos: DatosEnvio): string {
   const posterHtml = datos.posterUrl
     ? `<img src="${datos.posterUrl}" alt="Poster" width="220" style="display:block; max-width:220px; width:100%; height:auto; border:2px solid #131313; margin-bottom:16px;" />`
     : '';
+
+  const combosHtml =
+    datos.combosTexto.length > 0
+      ? `
+        <h3 style="font-size:14px; text-transform:uppercase; letter-spacing:0.06em; margin:20px 0 8px;">Combos</h3>
+        <ul style="margin:0; padding-left:18px; font-size:14px;">
+          ${datos.combosTexto.map((linea) => `<li>${linea}</li>`).join('')}
+        </ul>
+      `
+      : '';
 
   const candyHtml =
     datos.candyTexto.length > 0
@@ -79,6 +90,8 @@ function armarHtml(datos: DatosEnvio): string {
           <ul style="margin:0 0 8px; padding-left:18px; font-size:14px;">
             ${datos.butacasTexto.map((linea) => `<li>${linea}</li>`).join('')}
           </ul>
+
+          ${combosHtml}
 
           ${candyHtml}
 

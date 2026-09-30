@@ -8,6 +8,8 @@ import { SalaServicio } from '../../../servicios/sala/sala';
 import { EntradaServicio } from '../../../servicios/entrada/entrada';
 import { ProductoCandyServicio } from '../../../servicios/producto-candy/producto-candy';
 import { CompraCandyServicio } from '../../../servicios/compra-candy/compra-candy';
+import { ComboServicio, ComboConProductos } from '../../../servicios/combo/combo';
+import { CompraComboServicio } from '../../../servicios/compra-combo/compra-combo';
 import { CompraServicio } from '../../../servicios/compra/compra';
 import { ClienteServicio } from '../../../servicios/cliente/cliente';
 import { ConfiguracionCuponServicio } from '../../../servicios/configuracion-cupon/configuracion-cupon';
@@ -24,6 +26,7 @@ import { Boton } from '../../../componentes/boton/boton';
 import { BotonLink } from '../../../componentes/boton-link/boton-link';
 import { MapaButacas } from '../../../componentes/mapa-butacas/mapa-butacas';
 import { Poster } from '../../../componentes/poster/poster';
+import { Cargando } from '../../../componentes/cargando/cargando';
 import { RestriccionEdadPipe } from '../../../pipes/restriccion-edad/restriccion-edad';
 import { Logger } from '../../../servicios/logger/logger';
 import { Flujo } from '../../../servicios/logger/flujo';
@@ -62,7 +65,16 @@ function quitarPrefijoBase64(dataUrl: string): string {
 }
 
 @Component({
-  imports: [Boton, BotonLink, MapaButacas, Poster, DatePipe, UpperCasePipe, RestriccionEdadPipe],
+  imports: [
+    Boton,
+    BotonLink,
+    MapaButacas,
+    Poster,
+    Cargando,
+    DatePipe,
+    UpperCasePipe,
+    RestriccionEdadPipe,
+  ],
   selector: 'app-detalle-funcion',
   styleUrl: './detalle.css',
   templateUrl: './detalle.html',
@@ -75,6 +87,8 @@ export class Detalle implements OnDestroy {
   private entradaServicio = inject(EntradaServicio);
   private productoCandyServicio = inject(ProductoCandyServicio);
   private compraCandyServicio = inject(CompraCandyServicio);
+  private comboServicio = inject(ComboServicio);
+  private compraComboServicio = inject(CompraComboServicio);
   private compraServicio = inject(CompraServicio);
   private clienteServicio = inject(ClienteServicio);
   private configuracionCuponServicio = inject(ConfiguracionCuponServicio);
@@ -89,12 +103,14 @@ export class Detalle implements OnDestroy {
   protected butacas = signal<Butaca[]>([]);
   protected entradas = signal<Entrada[]>([]);
   protected productosCandy = signal<ProductoCandy[]>([]);
+  protected combos = signal<ComboConProductos[]>([]);
 
   protected paso = signal<Paso>('butacas');
   protected pasoMaximo = signal<Paso>('butacas');
   protected enviando = signal(false);
   protected butacasSeleccionadas = signal<Set<string>>(new Set());
   protected cantidadCandy = signal<Map<string, number>>(new Map());
+  protected cantidadCombo = signal<Map<string, number>>(new Map());
   protected codigoCompra = signal<string | null>(null);
   protected qrDataUrl = signal<string | null>(null);
   protected emailAnonimo = signal('');
@@ -159,7 +175,21 @@ export class Detalle implements OnDestroy {
     ),
   );
 
-  protected total = computed(() => this.subtotalButacas() + this.subtotalCandy());
+  protected itemsCombo = computed(() => {
+    const cantidades = this.cantidadCombo();
+
+    return this.combos()
+      .map((combo) => ({ combo, cantidad: cantidades.get(combo.id) ?? 0 }))
+      .filter((item) => item.cantidad > 0);
+  });
+
+  protected subtotalCombos = computed(() =>
+    this.itemsCombo().reduce((acumulado, item) => acumulado + item.combo.precio * item.cantidad, 0),
+  );
+
+  protected total = computed(
+    () => this.subtotalButacas() + this.subtotalCandy() + this.subtotalCombos(),
+  );
 
   protected cuponAplicable = computed(() => {
     const cliente = this.cliente();
@@ -267,11 +297,13 @@ export class Detalle implements OnDestroy {
       { data: salas },
       { data: butacas, error: errorButacas },
       { data: productosCandy, error: errorCandy },
+      { data: combos, error: errorCombos },
     ] = await Promise.all([
       this.peliculaServicio.buscarPorId(data.pelicula_id),
       this.salaServicio.listar(),
       this.salaServicio.listarButacas(data.sala_id),
       this.productoCandyServicio.listarActivos(),
+      this.comboServicio.listarActivos(),
     ]);
 
     this.pelicula.set(pelicula ?? null);
@@ -287,6 +319,12 @@ export class Detalle implements OnDestroy {
       this.errores.mostrar(errorCandy.message);
     } else {
       this.productosCandy.set(productosCandy ?? []);
+    }
+
+    if (errorCombos && errorCombos.code !== TABLA_NO_ENCONTRADA) {
+      this.errores.mostrar(errorCombos.message);
+    } else {
+      this.combos.set(combos ?? []);
     }
 
     const { data: entradas, error: errorEntradas } =
@@ -359,6 +397,35 @@ export class Detalle implements OnDestroy {
     }
 
     this.cantidadCandy.set(mapa);
+  }
+
+  protected cantidadComboDe(comboId: string): number {
+    return this.cantidadCombo().get(comboId) ?? 0;
+  }
+
+  protected sumarCombo(comboId: string) {
+    const mapa = new Map(this.cantidadCombo());
+    mapa.set(comboId, (mapa.get(comboId) ?? 0) + 1);
+    this.cantidadCombo.set(mapa);
+  }
+
+  protected restarCombo(comboId: string) {
+    const mapa = new Map(this.cantidadCombo());
+    const actual = mapa.get(comboId) ?? 0;
+
+    if (actual <= 1) {
+      mapa.delete(comboId);
+    } else {
+      mapa.set(comboId, actual - 1);
+    }
+
+    this.cantidadCombo.set(mapa);
+  }
+
+  protected productosDeCombo(combo: ComboConProductos): string {
+    return combo.combo_producto
+      .map((item) => `${item.cantidad}x ${item.producto_candy?.nombre ?? '—'}`)
+      .join(', ');
   }
 
   actualizarEmailAnonimo(valor: string) {
@@ -434,6 +501,17 @@ export class Detalle implements OnDestroy {
       this.errores.mostrar(errorCandy.message);
     }
 
+    const itemsCombo = this.itemsCombo().map((item) => ({
+      combo_id: item.combo.id,
+      cantidad: item.cantidad,
+    }));
+    const { error: errorCombos } = await this.compraComboServicio.registrar(codigo, itemsCombo);
+
+    if (errorCombos) {
+      this.logger.registrar(Flujo.AltaCompra, TipoEvento.Error, errorCombos.message);
+      this.errores.mostrar(errorCombos.message);
+    }
+
     let descuento = 0;
 
     if (this.cuponAplicable()) {
@@ -495,6 +573,7 @@ export class Detalle implements OnDestroy {
       idioma: funcion.idioma,
       butacasTexto: this.butacasElegidas().map((b) => `${b.fila}${b.numero} (${b.tipo})`),
       candyTexto: this.itemsCandy().map((item) => `${item.cantidad}x ${item.producto.nombre}`),
+      combosTexto: this.itemsCombo().map((item) => `${item.cantidad}x ${item.combo.nombre}`),
       total: totalCobrado,
       descuentoCupon: descuento,
     });

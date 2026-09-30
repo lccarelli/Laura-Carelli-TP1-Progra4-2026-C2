@@ -4,6 +4,12 @@
   flex: 1;
 }
 
+.panel__titulo,
+.tabla-contenedor {
+  max-width: 40rem;
+  margin-inline: auto;
+}
+
 .panel__titulo {
   margin-bottom: 1.5rem;
 }

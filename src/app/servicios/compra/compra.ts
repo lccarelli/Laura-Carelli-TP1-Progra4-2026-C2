@@ -32,6 +32,7 @@ export interface DatosEnvioQr {
   idioma: string;
   butacasTexto: string[];
   candyTexto: string[];
+  combosTexto: string[];
   total: number;
   descuentoCupon: number;
 }

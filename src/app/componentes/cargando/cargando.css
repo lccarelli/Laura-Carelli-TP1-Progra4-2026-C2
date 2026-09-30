@@ -5,8 +5,8 @@
 }
 
 .cargando__icono {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: var(--cargando-tamano, 2.5rem);
+  height: var(--cargando-tamano, 2.5rem);
   animation: cargando-girar 1s linear infinite;
 }
 

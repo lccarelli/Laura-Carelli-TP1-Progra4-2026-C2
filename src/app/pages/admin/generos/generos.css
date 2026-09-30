@@ -4,6 +4,12 @@
   flex: 1;
 }
 
+.panel__encabezado,
+.tabla-contenedor {
+  max-width: 40rem;
+  margin-inline: auto;
+}
+
 .tabla {
   min-width: 20rem;
 }

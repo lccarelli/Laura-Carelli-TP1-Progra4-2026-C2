@@ -22,6 +22,8 @@ export enum Flujo {
   CanjePuntos = 'CanjePuntos',
   AltaCandy = 'AltaCandy',
   BajaCandy = 'BajaCandy',
+  AltaCombo = 'AltaCombo',
+  BajaCombo = 'BajaCombo',
   AltaCompra = 'AltaCompra',
   ValidacionQr = 'ValidacionQr',
 }

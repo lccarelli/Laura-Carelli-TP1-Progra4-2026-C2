@@ -85,6 +85,15 @@
               Mostrar en "Próximamente" (mientras el estreno sea futuro)
             </span>
           </label>
+
+          <label class="campo campo--checkbox">
+            <input
+              type="checkbox"
+              [checked]="avisarNotificaciones()"
+              (change)="alternarAvisarNotificaciones()"
+            />
+            <span class="campo__etiqueta"> Avisar en notificaciones cuando se abra la venta </span>
+          </label>
         </div>
       </div>
 

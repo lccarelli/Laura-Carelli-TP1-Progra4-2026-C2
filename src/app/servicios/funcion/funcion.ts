@@ -183,6 +183,10 @@ export class FuncionServicio {
   }
 
   private async avisarDisponibilidad(pelicula: Pelicula) {
+    if (!pelicula.avisar_notificaciones) {
+      return;
+    }
+
     try {
       await this.supabase.Supabase.functions.invoke('enviar-alertas-disponibilidad', {
         body: { peliculaId: pelicula.id, peliculaNombre: pelicula.nombre },

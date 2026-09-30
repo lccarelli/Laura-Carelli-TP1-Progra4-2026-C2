@@ -33,6 +33,7 @@ export class Formulario {
   protected activa = signal(true);
   protected destacada = signal(false);
   protected enProximamente = signal(false);
+  protected avisarNotificaciones = signal(true);
   protected imagenRota = signal(false);
   protected generos = signal<Genero[]>([]);
   protected generosSeleccionados = signal<Set<string>>(new Set());
@@ -126,6 +127,7 @@ export class Formulario {
     this.activa.set(data.activa);
     this.destacada.set(data.destacada);
     this.enProximamente.set(data.en_proximamente);
+    this.avisarNotificaciones.set(data.avisar_notificaciones);
     this.generosSeleccionados.set(new Set((generosDePelicula ?? []).map((g) => g.id)));
   }
 
@@ -135,6 +137,10 @@ export class Formulario {
 
   alternarEnProximamente() {
     this.enProximamente.update((valor) => !valor);
+  }
+
+  alternarAvisarNotificaciones() {
+    this.avisarNotificaciones.update((valor) => !valor);
   }
 
   async cambiarEstado() {
@@ -232,6 +238,7 @@ export class Formulario {
       activa: this.activa(),
       destacada: this.destacada(),
       en_proximamente: this.enProximamente(),
+      avisar_notificaciones: this.avisarNotificaciones(),
       fecha_estreno: valores.fecha_estreno || null,
       trailer_url: valores.trailer_url || null,
       dias_preventa: valores.dias_preventa ? Number(valores.dias_preventa) : null,

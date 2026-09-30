@@ -89,7 +89,11 @@ export class Detalle {
       return false;
     }
 
-    return new Date(pelicula.fecha_estreno) > new Date() && this.funciones().length === 0;
+    return (
+      pelicula.avisar_notificaciones &&
+      new Date(pelicula.fecha_estreno) > new Date() &&
+      this.funciones().length === 0
+    );
   });
 
   protected funcionesPorDia = computed(() => {

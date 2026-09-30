@@ -74,6 +74,17 @@
             <input type="checkbox" [checked]="destacada()" (change)="alternarDestacada()" />
             <span class="campo__etiqueta">Destacada en la home (modo manual)</span>
           </label>
+
+          <label class="campo campo--checkbox">
+            <input
+              type="checkbox"
+              [checked]="enProximamente()"
+              (change)="alternarEnProximamente()"
+            />
+            <span class="campo__etiqueta">
+              Mostrar en "Próximamente" (mientras el estreno sea futuro)
+            </span>
+          </label>
         </div>
       </div>
 

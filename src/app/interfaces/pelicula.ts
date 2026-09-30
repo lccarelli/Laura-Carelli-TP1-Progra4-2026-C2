@@ -7,6 +7,7 @@ export interface Pelicula {
   restriccion_edad: number | null;
   activa: boolean;
   destacada: boolean;
+  en_proximamente: boolean;
   fecha_estreno: string | null;
   trailer_url: string | null;
   dias_preventa: number | null;

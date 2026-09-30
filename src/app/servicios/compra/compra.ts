@@ -7,6 +7,7 @@ export interface CompraConDetalle {
   codigo_compra: string;
   total: number;
   creada_en: string;
+  cancelada_en: string | null;
   funcion: {
     inicio: string;
     pelicula: { nombre: string } | null;
@@ -49,7 +50,7 @@ export class CompraServicio {
   listarPorCliente(clienteId: string) {
     return this.supabase.Supabase.from(this.tabla)
       .select(
-        'id, codigo_compra, total, creada_en, funcion(inicio, pelicula(nombre), sala(nombre))',
+        'id, codigo_compra, total, creada_en, cancelada_en, funcion(inicio, pelicula(nombre), sala(nombre))',
       )
       .eq('cliente_id', clienteId)
       .order('creada_en', { ascending: false })

@@ -4,10 +4,10 @@
   --crema: #f2f0ea;
   --negro: #131313;
   --naranja: #f2541a;
-  --amarillo: #ffdca0;
+  --gris-claro: #bebcb9;
   --rojo: #c1443a;
   --verde: #4caf50;
-  --gris: #7d7d7a;
+  --gris: #6c6c69;
 }
 
 body {
@@ -35,7 +35,7 @@ body {
 
 .boton--claro-negro,
 .boton--claro-rojo {
-  padding: 0.85rem 2rem;
+  padding: 0.5rem 2rem;
   font-size: 0.8rem;
   background: transparent;
   border: 2px solid var(--negro);
@@ -58,7 +58,7 @@ body {
 }
 
 .boton--oscuro-blanco {
-  padding: 0.4rem 1rem;
+  padding: 0.5rem 1rem;
   font-size: 0.85rem;
   background: transparent;
   border: 1px solid var(--crema);
@@ -85,7 +85,7 @@ body {
 
 .boton--menu {
   border: 2px solid var(--negro);
-  padding: 0.85rem 2rem;
+  padding: 0.5rem 2rem;
   font-size: 0.95rem;
   font-weight: 800;
   color: var(--crema);
@@ -97,7 +97,7 @@ body {
 }
 
 .boton--menu:disabled {
-  background-color: var(--gris);
+  background-color: var(--gris-claro);
   border-color: var(--gris);
   color: var(--negro);
   opacity: 1;

@@ -48,5 +48,26 @@
         <p class="lista-canjes__vacio">Todavía no canjeaste ningún premio.</p>
       }
     </div>
+
+    <h3 class="mis-puntos__subtitulo">Crédito</h3>
+    <p class="puntos-saldo">${{ cliente()?.credito ?? 0 }} disponibles</p>
+
+    <div class="lista-canjes">
+      @for (movimiento of movimientosCredito(); track movimiento.id) {
+        <div class="canje-item">
+          <span class="canje-item__nombre">
+            {{ movimiento.motivo === 'cancelacion' ? 'Cancelación de compra' : 'Usado en compra' }}
+          </span>
+          <span class="canje-item__fecha">
+            {{ movimiento.creada_en | date: 'dd/MM/yyyy HH:mm' }}
+          </span>
+          <span class="canje-item__puntos">
+            {{ movimiento.monto > 0 ? '+' : '' }}${{ movimiento.monto }}
+          </span>
+        </div>
+      } @empty {
+        <p class="lista-canjes__vacio">Todavía no tenés movimientos de crédito.</p>
+      }
+    </div>
   </section>
 </main>

@@ -54,6 +54,16 @@
   color: color-mix(in srgb, var(--negro) 55%, transparent);
 }
 
+.compra-item__cancelada {
+  border: 1.5px solid var(--rojo);
+  color: var(--rojo);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.15rem 0.5rem;
+}
+
 .compra-item__acciones {
   display: flex;
   align-items: center;

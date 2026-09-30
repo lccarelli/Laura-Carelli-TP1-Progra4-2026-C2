@@ -86,6 +86,13 @@
               (alternar)="alternarButaca($event)"
             />
 
+            @if (enPreventa()) {
+              <p class="aviso-preventa">
+                Precio de preventa: -{{ pelicula()?.porcentaje_preventa }}% por butaca hasta el
+                estreno.
+              </p>
+            }
+
             <div class="compra__barra">
               <span class="compra__resumen">
                 {{ butacasSeleccionadas().size }} butaca(s) — ${{ subtotalButacas() }}
@@ -150,6 +157,14 @@
                     <li>{{ item.cantidad }}x {{ item.producto.nombre }}</li>
                   }
                 </ul>
+              }
+
+              @if (enPreventa()) {
+                <p class="resumen-compra__descuento">
+                  Precio de preventa (-{{ pelicula()?.porcentaje_preventa }}%): -${{
+                    descuentoPreventa()
+                  }}
+                </p>
               }
 
               @if (cuponAplicable()) {

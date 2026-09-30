@@ -87,6 +87,32 @@
         <input class="campo__input" type="text" formControlName="trailer_url" />
       </label>
 
+      <div class="campo campo--preventa">
+        <span class="campo__etiqueta">Preventa (opcional)</span>
+        <p class="campo__ayuda">
+          Dejá los dos campos vacíos para que la película no tenga preventa. Se activa sola desde N
+          días antes de la fecha de estreno, con un descuento sobre el precio de cada tipo de
+          butaca, y vuelve al precio normal apenas llega el estreno.
+        </p>
+        <div class="campo--preventa__fila">
+          <label class="campo">
+            <span class="campo__etiqueta">Días antes del estreno</span>
+            <input class="campo__input" type="number" min="1" formControlName="dias_preventa" />
+          </label>
+
+          <label class="campo">
+            <span class="campo__etiqueta">Descuento (%)</span>
+            <input
+              class="campo__input"
+              type="number"
+              min="1"
+              max="100"
+              formControlName="porcentaje_preventa"
+            />
+          </label>
+        </div>
+      </div>
+
       <div class="campo">
         <span class="campo__etiqueta">Géneros</span>
         @if (opcionesGenero().length > 0) {

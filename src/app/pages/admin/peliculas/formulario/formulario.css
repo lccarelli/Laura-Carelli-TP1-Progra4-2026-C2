@@ -53,7 +53,7 @@
 
 .campo__input--area {
   resize: vertical;
-  min-height: 8rem;
+  min-height: 2rem;
 }
 
 .campo__input:focus {
@@ -64,7 +64,7 @@
 .formulario__grid {
   display: grid;
   grid-template-columns: 16rem 1fr;
-  gap: 1.5rem;
+  gap: 2.5rem;
 }
 
 .formulario__columna-imagen {
@@ -79,7 +79,6 @@
 
 .preview {
   border: 2px solid var(--negro);
-  border-radius: 1rem;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -116,6 +115,22 @@
     max-width: 11rem;
     margin-inline: auto;
   }
+}
+
+.campo__ayuda {
+  margin: 0;
+  font-size: 0.8rem;
+  color: color-mix(in srgb, var(--negro) 65%, transparent);
+}
+
+.campo--preventa__fila {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.campo--preventa__fila .campo {
+  flex: 1 1 10rem;
 }
 
 .generos__vacio {

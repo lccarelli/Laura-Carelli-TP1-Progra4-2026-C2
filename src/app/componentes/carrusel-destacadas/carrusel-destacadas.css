@@ -19,7 +19,7 @@
 
 .carrusel__media {
   position: relative;
-  width: 100%;
+  width: 75%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
   display: flex;
@@ -44,21 +44,37 @@
   background: var(--negro);
 }
 
+.carrusel__info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 32rem;
+  text-align: center;
+}
+
 .carrusel__insignias {
-  position: absolute;
-  top: 0.6rem;
-  left: 0.6rem;
-  right: 0.6rem;
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 0.35rem;
-  pointer-events: none;
 }
 
 .carrusel__nombre {
   font-weight: 800;
   font-size: 1.1rem;
   text-align: center;
+}
+
+.carrusel__sinopsis {
+  margin: 0;
+  font-size: 0.85rem;
+  color: color-mix(in srgb, var(--negro) 75%, transparent);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .carrusel__flecha {

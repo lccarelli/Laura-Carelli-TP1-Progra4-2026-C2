@@ -28,6 +28,7 @@ import { RestriccionEdadPipe } from '../../../pipes/restriccion-edad/restriccion
 import { Logger } from '../../../servicios/logger/logger';
 import { Flujo } from '../../../servicios/logger/flujo';
 import { TipoEvento } from '../../../servicios/logger/tipo-evento';
+import { estaEnPreventa } from '../../../utilidades/preventa';
 
 const TABLA_NO_ENCONTRADA = 'PGRST205';
 const ORDEN_PASOS = ['butacas', 'candy', 'pago', 'listo'] as const;
@@ -54,95 +55,6 @@ const PRECIO_POR_TIPO: Record<Butaca['tipo'], number> = {
   accesible: 4000,
   vip: 6000,
 };
-
-const BLOQUES: Butaca['bloque'][] = ['izquierdo', 'centro', 'derecho'];
-
-function generarImagenButacas(butacas: Butaca[], seleccionadas: Set<string>): string | null {
-  const filasConSeleccion = [
-    ...new Set(butacas.filter((b) => seleccionadas.has(b.id)).map((b) => b.fila)),
-  ].sort();
-
-  if (filasConSeleccion.length === 0) {
-    return null;
-  }
-
-  const ANCHO_CELDA = 24;
-  const ALTO_CELDA = 24;
-  const GAP_CELDA = 4;
-  const GAP_BLOQUE = 16;
-  const PADDING = 14;
-  const ANCHO_ETIQUETA = 26;
-
-  const filas = filasConSeleccion.map((fila) => ({
-    fila,
-    bloques: BLOQUES.map((bloque) =>
-      butacas
-        .filter((b) => b.fila === fila && b.bloque === bloque)
-        .sort((a, b) => a.numero - b.numero),
-    ),
-  }));
-
-  const anchoDeFila = (bloques: Butaca[][]) =>
-    bloques.reduce(
-      (acumulado, bloque) => acumulado + bloque.length * (ANCHO_CELDA + GAP_CELDA),
-      0,
-    ) +
-    GAP_BLOQUE * (bloques.length - 1);
-
-  const anchoMaximo = Math.max(...filas.map((f) => anchoDeFila(f.bloques)));
-  const ancho = PADDING * 2 + ANCHO_ETIQUETA + anchoMaximo;
-  const alto = PADDING * 2 + filas.length * (ALTO_CELDA + GAP_CELDA);
-
-  const canvas = document.createElement('canvas');
-  canvas.width = ancho;
-  canvas.height = alto;
-  const ctx = canvas.getContext('2d');
-
-  if (!ctx) {
-    return null;
-  }
-
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, ancho, alto);
-
-  filas.forEach((filaInfo, indice) => {
-    const y = PADDING + indice * (ALTO_CELDA + GAP_CELDA);
-
-    ctx.fillStyle = '#131313';
-    ctx.font = 'bold 13px sans-serif';
-    ctx.textAlign = 'left';
-    ctx.fillText(filaInfo.fila, PADDING, y + ALTO_CELDA - 7);
-
-    let x = PADDING + ANCHO_ETIQUETA;
-
-    filaInfo.bloques.forEach((bloque, indiceBloque) => {
-      for (const butaca of bloque) {
-        const elegida = seleccionadas.has(butaca.id);
-        ctx.fillStyle = elegida ? '#131313' : '#ffffff';
-        ctx.strokeStyle = '#131313';
-        ctx.lineWidth = 1.5;
-        ctx.fillRect(x, y, ANCHO_CELDA, ALTO_CELDA);
-        ctx.strokeRect(x, y, ANCHO_CELDA, ALTO_CELDA);
-
-        if (elegida) {
-          ctx.fillStyle = '#ffffff';
-          ctx.font = '10px sans-serif';
-          ctx.textAlign = 'center';
-          ctx.fillText(String(butaca.numero), x + ANCHO_CELDA / 2, y + ALTO_CELDA / 2 + 4);
-          ctx.textAlign = 'left';
-        }
-
-        x += ANCHO_CELDA + GAP_CELDA;
-      }
-
-      if (indiceBloque < filaInfo.bloques.length - 1) {
-        x += GAP_BLOQUE;
-      }
-    });
-  });
-
-  return canvas.toDataURL('image/png');
-}
 
 function quitarPrefijoBase64(dataUrl: string): string {
   const indice = dataUrl.indexOf(',');
@@ -198,12 +110,39 @@ export class Detalle implements OnDestroy {
     this.butacas().filter((butaca) => this.butacasSeleccionadas().has(butaca.id)),
   );
 
-  protected subtotalButacas = computed(() =>
-    this.butacasElegidas().reduce(
+  protected enPreventa = computed(() => {
+    const pelicula = this.pelicula();
+    return pelicula !== null && estaEnPreventa(pelicula);
+  });
+
+  protected subtotalButacas = computed(() => {
+    const porcentaje = this.enPreventa() ? (this.pelicula()?.porcentaje_preventa ?? 0) : 0;
+
+    return this.butacasElegidas().reduce(
+      (acumulado, butaca) => acumulado + this.precioButaca(butaca.tipo, porcentaje),
+      0,
+    );
+  });
+
+  private precioButaca(tipo: Butaca['tipo'], porcentajeDescuento: number): number {
+    const precioNormal = PRECIO_POR_TIPO[tipo];
+    return porcentajeDescuento > 0
+      ? Math.round(precioNormal * (1 - porcentajeDescuento / 100))
+      : precioNormal;
+  }
+
+  protected descuentoPreventa = computed(() => {
+    if (!this.enPreventa()) {
+      return 0;
+    }
+
+    const precioNormal = this.butacasElegidas().reduce(
       (acumulado, butaca) => acumulado + PRECIO_POR_TIPO[butaca.tipo],
       0,
-    ),
-  );
+    );
+
+    return precioNormal - this.subtotalButacas();
+  });
 
   protected itemsCandy = computed(() => {
     const cantidades = this.cantidadCandy();
@@ -542,13 +481,11 @@ export class Detalle implements OnDestroy {
     this.qrDataUrl.set(qr);
 
     const pelicula = this.pelicula();
-    const imagenButacas = generarImagenButacas(this.butacas(), new Set(butacaIds));
 
     const { error: errorMail } = await this.compraServicio.enviarQrPorMail({
       email,
       codigoCompra: codigo,
       qrBase64: quitarPrefijoBase64(qr),
-      butacasImagenBase64: imagenButacas ? quitarPrefijoBase64(imagenButacas) : null,
       posterUrl: pelicula?.imagen_url ?? null,
       peliculaNombre: pelicula?.nombre ?? '',
       restriccionTexto: new RestriccionEdadPipe().transform(pelicula?.restriccion_edad ?? null),

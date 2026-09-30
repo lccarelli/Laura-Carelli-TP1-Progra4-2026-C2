@@ -13,7 +13,6 @@ interface DatosEnvio {
   email: string;
   codigoCompra: string;
   qrBase64: string;
-  butacasImagenBase64: string | null;
   posterUrl: string | null;
   peliculaNombre: string;
   restriccionTexto: string;
@@ -41,10 +40,6 @@ function armarHtml(datos: DatosEnvio): string {
         </ul>
       `
       : '';
-
-  const butacasImagenHtml = datos.butacasImagenBase64
-    ? `<img src="cid:butacas" alt="Ubicación de las butacas" style="display:block; max-width:100%; width:100%; height:auto; margin:10px 0; border:2px solid #131313; padding:6px; background:#ffffff; box-sizing:border-box;" />`
-    : '';
 
   const avisoAdultoHtml =
     datos.restriccionTexto !== 'Sin restricción'
@@ -84,7 +79,6 @@ function armarHtml(datos: DatosEnvio): string {
           <ul style="margin:0 0 8px; padding-left:18px; font-size:14px;">
             ${datos.butacasTexto.map((linea) => `<li>${linea}</li>`).join('')}
           </ul>
-          ${butacasImagenHtml}
 
           ${candyHtml}
 
@@ -141,16 +135,6 @@ Deno.serve(async (req: Request) => {
         contentID: 'qr',
       },
     ];
-
-    if (datos.butacasImagenBase64) {
-      attachments.push({
-        filename: 'butacas.png',
-        contentType: 'image/png',
-        encoding: 'base64' as const,
-        content: datos.butacasImagenBase64,
-        contentID: 'butacas',
-      });
-    }
 
     await client.send({
       from: `kínema <${GMAIL_USER}>`,

@@ -4,11 +4,12 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Poster } from '../poster/poster';
 import { Cargando } from '../cargando/cargando';
 import { EstrellasPipe } from '../../pipes/estrellas/estrellas';
+import { RestriccionEdadPipe } from '../../pipes/restriccion-edad/restriccion-edad';
 import { DestacadaVista } from './destacada-vista';
 import { extraerIdYoutube } from '../../utilidades/youtube';
 
 @Component({
-  imports: [RouterLink, Poster, Cargando, EstrellasPipe],
+  imports: [RouterLink, Poster, Cargando, EstrellasPipe, RestriccionEdadPipe],
   selector: 'app-carrusel-destacadas',
   styleUrl: './carrusel-destacadas.css',
   templateUrl: './carrusel-destacadas.html',

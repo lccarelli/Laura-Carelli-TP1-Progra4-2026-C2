@@ -23,7 +23,6 @@ export interface DatosEnvioQr {
   email: string;
   codigoCompra: string;
   qrBase64: string;
-  butacasImagenBase64: string | null;
   posterUrl: string | null;
   peliculaNombre: string;
   restriccionTexto: string;

@@ -22,7 +22,9 @@
           } @else {
             <app-poster class="carrusel__poster" [imagen]="item.pelicula.imagen_url" />
           }
+        </div>
 
+        <div class="carrusel__info">
           <div class="carrusel__insignias">
             @if (item.promedio !== null) {
               <span class="insignia">{{ item.promedio | estrellas }}</span>
@@ -30,13 +32,20 @@
             @if (item.esEstreno) {
               <span class="insignia">Estreno</span>
             }
+            @if (item.pelicula.restriccion_edad) {
+              <span class="insignia">{{ item.pelicula.restriccion_edad | restriccionEdad }}</span>
+            }
             @for (genero of item.generos; track genero.id) {
               <span class="insignia">{{ genero.nombre }}</span>
             }
           </div>
-        </div>
 
-        <span class="carrusel__nombre">{{ item.pelicula.nombre }}</span>
+          <span class="carrusel__nombre">{{ item.pelicula.nombre }}</span>
+
+          @if (item.pelicula.sinopsis) {
+            <p class="carrusel__sinopsis">{{ item.pelicula.sinopsis }}</p>
+          }
+        </div>
       </a>
     }
 

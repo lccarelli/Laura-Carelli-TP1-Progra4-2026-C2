@@ -9,6 +9,12 @@
       @if (esEstreno) {
         <span class="insignia">Estreno</span>
       }
+      @if (esPreventa) {
+        <span class="insignia">Preventa</span>
+      }
+      @if (pelicula.restriccion_edad) {
+        <span class="insignia">{{ pelicula.restriccion_edad | restriccionEdad }}</span>
+      }
       @for (genero of generos; track genero.id) {
         <span class="insignia">{{ genero.nombre }}</span>
       }

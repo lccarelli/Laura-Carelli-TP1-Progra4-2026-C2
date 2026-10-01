@@ -36,7 +36,7 @@ body {
 .boton--claro-negro,
 .boton--claro-rojo {
   padding: 0.5rem 2rem;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   background: transparent;
   border: 2px solid var(--negro);
   color: var(--negro);
@@ -59,9 +59,9 @@ body {
 
 .boton--oscuro-blanco {
   padding: 0.5rem 1rem;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   background: transparent;
-  border: 1px solid var(--crema);
+  border: 2px solid var(--crema);
   color: var(--crema);
 }
 
@@ -86,7 +86,7 @@ body {
 .boton--menu {
   border: 2px solid var(--negro);
   padding: 0.5rem 2rem;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 800;
   color: var(--crema);
   background-color: var(--negro);

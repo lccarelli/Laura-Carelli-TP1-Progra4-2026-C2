@@ -70,10 +70,14 @@ Deno.serve(async (req: Request) => {
     }
 
     const payload = JSON.stringify({
-      title: 'Ya podés comprar entradas',
-      body: `${peliculaNombre} ya tiene funciones a la venta.`,
-      data: { url: `/peliculas/${peliculaId}` },
+      notification: {
+        title: 'Ya podés comprar entradas',
+        body: `${peliculaNombre} ya tiene funciones a la venta.`,
+        data: { url: `/peliculas/${peliculaId}` },
+      },
     });
+
+    const errores: { endpoint: string; detalle: string }[] = [];
 
     for (const suscripcion of suscripciones ?? []) {
       try {
@@ -86,6 +90,10 @@ Deno.serve(async (req: Request) => {
         );
       } catch (error) {
         const statusCode = (error as { statusCode?: number }).statusCode;
+        const detalle = (error as { body?: string; message?: string }).body ?? String(error);
+
+        console.error('Fallo el envio a', suscripcion.endpoint, 'status', statusCode, detalle);
+        errores.push({ endpoint: suscripcion.endpoint, detalle: `${statusCode}: ${detalle}` });
 
         // 404/410 = el navegador dio de baja esa suscripción del lado del
         // servicio de push; ya no sirve, la borramos para no reintentarla.
@@ -102,9 +110,17 @@ Deno.serve(async (req: Request) => {
       .update({ estado: 'notificada' })
       .in('id', idsAlertas);
 
-    return new Response(JSON.stringify({ ok: true, notificados: alertas.length }), {
-      headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        notificados: alertas.length,
+        suscripciones: suscripciones?.length ?? 0,
+        errores,
+      }),
+      {
+        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+      },
+    );
   } catch (error) {
     return new Response(JSON.stringify({ error: String(error) }), {
       status: 500,

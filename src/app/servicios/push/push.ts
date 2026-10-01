@@ -65,7 +65,7 @@ export class PushServicio {
         p256dh: keys['p256dh'],
         auth: keys['auth'],
       },
-      { onConflict: 'endpoint' },
+      { onConflict: 'cliente_id,endpoint' },
     );
 
     return { error };

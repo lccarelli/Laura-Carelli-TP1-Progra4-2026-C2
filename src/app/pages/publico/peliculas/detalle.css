@@ -68,6 +68,20 @@
   background: var(--negro);
 }
 
+.overlay-cargando {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(19, 19, 19, 0.75);
+}
+
+.overlay-cargando__icono {
+  --cargando-tamano: 5rem;
+}
+
 .selector-funciones {
   max-width: 40rem;
   margin-inline: auto;

@@ -1,4 +1,10 @@
 <main class="pagina">
+  @if (activandoAlerta()) {
+    <div class="overlay-cargando">
+      <app-cargando class="overlay-cargando__icono" />
+    </div>
+  }
+
   <section class="panel-flotante panel--ancho">
     <app-boton-link variante="claro-negro" ruta="/peliculas" class="panel__volver">
       ← Volver
@@ -53,7 +59,11 @@
 
           @if (auth.esCliente()) {
             <app-boton variante="menu" [disabled]="activandoAlerta()" (clic)="alternarAlerta()">
-              {{ alertaActiva() ? 'Cancelar aviso' : 'Avisarme cuando haya entradas' }}
+              @if (activandoAlerta()) {
+                Activando…
+              } @else {
+                {{ alertaActiva() ? 'Cancelar aviso' : 'Avisarme cuando haya entradas' }}
+              }
             </app-boton>
           } @else {
             <p class="aviso-proximamente__login">

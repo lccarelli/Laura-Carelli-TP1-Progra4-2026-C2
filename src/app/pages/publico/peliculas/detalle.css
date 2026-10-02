@@ -4,8 +4,28 @@
   flex: 1;
 }
 
+.panel-flotante {
+  max-width: 72rem;
+  margin-inline: auto;
+}
+
 .panel__volver {
   margin-bottom: 1.5rem;
+}
+
+.ficha {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  gap: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 860px) {
+  .ficha {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
 }
 
 .encabezado {
@@ -13,8 +33,6 @@
   flex-wrap: wrap;
   gap: 1.5rem;
   margin-bottom: 2rem;
-  max-width: 40rem;
-  margin-inline: auto;
 }
 
 .encabezado__poster {
@@ -44,8 +62,6 @@
 }
 
 .trailer {
-  max-width: 40rem;
-  margin-inline: auto;
   margin-bottom: 2rem;
 }
 
@@ -83,11 +99,14 @@
 }
 
 .selector-funciones {
-  max-width: 40rem;
-  margin-inline: auto;
-  border-top: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
-  padding-top: 1.5rem;
   margin-bottom: 1.5rem;
+}
+
+@media (max-width: 860px) {
+  .selector-funciones {
+    border-top: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
+    padding-top: 1.5rem;
+  }
 }
 
 .selector-funciones__titulo {
@@ -124,7 +143,7 @@
 
 .funcion-tile__fecha {
   background: var(--negro);
-  color: #fff;
+  color: var(--crema);
   font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -183,7 +202,7 @@
 
 .horario-tile:hover {
   background: var(--negro);
-  color: #fff;
+  color: var(--crema);
 }
 
 .horario-tile__hora {
@@ -222,7 +241,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  background: white;
+  background: var(--crema);
   color: var(--negro);
   margin-bottom: 1.5rem;
 }

@@ -9,6 +9,7 @@ export interface ItemProductoCombo {
 }
 
 export interface ProductoDeCombo {
+  producto_candy_id: string;
   cantidad: number;
   producto_candy: { nombre: string } | null;
 }
@@ -17,7 +18,8 @@ export interface ComboConProductos extends Combo {
   combo_producto: ProductoDeCombo[];
 }
 
-const SELECT_CON_PRODUCTOS = '*, combo_producto(cantidad, producto_candy(nombre))';
+const SELECT_CON_PRODUCTOS =
+  '*, combo_producto(producto_candy_id, cantidad, producto_candy(nombre))';
 
 @Service()
 export class ComboServicio {
@@ -39,8 +41,19 @@ export class ComboServicio {
       .returns<ComboConProductos[]>();
   }
 
+  buscarPorId(id: string) {
+    return this.supabase.Supabase.from(this.tabla)
+      .select(SELECT_CON_PRODUCTOS)
+      .eq('id', id)
+      .single<ComboConProductos>();
+  }
+
   crear(combo: ComboPorCrear) {
     return this.supabase.Supabase.from(this.tabla).insert(combo).select().returns<Combo[]>();
+  }
+
+  editar({ id, ...datos }: ComboPorCrear & { id: string }) {
+    return this.supabase.actualizar<Combo>(this.tabla, id, datos);
   }
 
   eliminar(id: string) {

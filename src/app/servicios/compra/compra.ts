@@ -1,6 +1,7 @@
 import { inject, Service } from '@angular/core';
 import { Supabase } from '../supabase/supabase';
 import { CompraPorCrear } from '../../interfaces/compra-por-crear';
+import { Pelicula } from '../../interfaces/pelicula';
 
 export interface CompraConDetalle {
   id: string;
@@ -38,6 +39,12 @@ export interface DatosEnvioQr {
   descuentoCupon: number;
 }
 
+export interface CompraConPelicula {
+  id: string;
+  cancelada_en: string | null;
+  funcion: { inicio: string; pelicula: Pelicula | null } | null;
+}
+
 @Service()
 export class CompraServicio {
   private supabase = inject(Supabase);
@@ -45,6 +52,14 @@ export class CompraServicio {
 
   crear(compra: CompraPorCrear) {
     return this.supabase.crear(this.tabla, compra);
+  }
+
+  listarPeliculasVistasPorCliente(clienteId: string) {
+    return this.supabase.Supabase.from(this.tabla)
+      .select('id, cancelada_en, funcion(inicio, pelicula(*))')
+      .eq('cliente_id', clienteId)
+      .is('cancelada_en', null)
+      .returns<CompraConPelicula[]>();
   }
 
   listarPorCliente(clienteId: string) {

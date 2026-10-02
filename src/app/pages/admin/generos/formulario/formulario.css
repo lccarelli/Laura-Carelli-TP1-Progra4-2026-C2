@@ -4,6 +4,11 @@
   flex: 1;
 }
 
+.panel-flotante {
+  max-width: 76rem;
+  margin-inline: auto;
+}
+
 .panel__titulo {
   margin-bottom: 1.75rem;
 }

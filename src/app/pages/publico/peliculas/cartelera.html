@@ -21,6 +21,7 @@
 
         @if (opcionesGenero().length > 0) {
           <app-selector-chips
+            variante="rectangular"
             [opciones]="opcionesGenero()"
             [seleccionados]="generosSeleccionados()"
             (alternar)="alternarGenero($event)"

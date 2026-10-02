@@ -11,6 +11,14 @@
       </app-boton-link>
     </div>
 
+    <input
+      class="buscador"
+      type="text"
+      placeholder="Buscar por nombre..."
+      [value]="busqueda()"
+      (input)="buscar($any($event.target).value)"
+    />
+
     <div class="tabla-contenedor">
       <table class="tabla">
         <thead>
@@ -21,12 +29,18 @@
           </tr>
         </thead>
         <tbody>
-          @for (sala of salas(); track sala.id) {
+          @for (sala of salasFiltradas(); track sala.id) {
             <tr>
               <td class="tabla__nombre">{{ sala.nombre }}</td>
               <td>518</td>
               <td class="tabla__acciones">
-                <app-boton variante="claro-negro" (clic)="eliminar(sala.id)">Eliminar</app-boton>
+                <app-boton
+                  variante="icono-peligro"
+                  [ariaLabel]="'Eliminar ' + sala.nombre"
+                  (clic)="eliminar(sala.id)"
+                >
+                  <img src="/trash.png" alt="" />
+                </app-boton>
               </td>
             </tr>
           } @empty {

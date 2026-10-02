@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { ComboServicio, ComboConProductos } from '../../../servicios/combo/combo';
 import { Errores } from '../../../servicios/errores/errores';
@@ -20,6 +20,17 @@ export class Combos {
   private logger = inject(Logger);
 
   protected combos = signal<ComboConProductos[]>([]);
+  protected busqueda = signal('');
+
+  protected combosFiltrados = computed(() => {
+    const texto = this.busqueda().toLowerCase().trim();
+
+    if (!texto) {
+      return this.combos();
+    }
+
+    return this.combos().filter((combo) => combo.nombre.toLowerCase().includes(texto));
+  });
 
   constructor() {
     this.cargar();
@@ -39,6 +50,10 @@ export class Combos {
     return combo.combo_producto
       .map((item) => `${item.cantidad}x ${item.producto_candy?.nombre ?? '—'}`)
       .join(', ');
+  }
+
+  buscar(texto: string) {
+    this.busqueda.set(texto);
   }
 
   async eliminar(id: string) {

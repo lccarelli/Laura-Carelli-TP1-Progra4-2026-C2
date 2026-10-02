@@ -4,12 +4,55 @@
   flex: 1;
 }
 
-.panel__encabezado,
-.tabla-contenedor {
-  max-width: 40rem;
+.panel-flotante {
+  max-width: 76rem;
   margin-inline: auto;
+}
+
+.panel__encabezado,
+.buscador,
+.tabla-contenedor {
+  max-width: 70rem;
+  margin-inline: auto;
+}
+
+.buscador {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid var(--negro);
+  background: transparent;
+  padding: 0.5rem 0.1rem;
+  font-size: 1rem;
+  color: var(--negro);
+  font-family: inherit;
+  margin-bottom: 2.5rem;
+}
+
+.buscador:focus {
+  outline: none;
+  border-bottom-color: var(--naranja);
+}
+
+.buscador::placeholder {
+  color: color-mix(in srgb, var(--negro) 45%, transparent);
 }
 
 .tabla {
   min-width: 24rem;
+}
+
+.tabla__col-foto {
+  width: 2.25rem;
+}
+
+.miniatura {
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 0.3rem;
+  object-fit: cover;
+  display: block;
+}
+
+.miniatura--vacia {
+  background: var(--gris-claro);
 }

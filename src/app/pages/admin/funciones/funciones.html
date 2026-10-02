@@ -11,41 +11,45 @@
       </app-boton-link>
     </div>
 
+    <input
+      class="buscador"
+      type="text"
+      placeholder="Buscar por película..."
+      [value]="busqueda()"
+      (input)="buscar($any($event.target).value)"
+    />
+
     <div class="tabla-contenedor">
       <table class="tabla">
         <thead>
           <tr>
             <th class="tabla__col-estado">Estado</th>
             <th>Película</th>
-            <th>Sala</th>
-            <th>Inicio</th>
-            <th>Fin</th>
-            <th>Formato</th>
-            <th>Idioma</th>
+            <th>Funciones</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          @for (fila of filas(); track fila.id) {
+          @for (fila of filasFiltradas(); track fila.peliculaId) {
             <tr>
               <td class="tabla__col-estado">
-                <app-estado-punto [activa]="fila.activa" />
+                <app-estado-punto [activa]="fila.algunaActiva" />
               </td>
-              <td class="tabla__nombre">{{ fila.pelicula }}</td>
-              <td>{{ fila.sala }}</td>
-              <td>{{ fila.inicio | date: 'dd/MM/yyyy HH:mm' }}</td>
-              <td>{{ fila.fin | date: 'dd/MM/yyyy HH:mm' }}</td>
-              <td>{{ fila.formato | uppercase }}</td>
-              <td>{{ fila.idioma }}</td>
+              <td class="tabla__nombre">{{ fila.nombre }}</td>
+              <td>{{ fila.cantidad }}</td>
               <td class="tabla__acciones">
-                <app-boton-link variante="claro-negro" [ruta]="['/admin/funciones', fila.id]">
-                  Ver
+                <app-boton-link
+                  variante="icono"
+                  [ruta]="['/admin/funciones/pelicula', fila.peliculaId]"
+                  [ariaLabel]="'Ver funciones de ' + fila.nombre"
+                >
+                  <img src="/folder.png" alt="" />
                 </app-boton-link>
               </td>
             </tr>
           } @empty {
             <tr>
-              <td class="tabla__vacio" colspan="8">No hay funciones cargadas todavía.</td>
+              <td class="tabla__vacio" colspan="4">No hay funciones cargadas todavía.</td>
             </tr>
           }
         </tbody>

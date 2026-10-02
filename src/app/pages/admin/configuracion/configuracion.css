@@ -4,6 +4,11 @@
   flex: 1;
 }
 
+.panel-flotante {
+  max-width: 76rem;
+  margin-inline: auto;
+}
+
 .panel__volver {
   margin-bottom: 1.5rem;
 }
@@ -88,7 +93,7 @@
 
 .modo-opcion--activo {
   background: var(--negro);
-  color: #fff;
+  color: var(--crema);
 }
 
 .modo-opcion__titulo {

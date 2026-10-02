@@ -11,6 +11,14 @@
       </app-boton-link>
     </div>
 
+    <input
+      class="buscador"
+      type="text"
+      placeholder="Buscar por nombre..."
+      [value]="busqueda()"
+      (input)="buscar($any($event.target).value)"
+    />
+
     <div class="tabla-contenedor">
       <table class="tabla">
         <thead>
@@ -23,15 +31,26 @@
           </tr>
         </thead>
         <tbody>
-          @for (premio of premios(); track premio.id) {
+          @for (premio of premiosFiltrados(); track premio.id) {
             <tr>
               <td class="tabla__nombre">{{ premio.nombre }}</td>
               <td>{{ premio.costo_puntos }}</td>
               <td>{{ condicionesDe(premio) }}</td>
               <td>{{ premio.activa ? 'Activo' : 'Inactivo' }}</td>
               <td class="tabla__acciones">
-                <app-boton variante="claro-negro" (clic)="eliminar(premio.id)">
-                  Eliminar
+                <app-boton-link
+                  variante="icono"
+                  [ruta]="['/admin/premios', premio.id, 'editar']"
+                  [ariaLabel]="'Editar ' + premio.nombre"
+                >
+                  <img src="/compose.png" alt="" />
+                </app-boton-link>
+                <app-boton
+                  variante="icono-peligro"
+                  [ariaLabel]="'Eliminar ' + premio.nombre"
+                  (clic)="eliminar(premio.id)"
+                >
+                  <img src="/trash.png" alt="" />
                 </app-boton>
               </td>
             </tr>

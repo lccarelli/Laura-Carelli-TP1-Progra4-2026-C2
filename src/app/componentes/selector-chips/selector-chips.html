@@ -4,6 +4,7 @@
       class="chips__boton"
       type="button"
       [class.chips__boton--activo]="seleccionados.has(opcion.valor)"
+      [class.chips__boton--rectangular]="variante === 'rectangular'"
       (click)="alternar.emit(opcion.valor)"
     >
       {{ opcion.etiqueta }}

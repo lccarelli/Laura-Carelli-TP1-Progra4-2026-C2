@@ -11,6 +11,14 @@
       </app-boton-link>
     </div>
 
+    <input
+      class="buscador"
+      type="text"
+      placeholder="Buscar por nombre..."
+      [value]="busqueda()"
+      (input)="buscar($any($event.target).value)"
+    />
+
     <div class="tabla-contenedor">
       <table class="tabla">
         <thead>
@@ -23,14 +31,27 @@
           </tr>
         </thead>
         <tbody>
-          @for (combo of combos(); track combo.id) {
+          @for (combo of combosFiltrados(); track combo.id) {
             <tr>
               <td class="tabla__nombre">{{ combo.nombre }}</td>
               <td>{{ productosDe(combo) }}</td>
               <td>{{ combo.precio | number: '1.0-0' }}</td>
               <td>{{ combo.activo ? 'Activo' : 'Inactivo' }}</td>
               <td class="tabla__acciones">
-                <app-boton variante="claro-negro" (clic)="eliminar(combo.id)"> Eliminar </app-boton>
+                <app-boton-link
+                  variante="icono"
+                  [ruta]="['/admin/combos', combo.id, 'editar']"
+                  [ariaLabel]="'Editar ' + combo.nombre"
+                >
+                  <img src="/compose.png" alt="" />
+                </app-boton-link>
+                <app-boton
+                  variante="icono-peligro"
+                  [ariaLabel]="'Eliminar ' + combo.nombre"
+                  (clic)="eliminar(combo.id)"
+                >
+                  <img src="/trash.png" alt="" />
+                </app-boton>
               </td>
             </tr>
           } @empty {

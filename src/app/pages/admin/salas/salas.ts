@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { SalaServicio } from '../../../servicios/sala/sala';
 import { Errores } from '../../../servicios/errores/errores';
 import { Sala } from '../../../interfaces/sala';
@@ -20,6 +20,17 @@ export class Salas {
   private logger = inject(Logger);
 
   protected salas = signal<Sala[]>([]);
+  protected busqueda = signal('');
+
+  protected salasFiltradas = computed(() => {
+    const texto = this.busqueda().toLowerCase().trim();
+
+    if (!texto) {
+      return this.salas();
+    }
+
+    return this.salas().filter((sala) => sala.nombre.toLowerCase().includes(texto));
+  });
 
   constructor() {
     this.cargar();
@@ -33,6 +44,10 @@ export class Salas {
     } else {
       this.salas.set(data ?? []);
     }
+  }
+
+  buscar(texto: string) {
+    this.busqueda.set(texto);
   }
 
   async eliminar(id: string) {

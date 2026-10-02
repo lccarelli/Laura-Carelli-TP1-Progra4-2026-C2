@@ -50,6 +50,14 @@ export class FuncionServicio {
     return this.supabase.obtenerPorId<Funcion>(this.tabla, id);
   }
 
+  listarPorPelicula(peliculaId: string) {
+    return this.supabase.Supabase.from(this.tabla)
+      .select('*')
+      .eq('pelicula_id', peliculaId)
+      .order('inicio', { ascending: false })
+      .returns<Funcion[]>();
+  }
+
   listarFuturasDePelicula(peliculaId: string) {
     return this.supabase.Supabase.from(this.tabla)
       .select('*')

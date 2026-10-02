@@ -10,6 +10,7 @@ import { OpcionChip } from './opcion-chip';
 export class SelectorChips {
   @Input() opciones: OpcionChip[] = [];
   @Input() seleccionados = new Set<string | number>();
+  @Input() variante: 'pill' | 'rectangular' = 'pill';
 
   @Output() alternar = new EventEmitter<string | number>();
 }

@@ -1,0 +1,158 @@
+<main class="pagina">
+  <section class="panel-flotante panel--ancho">
+    <app-boton-link variante="claro-negro" ruta="/admin" class="panel__volver">
+      ← Volver
+    </app-boton-link>
+
+    <div class="reportes__encabezado">
+      <h2 class="panel__titulo">Reportes</h2>
+
+      <div class="reportes__acciones">
+        <app-boton variante="claro-negro" (clic)="exportarExcel()">Exportar a Excel</app-boton>
+        <app-boton variante="claro-negro" (clic)="exportarPdf()">Exportar a PDF</app-boton>
+      </div>
+    </div>
+
+    <div class="reportes__tabs">
+      <button
+        type="button"
+        class="reportes__tab"
+        [class.reportes__tab--activo]="tabActiva() === 'facturacion'"
+        (click)="cambiarTab('facturacion')"
+      >
+        Facturación
+      </button>
+      <button
+        type="button"
+        class="reportes__tab"
+        [class.reportes__tab--activo]="tabActiva() === 'peliculas'"
+        (click)="cambiarTab('peliculas')"
+      >
+        Películas más vistas
+      </button>
+      <button
+        type="button"
+        class="reportes__tab"
+        [class.reportes__tab--activo]="tabActiva() === 'candy'"
+        (click)="cambiarTab('candy')"
+      >
+        Candy
+      </button>
+    </div>
+
+    @if (tabActiva() === 'facturacion') {
+      <section class="reportes__seccion">
+        <div class="reportes__resumen">
+          <div class="reportes__dato">
+            <span class="reportes__dato-numero">{{ totalFacturado() | number: '1.0-0' }}</span>
+            <span class="reportes__dato-etiqueta">Total facturado</span>
+          </div>
+          <div class="reportes__dato">
+            <span class="reportes__dato-numero">{{ totalEntradas() }}</span>
+            <span class="reportes__dato-etiqueta">Entradas vendidas</span>
+          </div>
+        </div>
+
+        <div class="tabla-contenedor">
+          <table class="tabla">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Facturado</th>
+                <th>Entradas vendidas</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (fila of facturacion(); track fila.fecha) {
+                <tr>
+                  <td>{{ fila.fecha | date: 'dd/MM/yyyy' }}</td>
+                  <td>{{ fila.total_facturado | number: '1.0-0' }}</td>
+                  <td>{{ fila.entradas_vendidas }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td class="tabla__vacio" colspan="3">Todavía no hay ventas registradas.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+
+    @if (tabActiva() === 'peliculas') {
+      <section class="reportes__seccion">
+        <div class="reportes__encabezado">
+          <h3 class="reportes__titulo">Películas más vistas</h3>
+
+          <div class="reportes__acciones">
+            <app-boton
+              variante="claro-negro"
+              [disabled]="periodo() === 'semana'"
+              (clic)="cambiarPeriodo('semana')"
+            >
+              Por semana
+            </app-boton>
+            <app-boton
+              variante="claro-negro"
+              [disabled]="periodo() === 'mes'"
+              (clic)="cambiarPeriodo('mes')"
+            >
+              Por mes
+            </app-boton>
+          </div>
+        </div>
+
+        @if (masVistasUltimoPeriodo().length === 0) {
+          <p class="reportes__vacio">Todavía no hay entradas vendidas para graficar.</p>
+        } @else {
+          <div class="reportes__columnas">
+            <div class="reportes__grafico">
+              <canvas #canvasBarras></canvas>
+            </div>
+            <div class="reportes__grafico">
+              <canvas #canvasTorta></canvas>
+            </div>
+          </div>
+        }
+      </section>
+    }
+
+    @if (tabActiva() === 'candy') {
+      <section class="reportes__seccion">
+        <h3 class="reportes__titulo">Candy más vendido</h3>
+
+        @if (candy().length === 0) {
+          <p class="reportes__vacio">Todavía no se vendió candy.</p>
+        } @else {
+          <div class="reportes__grafico">
+            <canvas #canvasCandy></canvas>
+          </div>
+        }
+
+        <div class="tabla-contenedor">
+          <table class="tabla">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Cantidad vendida</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (fila of candy(); track fila.producto_id) {
+                <tr>
+                  <td>{{ fila.producto_nombre }}</td>
+                  <td>{{ fila.cantidad_vendida }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td class="tabla__vacio" colspan="2">Todavía no se vendió candy.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+  </section>
+</main>

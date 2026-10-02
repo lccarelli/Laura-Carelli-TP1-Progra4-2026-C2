@@ -6,8 +6,6 @@
   text-decoration: none;
   color: var(--negro);
   transition: opacity 0.2s ease;
-  border-width: 1px;
-  border-color: var(--negro);
 }
 
 .tarjeta-pelicula:hover {
@@ -17,6 +15,7 @@
 .tarjeta-pelicula__poster-contenedor {
   position: relative;
   width: 100%;
+  box-shadow: 0 1.25rem 3rem rgba(19, 19, 19, 0.24);
 }
 
 .tarjeta-pelicula__poster-contenedor app-poster {

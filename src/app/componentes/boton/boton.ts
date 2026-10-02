@@ -10,6 +10,7 @@ export class Boton {
   @Input() variante: VarianteBoton = 'claro-negro';
   @Input() tipo: 'button' | 'submit' = 'button';
   @Input() disabled = false;
+  @Input() ariaLabel: string | null = null;
 
   @Output() clic = new EventEmitter<void>();
 }

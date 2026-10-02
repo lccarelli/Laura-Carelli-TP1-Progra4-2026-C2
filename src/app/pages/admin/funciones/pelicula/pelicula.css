@@ -1,0 +1,24 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.panel-flotante {
+  max-width: 76rem;
+  margin-inline: auto;
+}
+
+.panel__encabezado,
+.tabla-contenedor {
+  max-width: 70rem;
+  margin-inline: auto;
+}
+
+.tabla {
+  min-width: 40rem;
+}
+
+.tabla td {
+  white-space: nowrap;
+}

@@ -20,8 +20,16 @@ export class ProductoCandyServicio {
       .returns<ProductoCandy[]>();
   }
 
+  buscarPorId(id: string) {
+    return this.supabase.obtenerPorId<ProductoCandy>(this.tabla, id);
+  }
+
   crear(producto: ProductoCandyPorCrear) {
     return this.supabase.crear(this.tabla, producto);
+  }
+
+  editar({ id, ...datos }: ProductoCandy) {
+    return this.supabase.actualizar<ProductoCandy>(this.tabla, id, datos);
   }
 
   eliminar(id: string) {

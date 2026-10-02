@@ -1,5 +1,6 @@
-import { Component, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Component, inject, signal } from '@angular/core';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { filter } from 'rxjs';
 import { Auth } from '../../servicios/auth/auth';
 import { PushServicio } from '../../servicios/push/push';
 import { Errores } from '../../servicios/errores/errores';
@@ -18,11 +19,28 @@ import { TipoEvento } from '../../servicios/logger/tipo-evento';
 })
 export class Header {
   protected auth = inject(Auth);
+  protected menuAbierto = signal(false);
   // se inyecta sin usarlo para activar su escucha global de clicks en notificaciones
   private push = inject(PushServicio);
   private router = inject(Router);
   private errores = inject(Errores);
   private logger = inject(Logger);
+
+  alternarMenu() {
+    this.menuAbierto.update((abierto) => !abierto);
+  }
+
+  cerrarMenu() {
+    this.menuAbierto.set(false);
+  }
+
+  constructor() {
+    // Cierra el menú mobile cuando termina de navegar, sea por click en un
+    // link o por teclado — más confiable que escuchar el click en sí.
+    this.router.events
+      .pipe(filter((evento) => evento instanceof NavigationEnd))
+      .subscribe(() => this.cerrarMenu());
+  }
 
   async cerrarSesion() {
     const email = this.auth.usuario()?.email;

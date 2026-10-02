@@ -1,0 +1,22 @@
+<main class="pagina">
+  <section class="panel-flotante panel--ancho">
+    <app-boton-link variante="claro-negro" ruta="/peliculas" class="panel__volver">
+      ← Volver
+    </app-boton-link>
+
+    <h2 class="panel__titulo">Mis películas</h2>
+
+    <div class="tarjetas-grilla">
+      @for (item of peliculasVistas(); track item.pelicula.id) {
+        <div class="pelicula-vista">
+          <app-tarjeta-pelicula [pelicula]="item.pelicula" [promedio]="item.calificacion" />
+          <span class="pelicula-vista__fecha">
+            Vista el {{ item.fecha | date: 'dd/MM/yyyy' }}
+          </span>
+        </div>
+      } @empty {
+        <p class="tarjetas-grilla__vacio">Todavía no viste ninguna película.</p>
+      }
+    </div>
+  </section>
+</main>

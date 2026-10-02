@@ -4,37 +4,55 @@
   flex: 1;
 }
 
+.panel-flotante {
+  max-width: 82rem;
+  margin-inline: auto;
+}
+
 .panel__volver {
   margin-bottom: 1.5rem;
 }
 
+.ficha {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  align-items: start;
+  gap: 2.5rem;
+}
+
+@media (max-width: 860px) {
+  .ficha {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
 .encabezado {
   display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 1.25rem;
   margin-bottom: 2rem;
-  max-width: 40rem;
-  margin-inline: auto;
 }
 
 .encabezado__poster {
-  width: clamp(6rem, 25vw, 10rem);
-  flex-shrink: 0;
+  width: 100%;
+  max-width: 14rem;
+  margin-inline: auto;
   --poster-ancho: 100%;
   --poster-alto: auto;
 }
 
 .encabezado__info {
-  flex: 1;
-  min-width: 10rem;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 }
 
-.compra {
-  border-top: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
-  padding-top: 1.5rem;
+@media (max-width: 860px) {
+  .compra {
+    border-top: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
+    padding-top: 1.5rem;
+  }
 }
 
 .compra__tabs {
@@ -67,7 +85,7 @@
 
 .compra__tab--activo {
   background: var(--negro);
-  color: #fff;
+  color: var(--crema);
 }
 
 .compra__confirmar {

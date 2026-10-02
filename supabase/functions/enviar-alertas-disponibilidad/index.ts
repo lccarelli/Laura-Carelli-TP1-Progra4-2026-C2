@@ -25,6 +25,7 @@ interface AlertaFila {
 }
 
 interface SuscripcionFila {
+  cliente_id: string;
   endpoint: string;
   p256dh: string;
   auth: string;
@@ -61,7 +62,7 @@ Deno.serve(async (req: Request) => {
 
     const { data: suscripciones, error: errorSuscripciones } = await supabase
       .from('push_suscripcion')
-      .select('endpoint, p256dh, auth')
+      .select('cliente_id, endpoint, p256dh, auth')
       .in('cliente_id', clienteIds)
       .returns<SuscripcionFila[]>();
 
@@ -79,6 +80,12 @@ Deno.serve(async (req: Request) => {
 
     const errores: { endpoint: string; detalle: string }[] = [];
 
+    // clientes a los que les llegó el push al menos a una suscripción —
+    // sólo su alerta se marca como notificada. Si falló (y no es un
+    // 404/410 de suscripción muerta), la alerta queda en "pendiente" para
+    // reintentarse la próxima vez que se dispare esta función.
+    const clientesNotificados = new Set<string>();
+
     for (const suscripcion of suscripciones ?? []) {
       try {
         await webpush.sendNotification(
@@ -88,6 +95,7 @@ Deno.serve(async (req: Request) => {
           },
           payload,
         );
+        clientesNotificados.add(suscripcion.cliente_id);
       } catch (error) {
         const statusCode = (error as { statusCode?: number }).statusCode;
         const detalle = (error as { body?: string; message?: string }).body ?? String(error);
@@ -103,17 +111,22 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    const idsAlertas = alertas.map((alerta) => alerta.id);
+    const idsAlertasNotificadas = alertas
+      .filter((alerta) => clientesNotificados.has(alerta.cliente_id))
+      .map((alerta) => alerta.id);
 
-    await supabase
-      .from('alerta_disponibilidad')
-      .update({ estado: 'notificada' })
-      .in('id', idsAlertas);
+    if (idsAlertasNotificadas.length > 0) {
+      await supabase
+        .from('alerta_disponibilidad')
+        .update({ estado: 'notificada' })
+        .in('id', idsAlertasNotificadas);
+    }
 
     return new Response(
       JSON.stringify({
         ok: true,
-        notificados: alertas.length,
+        notificados: idsAlertasNotificadas.length,
+        pendientes: alertas.length - idsAlertasNotificadas.length,
         suscripciones: suscripciones?.length ?? 0,
         errores,
       }),

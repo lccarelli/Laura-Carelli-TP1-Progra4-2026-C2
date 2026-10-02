@@ -1,31 +1,64 @@
-<main class="pagina pagina--centrada">
-  <section class="panel-flotante panel--angosto">
-    <h2 class="panel__titulo">Nuevo producto de candy</h2>
+<main class="pagina">
+  <section class="panel-flotante panel--ancho">
+    <div class="panel__encabezado">
+      <h2 class="panel__titulo">
+        {{ id() ? 'Editar producto de candy' : 'Nuevo producto de candy' }}
+      </h2>
+
+      @if (id()) {
+        <div class="panel__acciones">
+          <label class="toggle">
+            <input type="checkbox" [checked]="activo()" (change)="alternarActivo()" />
+            <span class="toggle__riel"><span class="toggle__perilla"></span></span>
+            <span class="toggle__texto">{{ activo() ? 'Activo' : 'Inactivo' }}</span>
+          </label>
+
+          <app-boton
+            variante="icono-peligro"
+            ariaLabel="Eliminar producto"
+            (clic)="eliminarProducto()"
+          >
+            <img src="/trash.png" alt="" />
+          </app-boton>
+        </div>
+      }
+    </div>
 
     <form class="formulario" [formGroup]="formulario" (ngSubmit)="guardar()">
-      <label class="campo">
-        <span class="campo__etiqueta">Nombre</span>
-        <input class="campo__input" type="text" formControlName="nombre" />
-      </label>
+      <div class="formulario__grid">
+        <div class="formulario__columna-imagen">
+          <div class="preview preview--grande">
+            @if (imagenUrl() && !imagenRota()) {
+              <img class="preview__imagen" [src]="imagenUrl()" (error)="imagenFallo()" alt="" />
+            } @else if (imagenUrl() && imagenRota()) {
+              <span class="preview__error">No se pudo cargar la imagen</span>
+            } @else {
+              <span class="preview__vacio">Sin imagen</span>
+            }
+          </div>
+        </div>
 
-      <label class="campo">
-        <span class="campo__etiqueta">Precio</span>
-        <input class="campo__input" type="number" min="0" formControlName="precio" />
-      </label>
+        <div class="formulario__columna-campos">
+          <label class="campo">
+            <span class="campo__etiqueta">Nombre</span>
+            <input class="campo__input" type="text" formControlName="nombre" />
+          </label>
 
-      <label class="campo">
-        <span class="campo__etiqueta">Imagen (URL)</span>
-        <input class="campo__input" type="text" formControlName="imagen_url" />
-      </label>
+          <label class="campo">
+            <span class="campo__etiqueta">Precio</span>
+            <input class="campo__input" type="number" min="0" formControlName="precio" />
+          </label>
 
-      <label class="campo campo--checkbox">
-        <input type="checkbox" [checked]="activo()" (change)="alternarActivo()" />
-        <span class="campo__etiqueta">Activo (visible al comprar candy)</span>
-      </label>
+          <label class="campo">
+            <span class="campo__etiqueta">Imagen (URL)</span>
+            <input class="campo__input" type="text" formControlName="imagen_url" />
+          </label>
+        </div>
+      </div>
 
       <div class="formulario__acciones">
         <app-boton variante="menu" tipo="submit" [disabled]="formulario.invalid">
-          Crear producto
+          {{ id() ? 'Guardar cambios' : 'Crear producto' }}
         </app-boton>
 
         <app-boton variante="claro-negro" (clic)="cancelar()">Cancelar</app-boton>

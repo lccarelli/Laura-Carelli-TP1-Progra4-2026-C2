@@ -19,313 +19,319 @@
     }
 
     @if (funcion(); as funcion) {
-      <div class="encabezado">
-        <app-poster class="encabezado__poster" [imagen]="pelicula()?.imagen_url ?? null" />
+      <div class="ficha">
+        <div class="encabezado">
+          <app-poster class="encabezado__poster" [imagen]="pelicula()?.imagen_url ?? null" />
 
-        <div class="encabezado__info">
-          <h2 class="panel__titulo">{{ pelicula()?.nombre }}</h2>
+          <div class="encabezado__info">
+            <h2 class="panel__titulo">{{ pelicula()?.nombre }}</h2>
 
-          <dl class="detalle">
-            <div class="detalle__fila">
-              <dt>Sala</dt>
-              <dd>{{ sala() }}</dd>
-            </div>
-            <div class="detalle__fila">
-              <dt>Día</dt>
-              <dd>{{ funcion.inicio | date: 'EEEE dd/MM/yyyy' }}</dd>
-            </div>
-            <div class="detalle__fila">
-              <dt>Hora</dt>
-              <dd>{{ funcion.inicio | date: 'HH:mm' }}</dd>
-            </div>
-            <div class="detalle__fila">
-              <dt>Formato</dt>
-              <dd>{{ funcion.formato | uppercase }}</dd>
-            </div>
-            <div class="detalle__fila">
-              <dt>Idioma</dt>
-              <dd>{{ funcion.idioma }}</dd>
-            </div>
-          </dl>
-        </div>
-      </div>
-
-      <section class="compra">
-        @if (paso() !== 'listo') {
-          <div class="compra__tabs">
-            <button
-              type="button"
-              class="compra__tab"
-              [class.compra__tab--activo]="paso() === 'butacas'"
-              (click)="irA('butacas')"
-            >
-              1 · Butacas
-            </button>
-            <button
-              type="button"
-              class="compra__tab"
-              [class.compra__tab--activo]="paso() === 'candy'"
-              [disabled]="pasoMaximo() === 'butacas'"
-              (click)="irA('candy')"
-            >
-              2 · Candy
-            </button>
-            <button
-              type="button"
-              class="compra__tab"
-              [class.compra__tab--activo]="paso() === 'pago'"
-              [disabled]="pasoMaximo() === 'butacas'"
-              (click)="irA('pago')"
-            >
-              3 · Pagar
-            </button>
-          </div>
-        }
-
-        @switch (paso()) {
-          @case ('butacas') {
-            <app-mapa-butacas
-              [interactiva]="true"
-              [butacas]="butacas()"
-              [entradas]="entradas()"
-              [seleccionadas]="butacasSeleccionadas()"
-              (alternar)="alternarButaca($event)"
-            />
-
-            @if (enPreventa()) {
-              <p class="aviso-preventa">
-                Precio de preventa: -{{ pelicula()?.porcentaje_preventa }}% por butaca hasta el
-                estreno.
-              </p>
-            }
-
-            <div class="compra__barra">
-              <span class="compra__resumen">
-                {{ butacasSeleccionadas().size }} butaca(s) — ${{ subtotalButacas() }}
-              </span>
-              <app-boton
-                variante="menu"
-                [disabled]="butacasSeleccionadas().size === 0 || enviando()"
-                (clic)="confirmarButacas()"
-              >
-                Siguiente
-              </app-boton>
-            </div>
-          }
-          @case ('candy') {
-            @if (combos().length > 0) {
-              <h3 class="combos-destacados__titulo">Combos</h3>
-              <div class="combos-destacados">
-                @for (combo of combos(); track combo.id) {
-                  <div class="combo-item">
-                    <span class="combo-item__nombre">{{ combo.nombre }}</span>
-                    <span class="combo-item__incluye">{{ productosDeCombo(combo) }}</span>
-                    <span class="combo-item__precio">${{ combo.precio }}</span>
-                    <div class="candy-item__stepper">
-                      <button type="button" (click)="restarCombo(combo.id)">−</button>
-                      <span>{{ cantidadComboDe(combo.id) }}</span>
-                      <button type="button" (click)="sumarCombo(combo.id)">+</button>
-                    </div>
-                  </div>
-                }
+            <dl class="detalle">
+              <div class="detalle__fila">
+                <dt>Sala</dt>
+                <dd>{{ sala() }}</dd>
               </div>
-            }
+              <div class="detalle__fila">
+                <dt>Día</dt>
+                <dd>{{ funcion.inicio | date: 'EEEE dd/MM/yyyy' }}</dd>
+              </div>
+              <div class="detalle__fila">
+                <dt>Hora</dt>
+                <dd>{{ funcion.inicio | date: 'HH:mm' }}</dd>
+              </div>
+              <div class="detalle__fila">
+                <dt>Formato</dt>
+                <dd>{{ funcion.formato | uppercase }}</dd>
+              </div>
+              <div class="detalle__fila">
+                <dt>Idioma</dt>
+                <dd>{{ funcion.idioma }}</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
 
-            <div class="candy-grilla">
-              @for (producto of productosCandy(); track producto.id) {
-                <div class="candy-item">
-                  @if (producto.imagen_url) {
-                    <img class="candy-item__imagen" [src]="producto.imagen_url" alt="" />
-                  }
-                  <span class="candy-item__nombre">{{ producto.nombre }}</span>
-                  <span class="candy-item__precio">${{ producto.precio }}</span>
-                  <div class="candy-item__stepper">
-                    <button type="button" (click)="restarCandy(producto.id)">−</button>
-                    <span>{{ cantidadDe(producto.id) }}</span>
-                    <button type="button" (click)="sumarCandy(producto.id)">+</button>
-                  </div>
-                </div>
-              } @empty {
-                <p class="candy-grilla__vacio">No hay candy disponible por ahora.</p>
-              }
-            </div>
-
-            <div class="compra__barra">
-              <span class="compra__resumen">
-                Candy y combos — ${{ subtotalCandy() + subtotalCombos() }}
-              </span>
-              <app-boton variante="menu" (clic)="seguirACandy()">Siguiente</app-boton>
+        <section class="compra">
+          @if (paso() !== 'listo') {
+            <div class="compra__tabs">
+              <button
+                type="button"
+                class="compra__tab"
+                [class.compra__tab--activo]="paso() === 'butacas'"
+                (click)="irA('butacas')"
+              >
+                1 · Butacas
+              </button>
+              <button
+                type="button"
+                class="compra__tab"
+                [class.compra__tab--activo]="paso() === 'candy'"
+                [disabled]="pasoMaximo() === 'butacas'"
+                (click)="irA('candy')"
+              >
+                2 · Candy
+              </button>
+              <button
+                type="button"
+                class="compra__tab"
+                [class.compra__tab--activo]="paso() === 'pago'"
+                [disabled]="pasoMaximo() === 'butacas'"
+                (click)="irA('pago')"
+              >
+                3 · Pagar
+              </button>
             </div>
           }
-          @case ('pago') {
-            <div class="resumen-compra">
-              <span class="insignia">{{
-                pelicula()?.restriccion_edad ?? null | restriccionEdad
-              }}</span>
 
-              @if (restriccionEdad(); as restriccion) {
-                <p class="aviso-adulto">
-                  Esta función es +{{ restriccion }}: debe ir acompañado de un adulto responsable.
-                </p>
-              }
-
-              <h3 class="resumen-compra__titulo">Butacas</h3>
-              <ul class="resumen-compra__lista">
-                @for (butaca of butacasElegidas(); track butaca.id) {
-                  <li>{{ butaca.fila }}{{ butaca.numero }} ({{ butaca.tipo }})</li>
-                }
-              </ul>
-
-              @if (itemsCombo().length > 0) {
-                <h3 class="resumen-compra__titulo">Combos</h3>
-                <ul class="resumen-compra__lista">
-                  @for (item of itemsCombo(); track item.combo.id) {
-                    <li>{{ item.cantidad }}x {{ item.combo.nombre }}</li>
-                  }
-                </ul>
-              }
-
-              @if (itemsCandy().length > 0) {
-                <h3 class="resumen-compra__titulo">Candy</h3>
-                <ul class="resumen-compra__lista">
-                  @for (item of itemsCandy(); track item.producto.id) {
-                    <li>{{ item.cantidad }}x {{ item.producto.nombre }}</li>
-                  }
-                </ul>
-              }
+          @switch (paso()) {
+            @case ('butacas') {
+              <app-mapa-butacas
+                [interactiva]="true"
+                [butacas]="butacas()"
+                [entradas]="entradas()"
+                [seleccionadas]="butacasSeleccionadas()"
+                (alternar)="alternarButaca($event)"
+              />
 
               @if (enPreventa()) {
-                <p class="resumen-compra__descuento">
-                  Precio de preventa (-{{ pelicula()?.porcentaje_preventa }}%): -${{
-                    descuentoPreventa()
-                  }}
+                <p class="aviso-preventa">
+                  Precio de preventa: -{{ pelicula()?.porcentaje_preventa }}% por butaca hasta el
+                  estreno.
                 </p>
               }
 
-              @if (cuponAplicable()) {
-                <p class="resumen-compra__descuento">
-                  Cupón de bienvenida (-{{ cuponConfig()!.porcentaje }}%): -${{ descuentoCupon() }}
-                </p>
+              <div class="compra__barra">
+                <span class="compra__resumen">
+                  {{ butacasSeleccionadas().size }} butaca(s) — ${{ subtotalButacas() }}
+                </span>
+                <app-boton
+                  variante="menu"
+                  [disabled]="butacasSeleccionadas().size === 0 || enviando()"
+                  (clic)="confirmarButacas()"
+                >
+                  Siguiente
+                </app-boton>
+              </div>
+            }
+            @case ('candy') {
+              @if (combos().length > 0) {
+                <h3 class="combos-destacados__titulo">Combos</h3>
+                <div class="combos-destacados">
+                  @for (combo of combos(); track combo.id) {
+                    <div class="combo-item">
+                      <span class="combo-item__nombre">{{ combo.nombre }}</span>
+                      <span class="combo-item__incluye">{{ productosDeCombo(combo) }}</span>
+                      <span class="combo-item__precio">${{ combo.precio }}</span>
+                      <div class="candy-item__stepper">
+                        <button type="button" (click)="restarCombo(combo.id)">−</button>
+                        <span>{{ cantidadComboDe(combo.id) }}</span>
+                        <button type="button" (click)="sumarCombo(combo.id)">+</button>
+                      </div>
+                    </div>
+                  }
+                </div>
               }
 
-              @if (creditoAplicado() > 0) {
-                <p class="resumen-compra__descuento">
-                  Crédito disponible: -${{ creditoAplicado() }}
-                </p>
-              }
-
-              <p class="resumen-compra__total">Total: ${{ totalFinal() }}</p>
-            </div>
-
-            <div class="acceso-compra">
-              @if (auth.esCliente()) {
-                <p class="acceso-compra__cliente">
-                  Comprando como <strong>{{ auth.usuario()?.email }}</strong>
-                </p>
-                @if (!edadValidaCliente()) {
-                  <p class="acceso-compra__error">
-                    Esta película es para {{ restriccionEdad() }} años o más, y tu perfil no cumple
-                    esa edad.
-                  </p>
+              <div class="candy-grilla">
+                @for (producto of productosCandy(); track producto.id) {
+                  <div class="candy-item">
+                    @if (producto.imagen_url) {
+                      <img class="candy-item__imagen" [src]="producto.imagen_url" alt="" />
+                    }
+                    <span class="candy-item__nombre">{{ producto.nombre }}</span>
+                    <span class="candy-item__precio">${{ producto.precio }}</span>
+                    <div class="candy-item__stepper">
+                      <button type="button" (click)="restarCandy(producto.id)">−</button>
+                      <span>{{ cantidadDe(producto.id) }}</span>
+                      <button type="button" (click)="sumarCandy(producto.id)">+</button>
+                    </div>
+                  </div>
+                } @empty {
+                  <p class="candy-grilla__vacio">No hay candy disponible por ahora.</p>
                 }
-              } @else {
-                <label class="campo">
-                  <span class="campo__etiqueta">Mail (para enviarte el QR)</span>
-                  <input
-                    class="campo__input"
-                    type="email"
-                    [value]="emailAnonimo()"
-                    (input)="actualizarEmailAnonimo($any($event.target).value)"
-                  />
-                </label>
+              </div>
+
+              <div class="compra__barra">
+                <span class="compra__resumen">
+                  Candy y combos — ${{ subtotalCandy() + subtotalCombos() }}
+                </span>
+                <app-boton variante="menu" (clic)="seguirACandy()">Siguiente</app-boton>
+              </div>
+            }
+            @case ('pago') {
+              <div class="resumen-compra">
+                <span class="insignia">{{
+                  pelicula()?.restriccion_edad ?? null | restriccionEdad
+                }}</span>
 
                 @if (restriccionEdad(); as restriccion) {
-                  <label class="campo">
-                    <span class="campo__etiqueta"
-                      >Tu edad (esta película es +{{ restriccion }})</span
-                    >
-                    <input
-                      class="campo__input"
-                      type="number"
-                      min="0"
-                      [value]="edadAnonima() ?? ''"
-                      (input)="actualizarEdadAnonima($any($event.target).value)"
-                    />
-                  </label>
-                  @if (!edadValidaAnonima() && edadAnonima() !== null) {
-                    <p class="acceso-compra__error">No alcanza la edad mínima para esta función.</p>
-                  }
+                  <p class="aviso-adulto">
+                    Esta función es +{{ restriccion }}: debe ir acompañado de un adulto responsable.
+                  </p>
                 }
 
-                <p class="acceso-compra__cuenta">
-                  ¿Ya tenés cuenta o querés guardar tus compras?
-                  <app-boton-link variante="claro-negro" ruta="/login"
-                    >Iniciar sesión</app-boton-link
-                  >
-                  <app-boton-link variante="claro-negro" ruta="/registro"
-                    >Registrarme</app-boton-link
-                  >
-                </p>
-              }
-            </div>
+                <h3 class="resumen-compra__titulo">Butacas</h3>
+                <ul class="resumen-compra__lista">
+                  @for (butaca of butacasElegidas(); track butaca.id) {
+                    <li>{{ butaca.fila }}{{ butaca.numero }} ({{ butaca.tipo }})</li>
+                  }
+                </ul>
 
-            <div class="compra__barra">
-              <app-boton variante="claro-negro" [disabled]="enviando()" (clic)="irA('candy')">
-                Atrás
-              </app-boton>
-              <app-boton
-                variante="menu"
-                [disabled]="enviando() || !puedeConfirmarPago()"
-                (clic)="confirmarPago()"
-              >
-                {{ enviando() ? 'Confirmando…' : 'Confirmar pago' }}
-              </app-boton>
-            </div>
-          }
-          @case ('listo') {
-            <div class="confirmacion">
-              <p class="confirmacion__titulo">¡Compra confirmada!</p>
-              <span class="insignia">{{
-                pelicula()?.restriccion_edad ?? null | restriccionEdad
-              }}</span>
-              @if (restriccionEdad(); as restriccion) {
-                <p class="aviso-adulto">
-                  Esta función es +{{ restriccion }}: debe ir acompañado de un adulto responsable.
-                </p>
-              }
-              @if (qrDataUrl(); as qr) {
-                <img class="confirmacion__qr" [src]="qr" alt="Código QR de la compra" />
-              }
-              @if (descuentoAplicado() > 0) {
-                <p class="confirmacion__cupon">
-                  Se aplicó tu cupón de bienvenida: -${{ descuentoAplicado() }}
-                </p>
-              }
-              @if (creditoUsado() > 0) {
-                <p class="confirmacion__cupon">Usaste tu crédito: -${{ creditoUsado() }}</p>
-              }
-              <p class="confirmacion__codigo">Código: {{ codigoCompra() }}</p>
-              <p class="confirmacion__ayuda">Mostrá este código en boletería para retirar.</p>
-              @if (mailEnviado() === true) {
-                <p class="confirmacion__mail">Te enviamos el QR a {{ emailFinal() }}.</p>
-              } @else if (mailEnviado() === false) {
-                <p class="confirmacion__mail confirmacion__mail--error">
-                  No pudimos enviarte el mail, pero tu compra quedó confirmada igual.
-                </p>
-              }
+                @if (itemsCombo().length > 0) {
+                  <h3 class="resumen-compra__titulo">Combos</h3>
+                  <ul class="resumen-compra__lista">
+                    @for (item of itemsCombo(); track item.combo.id) {
+                      <li>{{ item.cantidad }}x {{ item.combo.nombre }}</li>
+                    }
+                  </ul>
+                }
 
-              <div class="confirmacion__acciones">
-                <app-boton variante="claro-negro" (clic)="descargarComprobante()">
-                  Descargar comprobante (PDF)
-                </app-boton>
-                <app-boton-link variante="claro-negro" ruta="/peliculas">
-                  Volver a la cartelera
-                </app-boton-link>
+                @if (itemsCandy().length > 0) {
+                  <h3 class="resumen-compra__titulo">Candy</h3>
+                  <ul class="resumen-compra__lista">
+                    @for (item of itemsCandy(); track item.producto.id) {
+                      <li>{{ item.cantidad }}x {{ item.producto.nombre }}</li>
+                    }
+                  </ul>
+                }
+
+                @if (enPreventa()) {
+                  <p class="resumen-compra__descuento">
+                    Precio de preventa (-{{ pelicula()?.porcentaje_preventa }}%): -${{
+                      descuentoPreventa()
+                    }}
+                  </p>
+                }
+
+                @if (cuponAplicable()) {
+                  <p class="resumen-compra__descuento">
+                    Cupón de bienvenida (-{{ cuponConfig()!.porcentaje }}%): -${{
+                      descuentoCupon()
+                    }}
+                  </p>
+                }
+
+                @if (creditoAplicado() > 0) {
+                  <p class="resumen-compra__descuento">
+                    Crédito disponible: -${{ creditoAplicado() }}
+                  </p>
+                }
+
+                <p class="resumen-compra__total">Total: ${{ totalFinal() }}</p>
               </div>
-            </div>
+
+              <div class="acceso-compra">
+                @if (auth.esCliente()) {
+                  <p class="acceso-compra__cliente">
+                    Comprando como <strong>{{ auth.usuario()?.email }}</strong>
+                  </p>
+                  @if (!edadValidaCliente()) {
+                    <p class="acceso-compra__error">
+                      Esta película es para {{ restriccionEdad() }} años o más, y tu perfil no
+                      cumple esa edad.
+                    </p>
+                  }
+                } @else {
+                  <label class="campo">
+                    <span class="campo__etiqueta">Mail (para enviarte el QR)</span>
+                    <input
+                      class="campo__input"
+                      type="email"
+                      [value]="emailAnonimo()"
+                      (input)="actualizarEmailAnonimo($any($event.target).value)"
+                    />
+                  </label>
+
+                  @if (restriccionEdad(); as restriccion) {
+                    <label class="campo">
+                      <span class="campo__etiqueta"
+                        >Tu edad (esta película es +{{ restriccion }})</span
+                      >
+                      <input
+                        class="campo__input"
+                        type="number"
+                        min="0"
+                        [value]="edadAnonima() ?? ''"
+                        (input)="actualizarEdadAnonima($any($event.target).value)"
+                      />
+                    </label>
+                    @if (!edadValidaAnonima() && edadAnonima() !== null) {
+                      <p class="acceso-compra__error">
+                        No alcanza la edad mínima para esta función.
+                      </p>
+                    }
+                  }
+
+                  <p class="acceso-compra__cuenta">
+                    ¿Ya tenés cuenta o querés guardar tus compras?
+                    <app-boton-link variante="claro-negro" ruta="/login"
+                      >Iniciar sesión</app-boton-link
+                    >
+                    <app-boton-link variante="claro-negro" ruta="/registro"
+                      >Registrarme</app-boton-link
+                    >
+                  </p>
+                }
+              </div>
+
+              <div class="compra__barra">
+                <app-boton variante="claro-negro" [disabled]="enviando()" (clic)="irA('candy')">
+                  Atrás
+                </app-boton>
+                <app-boton
+                  variante="menu"
+                  [disabled]="enviando() || !puedeConfirmarPago()"
+                  (clic)="confirmarPago()"
+                >
+                  {{ enviando() ? 'Confirmando…' : 'Confirmar pago' }}
+                </app-boton>
+              </div>
+            }
+            @case ('listo') {
+              <div class="confirmacion">
+                <p class="confirmacion__titulo">¡Compra confirmada!</p>
+                <span class="insignia">{{
+                  pelicula()?.restriccion_edad ?? null | restriccionEdad
+                }}</span>
+                @if (restriccionEdad(); as restriccion) {
+                  <p class="aviso-adulto">
+                    Esta función es +{{ restriccion }}: debe ir acompañado de un adulto responsable.
+                  </p>
+                }
+                @if (qrDataUrl(); as qr) {
+                  <img class="confirmacion__qr" [src]="qr" alt="Código QR de la compra" />
+                }
+                @if (descuentoAplicado() > 0) {
+                  <p class="confirmacion__cupon">
+                    Se aplicó tu cupón de bienvenida: -${{ descuentoAplicado() }}
+                  </p>
+                }
+                @if (creditoUsado() > 0) {
+                  <p class="confirmacion__cupon">Usaste tu crédito: -${{ creditoUsado() }}</p>
+                }
+                <p class="confirmacion__codigo">Código: {{ codigoCompra() }}</p>
+                <p class="confirmacion__ayuda">Mostrá este código en boletería para retirar.</p>
+                @if (mailEnviado() === true) {
+                  <p class="confirmacion__mail">Te enviamos el QR a {{ emailFinal() }}.</p>
+                } @else if (mailEnviado() === false) {
+                  <p class="confirmacion__mail confirmacion__mail--error">
+                    No pudimos enviarte el mail, pero tu compra quedó confirmada igual.
+                  </p>
+                }
+
+                <div class="confirmacion__acciones">
+                  <app-boton variante="claro-negro" (clic)="descargarComprobante()">
+                    Descargar comprobante (PDF)
+                  </app-boton>
+                  <app-boton-link variante="claro-negro" ruta="/peliculas">
+                    Volver a la cartelera
+                  </app-boton-link>
+                </div>
+              </div>
+            }
           }
-        }
-      </section>
+        </section>
+      </div>
     }
   </section>
 </main>

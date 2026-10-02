@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Auth } from '../../servicios/auth/auth';
 import { Errores } from '../../servicios/errores/errores';
@@ -26,6 +26,12 @@ export class Login {
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
+
+  protected mostrarPassword = signal(false);
+
+  alternarMostrarPassword() {
+    this.mostrarPassword.update((valor) => !valor);
+  }
 
   async enviar() {
     const { email, password } = this.formulario.getRawValue();

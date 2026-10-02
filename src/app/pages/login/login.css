@@ -44,6 +44,36 @@
   border-bottom-color: var(--naranja);
 }
 
+.campo__con-boton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.campo__con-boton .campo__input {
+  flex: 1;
+}
+
+.campo__boton-ojo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: color-mix(in srgb, var(--negro) 60%, transparent);
+  cursor: pointer;
+  padding: 0.4rem;
+}
+
+.campo__boton-ojo:hover {
+  color: var(--negro);
+}
+
+.campo__boton-ojo svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
 .tarjeta__form > app-boton {
   margin-top: 0.5rem;
 }

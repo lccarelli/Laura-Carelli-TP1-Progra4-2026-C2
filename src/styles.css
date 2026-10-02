@@ -9,12 +9,13 @@
   --verde: #4caf50;
   --amarillo: #f2b705;
   --gris: #6c6c69;
-  --font-display: 'Fraunces', serif;
+  --font-display: 'Space Grotesk', sans-serif;
   --font-logo: 'Space Grotesk', sans-serif;
 }
 
 body {
-  background: var(--crema);
+  background: color-mix(in srgb, var(--crema) 70%, var(--gris-claro) 30%);
+  font-family: var(--font-logo);
 }
 
 .boton {

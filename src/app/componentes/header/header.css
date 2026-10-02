@@ -3,6 +3,7 @@
 }
 
 .header {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -10,10 +11,24 @@
   background: var(--negro);
 }
 
-.header__acciones {
+.header__menu {
+  display: contents;
+}
+
+.header__acciones,
+.header__sesion {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+}
+
+@media (min-width: 861px) {
+  .header__acciones {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
 }
 
 .header__titulo-enlace {
@@ -22,9 +37,67 @@
 }
 
 .header__titulo {
-  font-size: 1.5rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-logo);
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
   margin: 0;
   color: var(--crema);
+}
+
+.header__hamburguesa {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.3rem;
+  border: none;
+  background: transparent;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.header__hamburguesa-linea {
+  width: 1.5rem;
+  height: 2px;
+  background: var(--crema);
+}
+
+@media (max-width: 860px) {
+  .header__hamburguesa {
+    display: flex;
+  }
+
+  .header__menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    background: var(--negro);
+    border-top: 1px solid color-mix(in srgb, var(--crema) 20%, transparent);
+    z-index: 100;
+  }
+
+  .header__menu--abierto {
+    display: flex;
+  }
+
+  .header__acciones,
+  .header__sesion {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .header__sesion {
+    border-top: 1px solid color-mix(in srgb, var(--crema) 20%, transparent);
+    padding-top: 0.5rem;
+  }
 }

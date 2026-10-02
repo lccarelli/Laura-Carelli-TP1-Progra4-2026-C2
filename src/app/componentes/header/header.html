@@ -1,24 +1,45 @@
 <header class="header">
   <a routerLink="/" class="header__titulo-enlace">
-    <h1 class="header__titulo">CINE KIMENA</h1>
+    <h1 class="header__titulo">
+      <span class="header__titulo-linea">Cine</span>
+      <span class="header__titulo-linea">Kimena</span>
+    </h1>
   </a>
 
-  <div class="header__acciones">
-    <app-boton-link variante="oscuro-blanco" ruta="/proximamente">Próximamente</app-boton-link>
-    @if (auth.esCliente()) {
-      <app-boton-link variante="oscuro-blanco" ruta="/mis-compras">Mis compras</app-boton-link>
-      <app-boton-link variante="oscuro-blanco" ruta="/mis-puntos">Mis puntos</app-boton-link>
-    }
-    @if (auth.esEmpleado() || auth.esAdmin()) {
-      <app-boton-link variante="oscuro-blanco" ruta="/boleteria">Boletería</app-boton-link>
-    }
-    @if (auth.usuario()) {
-      <app-boton variante="oscuro-blanco" (clic)="cerrarSesion()"> Cerrar sesión </app-boton>
-    } @else {
-      <app-boton variante="oscuro-blanco" (clic)="ingresarComoProfesor()">
-        Ingresar como Administrador
-      </app-boton>
-      <app-boton-link variante="oscuro-blanco" ruta="/login">Iniciar sesión</app-boton-link>
-    }
+  <button
+    type="button"
+    class="header__hamburguesa"
+    [attr.aria-expanded]="menuAbierto()"
+    aria-label="Abrir menú"
+    (click)="alternarMenu()"
+  >
+    <span class="header__hamburguesa-linea"></span>
+    <span class="header__hamburguesa-linea"></span>
+    <span class="header__hamburguesa-linea"></span>
+  </button>
+
+  <div class="header__menu" [class.header__menu--abierto]="menuAbierto()">
+    <nav class="header__acciones">
+      <app-boton-link variante="header" ruta="/proximamente">Próximamente</app-boton-link>
+      @if (auth.esCliente()) {
+        <app-boton-link variante="header" ruta="/mis-compras">Mis compras</app-boton-link>
+        <app-boton-link variante="header" ruta="/mis-peliculas">Mis películas</app-boton-link>
+        <app-boton-link variante="header" ruta="/mis-puntos">Mis puntos</app-boton-link>
+      }
+      @if (auth.esEmpleado() || auth.esAdmin()) {
+        <app-boton-link variante="header" ruta="/boleteria">Boletería</app-boton-link>
+      }
+    </nav>
+
+    <div class="header__sesion">
+      @if (auth.usuario()) {
+        <app-boton variante="header" (clic)="cerrarSesion()"> Cerrar sesión </app-boton>
+      } @else {
+        <app-boton variante="header" (clic)="ingresarComoProfesor()">
+          Ingresar como Administrador
+        </app-boton>
+        <app-boton-link variante="header" ruta="/login">Iniciar sesión</app-boton-link>
+      }
+    </div>
   </div>
 </header>

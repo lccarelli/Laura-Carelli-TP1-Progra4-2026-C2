@@ -47,6 +47,7 @@ export class FormularioFuncion {
   protected modo = signal<'unica' | 'recurrente'>('unica');
   protected diasSeleccionados = signal<Set<number>>(new Set());
   protected resultados = signal<ResultadoOcurrencia[] | null>(null);
+  protected enviando = signal(false);
 
   protected formulario = this.formBuilder.nonNullable.group({
     pelicula_id: ['', Validators.required],
@@ -118,7 +119,7 @@ export class FormularioFuncion {
   }
 
   protected puedeGuardar = computed(
-    () => this.modo() === 'unica' || this.diasSeleccionados().size > 0,
+    () => (this.modo() === 'unica' || this.diasSeleccionados().size > 0) && !this.enviando(),
   );
 
   async cargarPeliculas() {
@@ -150,10 +151,20 @@ export class FormularioFuncion {
   }
 
   async guardar() {
-    if (this.modo() === 'unica') {
-      await this.guardarUnica();
-    } else {
-      await this.guardarRecurrente();
+    if (this.enviando()) {
+      return;
+    }
+
+    this.enviando.set(true);
+
+    try {
+      if (this.modo() === 'unica') {
+        await this.guardarUnica();
+      } else {
+        await this.guardarRecurrente();
+      }
+    } finally {
+      this.enviando.set(false);
     }
   }
 

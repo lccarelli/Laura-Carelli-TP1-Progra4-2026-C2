@@ -125,7 +125,7 @@
 
       <div class="formulario__acciones">
         <app-boton variante="menu" tipo="submit" [disabled]="formulario.invalid || !puedeGuardar()">
-          {{ modo() === 'unica' ? 'Crear función' : 'Crear funciones' }}
+          {{ enviando() ? 'Guardando…' : modo() === 'unica' ? 'Crear función' : 'Crear funciones' }}
         </app-boton>
 
         <app-boton variante="claro-negro" (clic)="cancelar()">Cancelar</app-boton>

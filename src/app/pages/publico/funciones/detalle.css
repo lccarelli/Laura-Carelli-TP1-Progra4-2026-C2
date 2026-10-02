@@ -7,6 +7,8 @@
 .panel-flotante {
   max-width: 82rem;
   margin-inline: auto;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .panel__volver {
@@ -15,7 +17,7 @@
 
 .ficha {
   display: grid;
-  grid-template-columns: 1fr 3fr;
+  grid-template-columns: 0.4fr 1fr;
   align-items: start;
   gap: 2.5rem;
 }
@@ -30,7 +32,7 @@
 .encabezado {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
   margin-bottom: 2rem;
 }
 
@@ -237,14 +239,36 @@
   text-align: center;
 }
 
+.resumen-compra__avisos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.resumen-compra__avisos > .insignia {
+  align-self: flex-start;
+}
+
+.resumen-compra-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  gap: 2.5rem;
+  padding: 1.6rem;
+}
+
+@media (max-width: 860px) {
+  .resumen-compra-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
 .resumen-compra {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-}
-
-.resumen-compra > .insignia {
-  align-self: flex-start;
 }
 
 .resumen-compra__titulo {
@@ -397,9 +421,6 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
 }
 
 .campo {
@@ -457,7 +478,7 @@
   font-size: 0.85rem;
   font-weight: 700;
   color: var(--crema);
-  background: var(--naranja);
+  background: var(--gris);
   border: 1.5px solid var(--negro);
   padding: 0.5rem 0.75rem;
   margin: 0.5rem 0 0;

@@ -7,6 +7,7 @@
 .panel-flotante {
   max-width: 76rem;
   margin-inline: auto;
+  margin-top: 1rem;
 }
 
 .panel__titulo {

@@ -8,6 +8,7 @@
   max-width: 70rem;
   margin-inline: auto;
   padding: 2rem 5rem;
+  margin-top: 1rem;
 }
 
 .panel__volver {
@@ -21,7 +22,7 @@
 .encabezado {
   display: flex;
   justify-content: center;
-  gap: 1.5rem;
+  gap: 1rem;
   flex-wrap: wrap;
   margin-bottom: 2rem;
 }

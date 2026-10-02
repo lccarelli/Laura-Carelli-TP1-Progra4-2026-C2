@@ -8,6 +8,7 @@ interface ButacaConEstado {
   butaca: Butaca;
   estado: EstadoButaca;
   seleccionada: boolean;
+  enSeleccionPorOtro: boolean;
 }
 
 function entradaVigente(entrada: Entrada): boolean {
@@ -52,6 +53,7 @@ export class MapaButacas implements OnChanges {
   @Input() entradas: Entrada[] = [];
   @Input() interactiva = false;
   @Input() seleccionadas = new Set<string>();
+  @Input() enSeleccionPorOtros = new Set<string>();
   @Output() alternar = new EventEmitter<string>();
 
   protected filas = signal<FilaDeButacas[]>([]);
@@ -71,10 +73,13 @@ export class MapaButacas implements OnChanges {
 
     for (const butaca of this.butacas) {
       const estado = entradaPorButaca.get(butaca.id)?.estado ?? 'libre';
+      const seleccionada = this.seleccionadas.has(butaca.id);
       const butacaConEstado: ButacaConEstado = {
         butaca,
         estado,
-        seleccionada: this.seleccionadas.has(butaca.id),
+        seleccionada,
+        enSeleccionPorOtro:
+          !seleccionada && estado === 'libre' && this.enSeleccionPorOtros.has(butaca.id),
       };
       const butacasDeFila = butacasPorFila.get(butaca.fila) ?? [];
       butacasDeFila.push(butacaConEstado);
@@ -117,7 +122,11 @@ export class MapaButacas implements OnChanges {
   }
 
   protected clic(v: ButacaConEstado) {
-    if (!this.interactiva || v.estado !== 'libre') {
+    if (!this.interactiva || v.enSeleccionPorOtro) {
+      return;
+    }
+
+    if (v.estado !== 'libre' && !v.seleccionada) {
       return;
     }
 

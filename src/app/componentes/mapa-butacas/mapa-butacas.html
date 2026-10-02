@@ -20,11 +20,20 @@
                       class="butaca"
                       [class.butaca--accesible]="v.butaca.tipo === 'accesible'"
                       [class.butaca--vip]="v.butaca.tipo === 'vip'"
-                      [class.butaca--reservada]="v.estado === 'reservada'"
+                      [class.butaca--reservada]="v.estado === 'reservada' && !v.seleccionada"
                       [class.butaca--vendida]="v.estado === 'vendida'"
+                      [class.butaca--en-seleccion]="v.enSeleccionPorOtro"
                       [class.butaca--seleccionada]="v.seleccionada"
-                      [class.butaca--clickeable]="interactiva && v.estado === 'libre'"
-                      [disabled]="!interactiva || v.estado !== 'libre'"
+                      [class.butaca--clickeable]="
+                        interactiva &&
+                        !v.enSeleccionPorOtro &&
+                        (v.estado === 'libre' || v.seleccionada)
+                      "
+                      [disabled]="
+                        !interactiva ||
+                        v.enSeleccionPorOtro ||
+                        (v.estado !== 'libre' && !v.seleccionada)
+                      "
                       [title]="fila.fila + v.butaca.numero"
                       (click)="clic(v)"
                     ></button>
@@ -42,6 +51,9 @@
         <span class="mapa__leyenda-item"><span class="butaca"></span> Libre</span>
         <span class="mapa__leyenda-item">
           <span class="butaca butaca--reservada"></span> Reservada
+        </span>
+        <span class="mapa__leyenda-item">
+          <span class="butaca butaca--en-seleccion"></span> En selección
         </span>
         <span class="mapa__leyenda-item"><span class="butaca butaca--vendida"></span> Vendida</span>
         <span class="mapa__leyenda-item">

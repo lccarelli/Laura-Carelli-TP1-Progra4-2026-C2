@@ -117,6 +117,7 @@ export class Detalle implements OnDestroy {
   protected pasoMaximo = signal<Paso>('butacas');
   protected enviando = signal(false);
   protected butacasSeleccionadas = signal<Set<string>>(new Set());
+  protected butacasEnSeleccionPorOtros = signal<Set<string>>(new Set());
   protected cantidadCandy = signal<Map<string, number>>(new Map());
   protected cantidadCombo = signal<Map<string, number>>(new Map());
   protected codigoCompra = signal<string | null>(null);
@@ -135,6 +136,10 @@ export class Detalle implements OnDestroy {
 
   protected butacasElegidas = computed(() =>
     this.butacas().filter((butaca) => this.butacasSeleccionadas().has(butaca.id)),
+  );
+
+  protected cantidadButacasVip = computed(
+    () => this.butacasElegidas().filter((butaca) => butaca.tipo === 'vip').length,
   );
 
   protected enPreventa = computed(() => {
@@ -390,8 +395,10 @@ export class Detalle implements OnDestroy {
       this.entradas.set(entradas ?? []);
     }
 
-    this.canalEntradas = this.entradaServicio.suscribirCambios(id, () =>
-      this.actualizarEntradas(id),
+    this.canalEntradas = this.entradaServicio.suscribirCambios(
+      id,
+      () => this.actualizarEntradas(id),
+      (butacasDeOtros) => this.butacasEnSeleccionPorOtros.set(butacasDeOtros),
     );
 
     const { data: cuponConfig } = await this.configuracionCuponServicio.obtener();
@@ -435,6 +442,10 @@ export class Detalle implements OnDestroy {
     }
 
     this.butacasSeleccionadas.set(seleccionadas);
+
+    if (this.canalEntradas) {
+      this.entradaServicio.marcarSeleccionEnVivo(this.canalEntradas, [...seleccionadas]);
+    }
   }
 
   protected cantidadDe(productoId: string): number {

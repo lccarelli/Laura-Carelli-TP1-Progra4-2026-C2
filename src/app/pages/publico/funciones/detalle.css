@@ -124,6 +124,11 @@
   color: var(--negro);
 }
 
+.compra__acciones {
+  display: flex;
+  gap: 1rem;
+}
+
 .combos-destacados__titulo {
   font-size: 1rem;
   font-weight: 800;
@@ -442,6 +447,16 @@
   font-weight: 700;
   color: var(--negro);
   background: var(--amarillo);
+  border: 1.5px solid var(--negro);
+  padding: 0.5rem 0.75rem;
+  margin: 0.5rem 0 0;
+}
+
+.aviso-vip {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--crema);
+  background: var(--naranja);
   border: 1.5px solid var(--negro);
   padding: 0.5rem 0.75rem;
   margin: 0.5rem 0 0;

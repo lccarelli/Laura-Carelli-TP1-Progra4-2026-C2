@@ -8,6 +8,7 @@ export interface ButacaDeEntrada {
 }
 
 const MINUTOS_RESERVA = 10;
+const CLAVE_SESION = 'cine_sesion_compra';
 
 function entradaVigente(entrada: Entrada): boolean {
   if (entrada.estado === 'vendida') {
@@ -17,10 +18,25 @@ function entradaVigente(entrada: Entrada): boolean {
   return !entrada.reservada_hasta || new Date(entrada.reservada_hasta) > new Date();
 }
 
+interface PresenciaButacas {
+  butacas: string[];
+}
+
 @Service()
 export class EntradaServicio {
   private supabase = inject(Supabase);
   private readonly tabla = 'entrada';
+
+  sesionId(): string {
+    let id = sessionStorage.getItem(CLAVE_SESION);
+
+    if (!id) {
+      id = crypto.randomUUID();
+      sessionStorage.setItem(CLAVE_SESION, id);
+    }
+
+    return id;
+  }
 
   listarPorFuncion(funcionId: string) {
     return this.supabase.Supabase.from(this.tabla)
@@ -31,39 +47,64 @@ export class EntradaServicio {
   }
 
   async reservar(funcionId: string, butacaIds: string[]) {
+    const sesionId = this.sesionId();
     const { data: entradas, error } = await this.listarPorFuncion(funcionId);
 
     if (error) {
       return { error: error.message };
     }
 
-    const ocupadas = new Set(
-      (entradas ?? []).filter(entradaVigente).map((entrada) => entrada.butaca_id),
+    const vigentes = (entradas ?? []).filter(entradaVigente);
+    const propias = vigentes.filter(
+      (entrada) => entrada.estado === 'reservada' && entrada.sesion_id === sesionId,
     );
-    const enConflicto = butacaIds.filter((id) => ocupadas.has(id));
+    const ocupadasPorOtros = new Set(
+      vigentes.filter((entrada) => !propias.includes(entrada)).map((entrada) => entrada.butaca_id),
+    );
+    const enConflicto = butacaIds.filter((id) => ocupadasPorOtros.has(id));
 
     if (enConflicto.length > 0) {
       return { error: 'Alguna butaca elegida ya no está disponible. Volvé a elegir.' };
     }
 
-    const reservadaHasta = new Date(Date.now() + MINUTOS_RESERVA * 60_000).toISOString();
-    const { error: errorInsercion } = await this.supabase.Supabase.from(this.tabla).insert(
-      butacaIds.map((butacaId) => ({
-        funcion_id: funcionId,
-        butaca_id: butacaId,
-        estado: 'reservada' as const,
-        reservada_hasta: reservadaHasta,
-      })),
-    );
+    const aLiberar = propias.filter((entrada) => !butacaIds.includes(entrada.butaca_id));
+    const aCrear = butacaIds.filter((id) => !propias.some((entrada) => entrada.butaca_id === id));
 
-    if (errorInsercion) {
-      return { error: errorInsercion.message };
+    if (aLiberar.length > 0) {
+      const { error: errorBorrado } = await this.supabase.Supabase.from(this.tabla)
+        .delete()
+        .in(
+          'id',
+          aLiberar.map((entrada) => entrada.id),
+        );
+
+      if (errorBorrado) {
+        return { error: errorBorrado.message };
+      }
+    }
+
+    if (aCrear.length > 0) {
+      const reservadaHasta = new Date(Date.now() + MINUTOS_RESERVA * 60_000).toISOString();
+      const { error: errorInsercion } = await this.supabase.Supabase.from(this.tabla).insert(
+        aCrear.map((butacaId) => ({
+          funcion_id: funcionId,
+          butaca_id: butacaId,
+          estado: 'reservada' as const,
+          reservada_hasta: reservadaHasta,
+          sesion_id: sesionId,
+        })),
+      );
+
+      if (errorInsercion) {
+        return { error: errorInsercion.message };
+      }
     }
 
     return { error: null };
   }
 
   async confirmarCompra(funcionId: string, butacaIds: string[], codigoCompra: string) {
+    const sesionId = this.sesionId();
     const { data: entradas, error } = await this.listarPorFuncion(funcionId);
 
     if (error) {
@@ -71,7 +112,10 @@ export class EntradaServicio {
     }
 
     const propias = (entradas ?? []).filter(
-      (entrada) => entrada.estado === 'reservada' && butacaIds.includes(entrada.butaca_id),
+      (entrada) =>
+        entrada.estado === 'reservada' &&
+        entrada.sesion_id === sesionId &&
+        butacaIds.includes(entrada.butaca_id),
     );
 
     if (propias.length !== butacaIds.length) {
@@ -100,19 +144,54 @@ export class EntradaServicio {
       .returns<ButacaDeEntrada[]>();
   }
 
-  suscribirCambios(funcionId: string, alCambiar: () => void) {
-    return this.supabase.Supabase.channel(`entrada-funcion-${funcionId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: this.tabla,
-          filter: `funcion_id=eq.${funcionId}`,
-        },
-        alCambiar,
-      )
-      .subscribe();
+  suscribirCambios(
+    funcionId: string,
+    alCambiar: () => void,
+    alCambiarPresencia?: (butacasDeOtros: Set<string>) => void,
+  ) {
+    const sesionId = this.sesionId();
+    const canal = this.supabase.Supabase.channel(`entrada-funcion-${funcionId}`, {
+      config: { presence: { key: sesionId } },
+    }).on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: this.tabla,
+        filter: `funcion_id=eq.${funcionId}`,
+      },
+      alCambiar,
+    );
+
+    if (alCambiarPresencia) {
+      canal.on('presence', { event: 'sync' }, () => {
+        const estado = canal.presenceState<PresenciaButacas>();
+        const butacasDeOtros = new Set<string>();
+
+        for (const [clave, presencias] of Object.entries(estado)) {
+          if (clave === sesionId) {
+            continue;
+          }
+
+          for (const presencia of presencias) {
+            for (const butacaId of presencia.butacas) {
+              butacasDeOtros.add(butacaId);
+            }
+          }
+        }
+
+        alCambiarPresencia(butacasDeOtros);
+      });
+    }
+
+    return canal.subscribe();
+  }
+
+  marcarSeleccionEnVivo(
+    canal: ReturnType<EntradaServicio['suscribirCambios']>,
+    butacaIds: string[],
+  ) {
+    canal.track({ butacas: butacaIds });
   }
 
   desuscribir(canal: ReturnType<EntradaServicio['suscribirCambios']>) {

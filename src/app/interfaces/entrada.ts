@@ -5,5 +5,6 @@ export interface Entrada {
   estado: 'reservada' | 'vendida';
   reservada_hasta: string | null;
   codigo_compra: string | null;
+  sesion_id: string | null;
   creada_en: string;
 }

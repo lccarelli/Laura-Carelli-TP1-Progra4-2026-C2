@@ -90,6 +90,7 @@
                 [butacas]="butacas()"
                 [entradas]="entradas()"
                 [seleccionadas]="butacasSeleccionadas()"
+                [enSeleccionPorOtros]="butacasEnSeleccionPorOtros()"
                 (alternar)="alternarButaca($event)"
               />
 
@@ -155,7 +156,10 @@
                 <span class="compra__resumen">
                   Candy y combos — ${{ subtotalCandy() + subtotalCombos() }}
                 </span>
-                <app-boton variante="menu" (clic)="seguirACandy()">Siguiente</app-boton>
+                <div class="compra__acciones">
+                  <app-boton variante="claro-negro" (clic)="irA('butacas')">Atrás</app-boton>
+                  <app-boton variante="menu" (clic)="seguirACandy()">Siguiente</app-boton>
+                </div>
               </div>
             }
             @case ('pago') {
@@ -167,6 +171,13 @@
                 @if (restriccionEdad(); as restriccion) {
                   <p class="aviso-adulto">
                     Esta función es +{{ restriccion }}: debe ir acompañado de un adulto responsable.
+                  </p>
+                }
+
+                @if (cantidadButacasVip() > 0) {
+                  <p class="aviso-vip">
+                    Estás comprando {{ cantidadButacasVip() }} butaca(s) VIP, con precio
+                    diferenciado.
                   </p>
                 }
 

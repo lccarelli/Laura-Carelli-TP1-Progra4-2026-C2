@@ -42,6 +42,7 @@ export class FormularioPremio {
     nombre: ['', Validators.required],
     costo_puntos: [0, [Validators.required, Validators.min(1)]],
     cantidad_entradas: [null as number | null],
+    monto_descuento: [null as number | null],
   });
 
   constructor() {
@@ -65,6 +66,7 @@ export class FormularioPremio {
       nombre: data.nombre,
       costo_puntos: data.costo_puntos,
       cantidad_entradas: data.cantidad_entradas ?? null,
+      monto_descuento: data.monto_descuento ?? null,
     });
     this.activa.set(data.activa);
     this.diasSeleccionados.set(new Set(data.dias_validos ?? []));
@@ -93,6 +95,13 @@ export class FormularioPremio {
     );
   }
 
+  actualizarMontoDescuento(valor: string) {
+    const numero = Number(valor);
+    this.formulario.controls.monto_descuento.setValue(
+      valor.trim() !== '' && Number.isFinite(numero) ? numero : null,
+    );
+  }
+
   async guardar() {
     const valores = this.formulario.getRawValue();
     const idExistente = this.id();
@@ -105,6 +114,7 @@ export class FormularioPremio {
       activa: this.activa(),
       dias_validos: dias.length > 0 ? dias : null,
       cantidad_entradas: valores.cantidad_entradas,
+      monto_descuento: valores.monto_descuento,
     };
 
     const { error } = idExistente

@@ -5,5 +5,6 @@ export interface Premio {
   activa: boolean;
   dias_validos: number[] | null;
   cantidad_entradas: number | null;
+  monto_descuento: number | null;
   creada_en: string;
 }

@@ -195,6 +195,34 @@
                   </ul>
                 }
 
+                @if (premiosAplicables().length > 0) {
+                  <h3 class="resumen-compra__titulo">Premios</h3>
+                  <div class="premios-lista">
+                    @for (item of premiosAplicables(); track item.premio.id) {
+                      <button
+                        type="button"
+                        class="premio-tile"
+                        [class.premio-tile--activo]="premioSeleccionado() === item.premio.id"
+                        [disabled]="!item.aplicable"
+                        (click)="elegirPremio(item.premio.id)"
+                      >
+                        <span class="premio-tile__nombre">{{ item.premio.nombre }}</span>
+                        <span class="premio-tile__detalle">
+                          {{ item.premio.costo_puntos }} pts · -${{ item.premio.monto_descuento }}
+                        </span>
+                        @if (!item.aplicable) {
+                          <span class="premio-tile__motivo">
+                            Sólo {{ item.premio.dias_validos | diasValidos }}
+                            @if (item.premio.cantidad_entradas) {
+                              · {{ item.premio.cantidad_entradas }} entradas
+                            }
+                          </span>
+                        }
+                      </button>
+                    }
+                  </div>
+                }
+
                 @if (enPreventa()) {
                   <p class="resumen-compra__descuento">
                     Precio de preventa (-{{ pelicula()?.porcentaje_preventa }}%): -${{
@@ -208,6 +236,12 @@
                     Cupón de bienvenida (-{{ cuponConfig()!.porcentaje }}%): -${{
                       descuentoCupon()
                     }}
+                  </p>
+                }
+
+                @if (descuentoPremio() > 0) {
+                  <p class="resumen-compra__descuento">
+                    {{ premioElegido()?.nombre }}: -${{ descuentoPremio() }}
                   </p>
                 }
 

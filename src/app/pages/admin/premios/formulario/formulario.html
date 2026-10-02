@@ -49,6 +49,19 @@
         />
       </label>
 
+      <label class="campo">
+        <span class="campo__etiqueta">
+          Monto de descuento ($, vacío = no se puede aplicar en el pago, solo se canjea)
+        </span>
+        <input
+          class="campo__input"
+          type="number"
+          min="0"
+          [value]="formulario.controls.monto_descuento.value ?? ''"
+          (input)="actualizarMontoDescuento($any($event.target).value)"
+        />
+      </label>
+
       <div class="formulario__acciones">
         <app-boton variante="menu" tipo="submit" [disabled]="formulario.invalid">
           {{ id() ? 'Guardar cambios' : 'Crear premio' }}

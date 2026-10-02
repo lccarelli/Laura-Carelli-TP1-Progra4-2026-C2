@@ -28,6 +28,7 @@ import { TipoEvento } from '../../../servicios/logger/tipo-evento';
 import { extraerIdYoutube } from '../../../utilidades/youtube';
 
 const PUNTAJES = [1, 2, 3, 4, 5];
+const DIAS_CALENDARIO = 14;
 
 export interface FuncionConSala {
   funcion: Funcion;
@@ -114,25 +115,19 @@ export class Detalle {
   });
 
   protected diasCalendario = computed<DiaCalendario[]>(() => {
-    const claves = [...this.funcionesPorDia().keys()].sort();
-
+    const dias: DiaCalendario[] = [];
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
 
-    const ultimaFecha = claves.length > 0 ? new Date(`${claves[claves.length - 1]}T00:00:00`) : hoy;
+    for (let i = 0; i < DIAS_CALENDARIO; i++) {
+      const fecha = new Date(hoy);
+      fecha.setDate(fecha.getDate() + i);
 
-    const dias: DiaCalendario[] = [];
-    const fecha = new Date(hoy);
-    let i = 0;
-
-    while (fecha <= ultimaFecha) {
       dias.push({
         clave: claveDia(fecha),
         nombreDia: i === 0 ? 'Hoy' : (this.datePipe.transform(fecha, 'EEEE') ?? ''),
         etiquetaFecha: this.datePipe.transform(fecha, 'dd/MM') ?? '',
       });
-      fecha.setDate(fecha.getDate() + 1);
-      i++;
     }
 
     return dias;

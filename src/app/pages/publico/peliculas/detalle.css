@@ -7,6 +7,8 @@
 .panel-flotante {
   max-width: 72rem;
   margin-inline: auto;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .panel__volver {
@@ -15,7 +17,7 @@
 
 .ficha {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 0.8fr 1fr;
   align-items: start;
   gap: 2.5rem;
   margin-bottom: 2rem;
@@ -33,7 +35,7 @@
 .encabezado {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem;
+  gap: 1rem;
   margin-bottom: 2rem;
 }
 
@@ -120,15 +122,20 @@
 }
 
 .selector-funciones__tiles {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
   gap: 1px;
   background: var(--negro);
   border: 1px solid var(--negro);
 }
 
+@media (max-width: 480px) {
+  .selector-funciones__tiles {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
 .funcion-tile {
-  flex: 1 0 4.5rem;
   display: flex;
   flex-direction: column;
   border: none;

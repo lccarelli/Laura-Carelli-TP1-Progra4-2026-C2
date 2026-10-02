@@ -7,6 +7,8 @@
 .panel-flotante {
   max-width: 70rem;
   margin-inline: auto;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .panel__encabezado,

@@ -4,15 +4,26 @@
   flex: 1;
 }
 
+.panel-flotante {
+  max-width: 70rem;
+}
+
 .panel__titulo {
   max-width: 56rem;
   margin: 0 auto 1rem;
 }
 
 .secciones {
+  margin-top: 1rem;
   display: flex;
   flex-direction: column;
   width: 100%;
+}
+
+.destacadas {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
 }
 
 .destacadas app-carrusel-destacadas {

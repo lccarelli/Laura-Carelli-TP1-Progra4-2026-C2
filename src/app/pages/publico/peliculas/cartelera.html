@@ -1,14 +1,14 @@
 <main class="pagina">
-  <div class="secciones">
-    <section class="panel-flotante panel--ancho destacadas">
+  <section class="panel-flotante panel--ancho secciones">
+    <div class="destacadas">
       @if (destacadasVista().length > 0) {
         <app-carrusel-destacadas [items]="destacadasVista()" />
       } @else {
         <p class="tarjetas-grilla__vacio">Todavía no hay películas destacadas.</p>
       }
-    </section>
+    </div>
 
-    <section class="panel-flotante panel--ancho">
+    <div class="cartelera-listado">
       <h2 class="panel__titulo" #carteleraSeccion>CARTELERA</h2>
       <div class="buscador-fila">
         <input
@@ -58,6 +58,6 @@
           <p class="tarjetas-grilla__vacio">No encontramos películas con esos filtros.</p>
         }
       </div>
-    </section>
-  </div>
+    </div>
+  </section>
 </main>

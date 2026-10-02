@@ -22,6 +22,13 @@ export class ResenaServicio {
       .returns<Resena[]>();
   }
 
+  listarDeUsuario(usuarioId: string) {
+    return this.supabase.Supabase.from(this.tabla)
+      .select('pelicula_id, puntaje')
+      .eq('usuario_id', usuarioId)
+      .returns<Pick<Resena, 'pelicula_id' | 'puntaje'>[]>();
+  }
+
   buscarDeUsuario(peliculaId: string, usuarioId: string) {
     return this.supabase.Supabase.from(this.tabla)
       .select('*')

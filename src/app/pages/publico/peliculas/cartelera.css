@@ -59,7 +59,7 @@
   min-width: 14rem;
   border: 2px solid var(--negro);
   padding: 0.55rem 1.1rem;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-family: inherit;
   background: transparent;
   color: var(--negro);
@@ -102,7 +102,7 @@
 
 .dia-tile__nombre {
   background: var(--negro);
-  color: #fff;
+  color: var(--crema);
   font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;

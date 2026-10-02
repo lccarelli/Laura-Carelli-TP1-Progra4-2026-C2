@@ -1,0 +1,35 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.tarjetas-grilla {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  max-width: 56rem;
+  margin-inline: auto;
+}
+
+@media (max-width: 480px) {
+  .tarjetas-grilla {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.tarjetas-grilla__vacio {
+  color: color-mix(in srgb, var(--negro) 60%, transparent);
+}
+
+.pelicula-vista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.pelicula-vista__fecha {
+  font-size: 0.75rem;
+  color: color-mix(in srgb, var(--negro) 60%, transparent);
+  text-align: center;
+}

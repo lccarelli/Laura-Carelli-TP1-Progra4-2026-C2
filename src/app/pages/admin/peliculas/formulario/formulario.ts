@@ -8,14 +8,13 @@ import { Errores } from '../../../../servicios/errores/errores';
 import { PeliculaPorCrear } from '../../../../interfaces/pelicula-por-crear';
 import { Genero } from '../../../../interfaces/genero';
 import { Boton } from '../../../../componentes/boton/boton';
-import { EstadoPunto } from '../../../../componentes/estado-punto/estado-punto';
 import { SelectorChips } from '../../../../componentes/selector-chips/selector-chips';
 import { Logger } from '../../../../servicios/logger/logger';
 import { Flujo } from '../../../../servicios/logger/flujo';
 import { TipoEvento } from '../../../../servicios/logger/tipo-evento';
 
 @Component({
-  imports: [ReactiveFormsModule, Boton, EstadoPunto, SelectorChips],
+  imports: [ReactiveFormsModule, Boton, SelectorChips],
   selector: 'app-formulario',
   styleUrl: './formulario.css',
   templateUrl: './formulario.html',

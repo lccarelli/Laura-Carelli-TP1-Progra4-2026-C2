@@ -1,22 +1,24 @@
 <main class="pagina pagina--centrada">
   <section class="panel-flotante panel--ancho">
     <div class="panel__encabezado">
-      <div class="panel__titulo-fila">
-        @if (id()) {
-          <app-estado-punto [activa]="activa()" />
-        }
-        <h2 class="panel__titulo">
-          {{ id() ? 'Editar película' : 'Nueva película' }}
-        </h2>
-      </div>
+      <h2 class="panel__titulo">
+        {{ id() ? 'Editar película' : 'Nueva película' }}
+      </h2>
 
       @if (id()) {
         <div class="panel__acciones">
-          <app-boton variante="claro-negro" (clic)="cambiarEstado()">
-            {{ activa() ? 'Desactivar película' : 'Activar película' }}
-          </app-boton>
-          <app-boton variante="claro-rojo" (clic)="eliminarPelicula()">
-            Eliminar película
+          <label class="toggle">
+            <input type="checkbox" [checked]="activa()" (change)="cambiarEstado()" />
+            <span class="toggle__riel"><span class="toggle__perilla"></span></span>
+            <span class="toggle__texto">{{ activa() ? 'Activa' : 'Inactiva' }}</span>
+          </label>
+
+          <app-boton
+            variante="icono-peligro"
+            ariaLabel="Eliminar película"
+            (clic)="eliminarPelicula()"
+          >
+            <img src="/trash.png" alt="" />
           </app-boton>
         </div>
       }

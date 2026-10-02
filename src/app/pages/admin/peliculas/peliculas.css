@@ -4,6 +4,11 @@
   flex: 1;
 }
 
+.panel-flotante {
+  max-width: 76rem;
+  margin-inline: auto;
+}
+
 .panel__encabezado,
 .buscador,
 .tabla-contenedor {
@@ -41,17 +46,11 @@
 }
 
 .tabla__generos {
-  display: flex;
-  flex-wrap: wrap;
   gap: 0.3rem;
-  max-width: 14rem;
+  max-width: 10rem;
 }
 
 .etiqueta-genero {
-  border: 1.5px solid var(--negro);
-  padding: 0.15rem 0.55rem;
-  font-size: 0.7rem;
-  font-weight: 700;
   white-space: nowrap;
 }
 
@@ -81,6 +80,7 @@
 }
 
 .tabla__acciones {
-  align-items: center;
-  gap: 0.5rem;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding: 0.5rem;
 }

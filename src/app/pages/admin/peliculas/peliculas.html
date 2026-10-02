@@ -28,7 +28,7 @@
             <th>Duración</th>
             <th>Restricción</th>
             <th>Géneros</th>
-            <th></th>
+            <th>Acción</th>
           </tr>
         </thead>
         <tbody>
@@ -58,13 +58,18 @@
               </td>
               <td class="tabla__acciones">
                 <app-boton-link
-                  variante="claro-negro"
+                  variante="icono"
                   [ruta]="['/admin/peliculas', pelicula.id, 'editar']"
+                  [ariaLabel]="'Editar ' + pelicula.nombre"
                 >
-                  Editar
+                  <img src="/compose.png" alt="" />
                 </app-boton-link>
-                <app-boton variante="claro-negro" (clic)="eliminar(pelicula.id)">
-                  Eliminar
+                <app-boton
+                  variante="icono-peligro"
+                  [ariaLabel]="'Eliminar ' + pelicula.nombre"
+                  (clic)="eliminar(pelicula.id)"
+                >
+                  <img src="/trash.png" alt="" />
                 </app-boton>
               </td>
             </tr>

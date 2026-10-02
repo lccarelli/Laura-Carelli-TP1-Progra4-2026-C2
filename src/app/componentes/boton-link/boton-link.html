@@ -1,3 +1,8 @@
-<a [class]="'boton boton--' + variante" [routerLink]="ruta" [attr.aria-label]="ariaLabel">
+<a
+  [class]="'boton boton--' + variante"
+  [routerLink]="ruta"
+  [fragment]="fragment"
+  [attr.aria-label]="ariaLabel"
+>
   <ng-content />
 </a>

@@ -1,3 +1,12 @@
+.panel-flotante {
+  max-width: 70rem;
+  margin-top: 1rem;
+}
+
+.panel__titulo {
+  margin-bottom: 1rem;
+  margin-left: 2rem;
+}
 .tarjetas-grilla {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

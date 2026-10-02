@@ -6,6 +6,8 @@
     </h1>
   </a>
 
+  <span class="header__separador" aria-hidden="true">|</span>
+
   <button
     type="button"
     class="header__hamburguesa"
@@ -20,6 +22,7 @@
 
   <div class="header__menu" [class.header__menu--abierto]="menuAbierto()">
     <nav class="header__acciones">
+      <app-boton-link variante="header" ruta="/" fragment="cartelera">Cartelera</app-boton-link>
       <app-boton-link variante="header" ruta="/proximamente">Próximamente</app-boton-link>
       @if (auth.esCliente()) {
         <app-boton-link variante="header" ruta="/mis-compras">Mis compras</app-boton-link>

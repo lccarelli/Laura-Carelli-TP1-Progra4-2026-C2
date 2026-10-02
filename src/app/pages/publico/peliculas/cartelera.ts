@@ -1,5 +1,7 @@
-import { Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { PeliculaServicio } from '../../../servicios/pelicula/pelicula';
 import { ConfiguracionHomeServicio } from '../../../servicios/configuracion-home/configuracion-home';
 import { GeneroServicio } from '../../../servicios/genero/genero';
@@ -37,6 +39,7 @@ function claveDia(fecha: Date): string {
   templateUrl: './cartelera.html',
 })
 export class Cartelera {
+  private route = inject(ActivatedRoute);
   private peliculaServicio = inject(PeliculaServicio);
   private configuracionHomeServicio = inject(ConfiguracionHomeServicio);
   private generoServicio = inject(GeneroServicio);
@@ -57,6 +60,7 @@ export class Cartelera {
   protected diaSeleccionado = signal<string | null>(null);
   protected diasCalendario: DiaCalendario[] = this.construirDiasCalendario();
   private carteleraSeccion = viewChild<ElementRef<HTMLElement>>('carteleraSeccion');
+  private fragmento = toSignal(this.route.fragment, { initialValue: null });
 
   protected opcionesGenero = computed(() =>
     this.generos().map((genero) => ({ valor: genero.id, etiqueta: genero.nombre })),
@@ -90,6 +94,15 @@ export class Cartelera {
 
   constructor() {
     this.cargar();
+
+    effect(() => {
+      this.peliculas();
+      this.destacadas();
+
+      if (this.fragmento() === 'cartelera') {
+        this.scrollACartelera();
+      }
+    });
   }
 
   async cargar() {

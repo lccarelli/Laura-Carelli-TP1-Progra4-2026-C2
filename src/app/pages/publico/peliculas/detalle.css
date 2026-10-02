@@ -19,6 +19,8 @@
   align-items: start;
   gap: 2.5rem;
   margin-bottom: 2rem;
+  max-width: 60rem;
+  margin-inline: auto;
 }
 
 @media (max-width: 860px) {
@@ -98,15 +100,16 @@
   --cargando-tamano: 5rem;
 }
 
-.selector-funciones {
-  margin-bottom: 1.5rem;
+.ficha__funciones {
+  border-top: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
+  padding-top: 1.5rem;
+  margin-bottom: 2rem;
+  margin-inline: auto;
+  max-width: 60rem;
 }
 
-@media (max-width: 860px) {
-  .selector-funciones {
-    border-top: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
-    padding-top: 1.5rem;
-  }
+.selector-funciones {
+  margin-bottom: 1.5rem;
 }
 
 .selector-funciones__titulo {
@@ -224,7 +227,7 @@
 }
 
 .resenas-seccion {
-  max-width: 40rem;
+  max-width: 60rem;
   margin-inline: auto;
   border-top: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
   padding-top: 1.5rem;

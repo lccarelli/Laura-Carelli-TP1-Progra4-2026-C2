@@ -50,23 +50,6 @@
     }
 
     @if (items.length > 1) {
-      <button
-        type="button"
-        class="carrusel__flecha carrusel__flecha--anterior"
-        aria-label="Anterior"
-        (click)="anterior()"
-      >
-        ‹
-      </button>
-      <button
-        type="button"
-        class="carrusel__flecha carrusel__flecha--siguiente"
-        aria-label="Siguiente"
-        (click)="siguiente()"
-      >
-        ›
-      </button>
-
       <div class="carrusel__puntos">
         @for (item of items; track item.pelicula.id; let indice = $index) {
           <button

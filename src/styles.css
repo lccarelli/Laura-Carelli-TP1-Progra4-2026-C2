@@ -7,13 +7,15 @@
   --gris-claro: #bebcb9;
   --rojo: #c1443a;
   --verde: #4caf50;
+  --amarillo: #f2b705;
   --gris: #6c6c69;
-  --font-display: 'Fraunces', serif;
+  --font-display: 'Space Grotesk', sans-serif;
   --font-logo: 'Space Grotesk', sans-serif;
 }
 
 body {
-  background: var(--crema);
+  background: color-mix(in srgb, var(--crema) 70%, var(--gris-claro) 30%);
+  font-family: var(--font-logo);
 }
 
 .boton {
@@ -122,14 +124,14 @@ body {
 .boton--menu {
   border: 2px solid var(--negro);
   padding: 0.5rem 2rem;
-  font-size: 0.9rem;
-  font-weight: 800;
+  font-size: 0.8rem;
+  font-weight: 700;
   color: var(--crema);
   background-color: var(--negro);
 }
 
 .boton--menu:not(:disabled):hover {
-  opacity: 0.85;
+  opacity: 0.8;
 }
 
 .boton--menu:disabled {

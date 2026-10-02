@@ -10,5 +10,6 @@ import { VarianteBoton } from '../variante-boton';
 export class BotonLink {
   @Input() variante: VarianteBoton = 'claro-negro';
   @Input({ required: true }) ruta!: string | unknown[];
+  @Input() fragment?: string;
   @Input() ariaLabel: string | null = null;
 }

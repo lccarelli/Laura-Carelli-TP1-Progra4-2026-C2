@@ -5,8 +5,9 @@
 }
 
 .panel-flotante {
-  max-width: 76rem;
+  max-width: 70rem;
   margin-inline: auto;
+  padding: 2rem 5rem;
 }
 
 .panel__volver {

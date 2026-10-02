@@ -52,6 +52,7 @@ export class MapaButacas implements OnChanges {
   @Input() entradas: Entrada[] = [];
   @Input() interactiva = false;
   @Input() seleccionadas = new Set<string>();
+  @Input() reservadasPropias = new Set<string>();
   @Output() alternar = new EventEmitter<string>();
 
   protected filas = signal<FilaDeButacas[]>([]);
@@ -70,12 +71,16 @@ export class MapaButacas implements OnChanges {
     };
 
     for (const butaca of this.butacas) {
-      const estado = entradaPorButaca.get(butaca.id)?.estado ?? 'libre';
-      const butacaConEstado: ButacaConEstado = {
-        butaca,
-        estado,
-        seleccionada: this.seleccionadas.has(butaca.id),
-      };
+      const estadoReal: EstadoButaca = entradaPorButaca.get(butaca.id)?.estado ?? 'libre';
+      const seleccionada = this.seleccionadas.has(butaca.id);
+      let estado: EstadoButaca = estadoReal;
+
+      if (estadoReal === 'reservada' && this.reservadasPropias.has(butaca.id)) {
+        // la reserva es mía: si la deseleccioné, vuelve a estar libre para mí
+        estado = 'libre';
+      }
+
+      const butacaConEstado: ButacaConEstado = { butaca, estado, seleccionada };
       const butacasDeFila = butacasPorFila.get(butaca.fila) ?? [];
       butacasDeFila.push(butacaConEstado);
       butacasPorFila.set(butaca.fila, butacasDeFila);
@@ -117,7 +122,11 @@ export class MapaButacas implements OnChanges {
   }
 
   protected clic(v: ButacaConEstado) {
-    if (!this.interactiva || v.estado !== 'libre') {
+    if (!this.interactiva) {
+      return;
+    }
+
+    if (v.estado !== 'libre' && !v.seleccionada) {
       return;
     }
 

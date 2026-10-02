@@ -47,14 +47,6 @@ export class CarruselDestacadas implements OnChanges {
     this.trailersCargados.update((actuales) => new Set(actuales).add(indice));
   }
 
-  anterior() {
-    this.indiceActual.update((i) => (i === 0 ? this.items.length - 1 : i - 1));
-  }
-
-  siguiente() {
-    this.indiceActual.update((i) => (i === this.items.length - 1 ? 0 : i + 1));
-  }
-
   irA(indice: number) {
     this.indiceActual.set(indice);
   }

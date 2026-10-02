@@ -1,3 +1,8 @@
+.panel-flotante {
+  max-width: 70rem;
+  margin-top: 1rem;
+}
+
 .panel__titulo,
 .boleteria__ayuda,
 .boleteria__busqueda,

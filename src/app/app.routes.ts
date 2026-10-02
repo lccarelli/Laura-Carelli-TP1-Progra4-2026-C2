@@ -181,7 +181,7 @@ export const routes: Routes = [
   {
     path: 'boleteria',
     canActivate: [empleadoGuard],
-    loadComponent: () => import('./pages/publico/boleteria/boleteria').then((m) => m.Boleteria),
+    loadComponent: () => import('./pages/empleado/boleteria/boleteria').then((m) => m.Boleteria),
   },
   {
     path: 'mis-puntos',

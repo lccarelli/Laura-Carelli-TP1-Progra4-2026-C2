@@ -117,6 +117,7 @@ export class Detalle implements OnDestroy {
   protected pasoMaximo = signal<Paso>('butacas');
   protected enviando = signal(false);
   protected butacasSeleccionadas = signal<Set<string>>(new Set());
+  protected sincronizandoButaca = signal(false);
   protected cantidadCandy = signal<Map<string, number>>(new Map());
   protected cantidadCombo = signal<Map<string, number>>(new Map());
   protected codigoCompra = signal<string | null>(null);
@@ -132,9 +133,52 @@ export class Detalle implements OnDestroy {
   protected premioSeleccionado = signal<string | null>(null);
 
   private canalEntradas: ReturnType<EntradaServicio['suscribirCambios']> | null = null;
+  private intervaloReloj = setInterval(() => this.ahora.set(Date.now()), 1000);
 
   protected butacasElegidas = computed(() =>
     this.butacas().filter((butaca) => this.butacasSeleccionadas().has(butaca.id)),
+  );
+
+  protected misButacasReservadas = computed(() => {
+    const sesionId = this.entradaServicio.sesionId();
+
+    return new Set(
+      this.entradas()
+        .filter((entrada) => entrada.estado === 'reservada' && entrada.sesion_id === sesionId)
+        .map((entrada) => entrada.butaca_id),
+    );
+  });
+
+  private ahora = signal(Date.now());
+
+  private expiracionReserva = computed(() => {
+    const sesionId = this.entradaServicio.sesionId();
+    const vencimientos = this.entradas()
+      .filter((entrada) => entrada.estado === 'reservada' && entrada.sesion_id === sesionId)
+      .map((entrada) =>
+        entrada.reservada_hasta ? new Date(entrada.reservada_hasta).getTime() : null,
+      )
+      .filter((vencimiento): vencimiento is number => vencimiento !== null);
+
+    return vencimientos.length > 0 ? Math.min(...vencimientos) : null;
+  });
+
+  protected tiempoRestanteTexto = computed(() => {
+    const expira = this.expiracionReserva();
+
+    if (expira === null) {
+      return null;
+    }
+
+    const segundos = Math.max(0, Math.round((expira - this.ahora()) / 1000));
+    const minutos = Math.floor(segundos / 60);
+    const resto = segundos % 60;
+
+    return `${minutos}:${resto.toString().padStart(2, '0')}`;
+  });
+
+  protected cantidadButacasVip = computed(
+    () => this.butacasElegidas().filter((butaca) => butaca.tipo === 'vip').length,
   );
 
   protected enPreventa = computed(() => {
@@ -417,6 +461,8 @@ export class Detalle implements OnDestroy {
     if (this.canalEntradas) {
       this.entradaServicio.desuscribir(this.canalEntradas);
     }
+
+    clearInterval(this.intervaloReloj);
   }
 
   protected irA(destino: Paso) {
@@ -425,8 +471,15 @@ export class Detalle implements OnDestroy {
     }
   }
 
-  protected alternarButaca(butacaId: string) {
-    const seleccionadas = new Set(this.butacasSeleccionadas());
+  protected async alternarButaca(butacaId: string) {
+    const funcion = this.funcion();
+
+    if (!funcion || this.sincronizandoButaca()) {
+      return;
+    }
+
+    const anteriores = this.butacasSeleccionadas();
+    const seleccionadas = new Set(anteriores);
 
     if (seleccionadas.has(butacaId)) {
       seleccionadas.delete(butacaId);
@@ -435,6 +488,14 @@ export class Detalle implements OnDestroy {
     }
 
     this.butacasSeleccionadas.set(seleccionadas);
+    this.sincronizandoButaca.set(true);
+    const { error } = await this.entradaServicio.reservar(funcion.id, [...seleccionadas]);
+    this.sincronizandoButaca.set(false);
+
+    if (error) {
+      this.butacasSeleccionadas.set(anteriores);
+      this.errores.mostrar(error);
+    }
   }
 
   protected cantidadDe(productoId: string): number {
@@ -509,7 +570,12 @@ export class Detalle implements OnDestroy {
   async confirmarButacas() {
     const funcion = this.funcion();
 
-    if (!funcion || this.butacasSeleccionadas().size === 0 || this.enviando()) {
+    if (
+      !funcion ||
+      this.butacasSeleccionadas().size === 0 ||
+      this.enviando() ||
+      this.sincronizandoButaca()
+    ) {
       return;
     }
 

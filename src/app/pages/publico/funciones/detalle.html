@@ -90,7 +90,7 @@
                 [butacas]="butacas()"
                 [entradas]="entradas()"
                 [seleccionadas]="butacasSeleccionadas()"
-                [enSeleccionPorOtros]="butacasEnSeleccionPorOtros()"
+                [reservadasPropias]="misButacasReservadas()"
                 (alternar)="alternarButaca($event)"
               />
 
@@ -107,7 +107,9 @@
                 </span>
                 <app-boton
                   variante="menu"
-                  [disabled]="butacasSeleccionadas().size === 0 || enviando()"
+                  [disabled]="
+                    butacasSeleccionadas().size === 0 || enviando() || sincronizandoButaca()
+                  "
                   (clic)="confirmarButacas()"
                 >
                   Siguiente
@@ -115,6 +117,10 @@
               </div>
             }
             @case ('candy') {
+              @if (tiempoRestanteTexto(); as tiempo) {
+                <p class="aviso-tiempo">⏱ Te quedan {{ tiempo }} para completar la compra.</p>
+              }
+
               @if (combos().length > 0) {
                 <h3 class="combos-destacados__titulo">Combos</h3>
                 <div class="combos-destacados">
@@ -167,6 +173,10 @@
                 <span class="insignia">{{
                   pelicula()?.restriccion_edad ?? null | restriccionEdad
                 }}</span>
+
+                @if (tiempoRestanteTexto(); as tiempo) {
+                  <p class="aviso-tiempo">⏱ Te quedan {{ tiempo }} para completar la compra.</p>
+                }
 
                 @if (restriccionEdad(); as restriccion) {
                   <p class="aviso-adulto">
@@ -320,16 +330,18 @@
               </div>
 
               <div class="compra__barra">
-                <app-boton variante="claro-negro" [disabled]="enviando()" (clic)="irA('candy')">
-                  Atrás
-                </app-boton>
-                <app-boton
-                  variante="menu"
-                  [disabled]="enviando() || !puedeConfirmarPago()"
-                  (clic)="confirmarPago()"
-                >
-                  {{ enviando() ? 'Confirmando…' : 'Confirmar pago' }}
-                </app-boton>
+                <div class="compra__acciones">
+                  <app-boton variante="claro-negro" [disabled]="enviando()" (clic)="irA('candy')">
+                    Atrás
+                  </app-boton>
+                  <app-boton
+                    variante="menu"
+                    [disabled]="enviando() || !puedeConfirmarPago()"
+                    (clic)="confirmarPago()"
+                  >
+                    {{ enviando() ? 'Confirmando…' : 'Confirmar pago' }}
+                  </app-boton>
+                </div>
               </div>
             }
             @case ('listo') {

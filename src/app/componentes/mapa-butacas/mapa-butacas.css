@@ -116,12 +116,6 @@
   border-color: var(--gris);
 }
 
-.butaca--en-seleccion {
-  background-color: var(--crema);
-  border-color: var(--amarillo);
-  border-style: dashed;
-}
-
 .butaca--vendida {
   background-color: var(--rojo);
   border-color: var(--rojo);

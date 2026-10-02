@@ -18,10 +18,6 @@ function entradaVigente(entrada: Entrada): boolean {
   return !entrada.reservada_hasta || new Date(entrada.reservada_hasta) > new Date();
 }
 
-interface PresenciaButacas {
-  butacas: string[];
-}
-
 @Service()
 export class EntradaServicio {
   private supabase = inject(Supabase);
@@ -84,6 +80,19 @@ export class EntradaServicio {
     }
 
     if (aCrear.length > 0) {
+      // libera reservas vencidas de otras sesiones para esas butacas: si no se
+      // borran, chocan con el índice único de abajo aunque ya no valgan.
+      const { error: errorLimpieza } = await this.supabase.Supabase.from(this.tabla)
+        .delete()
+        .eq('funcion_id', funcionId)
+        .eq('estado', 'reservada')
+        .lt('reservada_hasta', new Date().toISOString())
+        .in('butaca_id', aCrear);
+
+      if (errorLimpieza) {
+        return { error: errorLimpieza.message };
+      }
+
       const reservadaHasta = new Date(Date.now() + MINUTOS_RESERVA * 60_000).toISOString();
       const { error: errorInsercion } = await this.supabase.Supabase.from(this.tabla).insert(
         aCrear.map((butacaId) => ({
@@ -96,6 +105,10 @@ export class EntradaServicio {
       );
 
       if (errorInsercion) {
+        if (errorInsercion.code === '23505') {
+          return { error: 'Alguien más reservó esa butaca justo antes que vos. Volvé a elegir.' };
+        }
+
         return { error: errorInsercion.message };
       }
     }
@@ -125,12 +138,19 @@ export class EntradaServicio {
     const { error: errorActualizacion } = await this.supabase.Supabase.from(this.tabla)
       .update({ estado: 'vendida', codigo_compra: codigoCompra, reservada_hasta: null })
       .eq('funcion_id', funcionId)
+      .eq('estado', 'reservada')
       .in(
         'butaca_id',
         propias.map((entrada) => entrada.butaca_id),
       );
 
     if (errorActualizacion) {
+      if (errorActualizacion.code === '23505') {
+        return {
+          error: 'Alguna de estas butacas ya fue comprada por otra persona. Volvé a elegir.',
+        };
+      }
+
       return { error: errorActualizacion.message };
     }
 
@@ -144,54 +164,19 @@ export class EntradaServicio {
       .returns<ButacaDeEntrada[]>();
   }
 
-  suscribirCambios(
-    funcionId: string,
-    alCambiar: () => void,
-    alCambiarPresencia?: (butacasDeOtros: Set<string>) => void,
-  ) {
-    const sesionId = this.sesionId();
-    const canal = this.supabase.Supabase.channel(`entrada-funcion-${funcionId}`, {
-      config: { presence: { key: sesionId } },
-    }).on(
-      'postgres_changes',
-      {
-        event: '*',
-        schema: 'public',
-        table: this.tabla,
-        filter: `funcion_id=eq.${funcionId}`,
-      },
-      alCambiar,
-    );
-
-    if (alCambiarPresencia) {
-      canal.on('presence', { event: 'sync' }, () => {
-        const estado = canal.presenceState<PresenciaButacas>();
-        const butacasDeOtros = new Set<string>();
-
-        for (const [clave, presencias] of Object.entries(estado)) {
-          if (clave === sesionId) {
-            continue;
-          }
-
-          for (const presencia of presencias) {
-            for (const butacaId of presencia.butacas) {
-              butacasDeOtros.add(butacaId);
-            }
-          }
-        }
-
-        alCambiarPresencia(butacasDeOtros);
-      });
-    }
-
-    return canal.subscribe();
-  }
-
-  marcarSeleccionEnVivo(
-    canal: ReturnType<EntradaServicio['suscribirCambios']>,
-    butacaIds: string[],
-  ) {
-    canal.track({ butacas: butacaIds });
+  suscribirCambios(funcionId: string, alCambiar: () => void) {
+    return this.supabase.Supabase.channel(`entrada-funcion-${funcionId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: this.tabla,
+          filter: `funcion_id=eq.${funcionId}`,
+        },
+        alCambiar,
+      )
+      .subscribe();
   }
 
   desuscribir(canal: ReturnType<EntradaServicio['suscribirCambios']>) {

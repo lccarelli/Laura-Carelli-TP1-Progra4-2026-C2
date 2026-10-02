@@ -15,7 +15,7 @@
 
 .ficha {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1fr 3fr;
   align-items: start;
   gap: 2.5rem;
 }
@@ -45,7 +45,7 @@
 .encabezado__info {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 @media (max-width: 860px) {
@@ -127,6 +127,7 @@
 .compra__acciones {
   display: flex;
   gap: 1rem;
+  margin-left: auto;
 }
 
 .combos-destacados__titulo {
@@ -467,6 +468,16 @@
   font-weight: 700;
   color: var(--crema);
   background: var(--verde);
+  border: 1.5px solid var(--negro);
+  padding: 0.5rem 0.75rem;
+  margin: 0 0 0.75rem;
+}
+
+.aviso-tiempo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--negro);
+  background: var(--gris-claro);
   border: 1.5px solid var(--negro);
   padding: 0.5rem 0.75rem;
   margin: 0 0 0.75rem;

@@ -13,6 +13,8 @@ import { CompraComboServicio } from '../../../servicios/compra-combo/compra-comb
 import { CompraServicio } from '../../../servicios/compra/compra';
 import { ClienteServicio } from '../../../servicios/cliente/cliente';
 import { ConfiguracionCuponServicio } from '../../../servicios/configuracion-cupon/configuracion-cupon';
+import { PremioServicio } from '../../../servicios/premio/premio';
+import { CanjeServicio } from '../../../servicios/canje/canje';
 import { Auth } from '../../../servicios/auth/auth';
 import { Errores } from '../../../servicios/errores/errores';
 import { Funcion } from '../../../interfaces/funcion';
@@ -22,12 +24,15 @@ import { Entrada } from '../../../interfaces/entrada';
 import { ProductoCandy } from '../../../interfaces/producto-candy';
 import { Cliente } from '../../../interfaces/cliente';
 import { ConfiguracionCupon } from '../../../interfaces/configuracion-cupon';
+import { Premio } from '../../../interfaces/premio';
+import { premioEsAplicable } from '../../../utilidades/premio';
 import { Boton } from '../../../componentes/boton/boton';
 import { BotonLink } from '../../../componentes/boton-link/boton-link';
 import { MapaButacas } from '../../../componentes/mapa-butacas/mapa-butacas';
 import { Poster } from '../../../componentes/poster/poster';
 import { Cargando } from '../../../componentes/cargando/cargando';
 import { RestriccionEdadPipe } from '../../../pipes/restriccion-edad/restriccion-edad';
+import { DiasValidosPipe } from '../../../pipes/dias-validos/dias-validos';
 import { Logger } from '../../../servicios/logger/logger';
 import { Flujo } from '../../../servicios/logger/flujo';
 import { TipoEvento } from '../../../servicios/logger/tipo-evento';
@@ -74,6 +79,7 @@ function quitarPrefijoBase64(dataUrl: string): string {
     DatePipe,
     UpperCasePipe,
     RestriccionEdadPipe,
+    DiasValidosPipe,
   ],
   selector: 'app-detalle-funcion',
   styleUrl: './detalle.css',
@@ -92,6 +98,8 @@ export class Detalle implements OnDestroy {
   private compraServicio = inject(CompraServicio);
   private clienteServicio = inject(ClienteServicio);
   private configuracionCuponServicio = inject(ConfiguracionCuponServicio);
+  private premioServicio = inject(PremioServicio);
+  private canjeServicio = inject(CanjeServicio);
   private datePipe = inject(DatePipe);
   protected auth = inject(Auth);
   private errores = inject(Errores);
@@ -120,6 +128,8 @@ export class Detalle implements OnDestroy {
   protected creditoUsado = signal(0);
   protected cliente = signal<Cliente | null>(null);
   protected cuponConfig = signal<ConfiguracionCupon | null>(null);
+  protected premios = signal<Premio[]>([]);
+  protected premioSeleccionado = signal<string | null>(null);
 
   private canalEntradas: ReturnType<EntradaServicio['suscribirCambios']> | null = null;
 
@@ -212,16 +222,49 @@ export class Detalle implements OnDestroy {
     this.cuponAplicable() ? Math.round((this.total() * this.cuponConfig()!.porcentaje) / 100) : 0,
   );
 
+  protected premiosAplicables = computed(() => {
+    const funcion = this.funcion();
+    const puntos = this.cliente()?.puntos ?? 0;
+
+    if (!this.auth.esCliente() || !funcion) {
+      return [];
+    }
+
+    const contexto = {
+      diaSemana: new Date(funcion.inicio).getDay(),
+      cantidadButacas: this.butacasSeleccionadas().size,
+    };
+
+    return this.premios()
+      .filter((premio) => premio.monto_descuento !== null && premio.costo_puntos <= puntos)
+      .map((premio) => ({ premio, aplicable: premioEsAplicable(premio, contexto) }));
+  });
+
+  protected premioElegido = computed(() => {
+    const id = this.premioSeleccionado();
+    if (!id) {
+      return null;
+    }
+
+    const item = this.premiosAplicables().find((item) => item.premio.id === id);
+    return item?.aplicable ? item.premio : null;
+  });
+
+  protected descuentoPremio = computed(() => this.premioElegido()?.monto_descuento ?? 0);
+
   protected creditoDisponible = computed(() =>
     this.auth.esCliente() ? (this.cliente()?.credito ?? 0) : 0,
   );
 
   protected creditoAplicado = computed(() =>
-    Math.min(this.creditoDisponible(), this.total() - this.descuentoCupon()),
+    Math.min(
+      this.creditoDisponible(),
+      this.total() - this.descuentoCupon() - this.descuentoPremio(),
+    ),
   );
 
   protected totalFinal = computed(
-    () => this.total() - this.descuentoCupon() - this.creditoAplicado(),
+    () => this.total() - this.descuentoCupon() - this.descuentoPremio() - this.creditoAplicado(),
   );
 
   protected restriccionEdad = computed(() => this.pelicula()?.restriccion_edad ?? null);
@@ -353,6 +396,13 @@ export class Detalle implements OnDestroy {
 
     const { data: cuponConfig } = await this.configuracionCuponServicio.obtener();
     this.cuponConfig.set(cuponConfig ?? null);
+
+    const { data: premios } = await this.premioServicio.listarActivas();
+    this.premios.set(premios ?? []);
+  }
+
+  protected elegirPremio(id: string) {
+    this.premioSeleccionado.update((actual) => (actual === id ? null : id));
   }
 
   private async actualizarEntradas(funcionId: string) {
@@ -538,10 +588,26 @@ export class Detalle implements OnDestroy {
       }
     }
 
+    let descuentoPremio = 0;
+    const premioElegido = this.premioElegido();
+
+    if (premioElegido) {
+      const { error: errorCanje } = await this.canjeServicio.canjear(premioElegido.id);
+
+      if (errorCanje) {
+        this.errores.mostrar('No se pudo aplicar el premio elegido, se cobra sin ese descuento.');
+      } else {
+        descuentoPremio = premioElegido.monto_descuento ?? 0;
+      }
+    }
+
     let creditoAplicado = 0;
 
     if (this.auth.esCliente()) {
-      const montoCredito = Math.min(this.creditoDisponible(), this.total() - descuento);
+      const montoCredito = Math.min(
+        this.creditoDisponible(),
+        this.total() - descuento - descuentoPremio,
+      );
 
       if (montoCredito > 0) {
         const { error: errorCredito } = await this.clienteServicio.usarCredito(
@@ -557,7 +623,7 @@ export class Detalle implements OnDestroy {
       }
     }
 
-    const totalCobrado = this.total() - descuento - creditoAplicado;
+    const totalCobrado = this.total() - descuento - descuentoPremio - creditoAplicado;
     this.descuentoAplicado.set(descuento);
     this.creditoUsado.set(creditoAplicado);
 

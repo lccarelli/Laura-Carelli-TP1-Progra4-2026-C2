@@ -4,4 +4,5 @@ export interface PremioPorCrear {
   activa: boolean;
   dias_validos: number[] | null;
   cantidad_entradas: number | null;
+  monto_descuento: number | null;
 }

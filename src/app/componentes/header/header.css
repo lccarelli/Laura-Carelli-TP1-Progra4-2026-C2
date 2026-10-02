@@ -22,12 +22,26 @@
   gap: 0.75rem;
 }
 
+.header__separador {
+  display: none;
+  color: var(--crema);
+  opacity: 0.4;
+  font-size: 1.2rem;
+  font-weight: 300;
+}
+
 @media (min-width: 861px) {
-  .header__acciones {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+  .header {
+    justify-content: flex-start;
+    gap: 1.25rem;
+  }
+
+  .header__separador {
+    display: inline;
+  }
+
+  .header__sesion {
+    margin-left: auto;
   }
 }
 

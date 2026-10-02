@@ -57,6 +57,12 @@ export const routes: Routes = [
       import('./pages/admin/funciones/formulario/formulario').then((m) => m.FormularioFuncion),
   },
   {
+    path: 'admin/funciones/pelicula/:peliculaId',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./pages/admin/funciones/pelicula/pelicula').then((m) => m.FuncionesPelicula),
+  },
+  {
     path: 'admin/funciones/:id',
     canActivate: [adminGuard],
     loadComponent: () => import('./pages/admin/funciones/detalle/detalle').then((m) => m.Detalle),
@@ -90,6 +96,12 @@ export const routes: Routes = [
       import('./pages/admin/candy/formulario/formulario').then((m) => m.FormularioCandy),
   },
   {
+    path: 'admin/candy/:id/editar',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./pages/admin/candy/formulario/formulario').then((m) => m.FormularioCandy),
+  },
+  {
     path: 'admin/combos',
     canActivate: [adminGuard],
     loadComponent: () => import('./pages/admin/combos/combos').then((m) => m.Combos),
@@ -101,12 +113,24 @@ export const routes: Routes = [
       import('./pages/admin/combos/formulario/formulario').then((m) => m.FormularioCombo),
   },
   {
+    path: 'admin/combos/:id/editar',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./pages/admin/combos/formulario/formulario').then((m) => m.FormularioCombo),
+  },
+  {
     path: 'admin/premios',
     canActivate: [adminGuard],
     loadComponent: () => import('./pages/admin/premios/premios').then((m) => m.Premios),
   },
   {
     path: 'admin/premios/nueva',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./pages/admin/premios/formulario/formulario').then((m) => m.FormularioPremio),
+  },
+  {
+    path: 'admin/premios/:id/editar',
     canActivate: [adminGuard],
     loadComponent: () =>
       import('./pages/admin/premios/formulario/formulario').then((m) => m.FormularioPremio),
@@ -147,6 +171,12 @@ export const routes: Routes = [
     canActivate: [clienteGuard],
     loadComponent: () =>
       import('./pages/publico/mis-compras/mis-compras').then((m) => m.MisCompras),
+  },
+  {
+    path: 'mis-peliculas',
+    canActivate: [clienteGuard],
+    loadComponent: () =>
+      import('./pages/publico/mis-peliculas/mis-peliculas').then((m) => m.MisPeliculas),
   },
   {
     path: 'boleteria',

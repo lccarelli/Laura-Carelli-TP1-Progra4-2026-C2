@@ -20,8 +20,16 @@ export class PremioServicio {
       .returns<Premio[]>();
   }
 
+  buscarPorId(id: string) {
+    return this.supabase.obtenerPorId<Premio>(this.tabla, id);
+  }
+
   crear(premio: PremioPorCrear) {
     return this.supabase.crear(this.tabla, premio);
+  }
+
+  editar({ id, ...datos }: PremioPorCrear & { id: string }) {
+    return this.supabase.actualizar<Premio>(this.tabla, id, datos);
   }
 
   eliminar(id: string) {

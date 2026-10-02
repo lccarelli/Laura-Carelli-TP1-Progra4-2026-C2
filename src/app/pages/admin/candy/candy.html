@@ -11,10 +11,19 @@
       </app-boton-link>
     </div>
 
+    <input
+      class="buscador"
+      type="text"
+      placeholder="Buscar por nombre..."
+      [value]="busqueda()"
+      (input)="buscar($any($event.target).value)"
+    />
+
     <div class="tabla-contenedor">
       <table class="tabla">
         <thead>
           <tr>
+            <th class="tabla__col-foto"></th>
             <th>Producto</th>
             <th>Precio</th>
             <th>Estado</th>
@@ -22,20 +31,38 @@
           </tr>
         </thead>
         <tbody>
-          @for (producto of productos(); track producto.id) {
+          @for (producto of productosFiltrados(); track producto.id) {
             <tr>
+              <td class="tabla__col-foto">
+                @if (producto.imagen_url) {
+                  <img class="miniatura" [src]="producto.imagen_url" alt="" />
+                } @else {
+                  <div class="miniatura miniatura--vacia"></div>
+                }
+              </td>
               <td class="tabla__nombre">{{ producto.nombre }}</td>
               <td>{{ producto.precio | number: '1.0-0' }}</td>
               <td>{{ producto.activo ? 'Activo' : 'Inactivo' }}</td>
               <td class="tabla__acciones">
-                <app-boton variante="claro-negro" (clic)="eliminar(producto.id)">
-                  Eliminar
+                <app-boton-link
+                  variante="icono"
+                  [ruta]="['/admin/candy', producto.id, 'editar']"
+                  [ariaLabel]="'Editar ' + producto.nombre"
+                >
+                  <img src="/compose.png" alt="" />
+                </app-boton-link>
+                <app-boton
+                  variante="icono-peligro"
+                  [ariaLabel]="'Eliminar ' + producto.nombre"
+                  (clic)="eliminar(producto.id)"
+                >
+                  <img src="/trash.png" alt="" />
                 </app-boton>
               </td>
             </tr>
           } @empty {
             <tr>
-              <td class="tabla__vacio" colspan="4">No hay productos de candy cargados todavía.</td>
+              <td class="tabla__vacio" colspan="5">No hay productos de candy cargados todavía.</td>
             </tr>
           }
         </tbody>

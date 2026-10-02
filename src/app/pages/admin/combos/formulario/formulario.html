@@ -1,6 +1,22 @@
 <main class="pagina pagina--centrada">
   <section class="panel-flotante panel--angosto">
-    <h2 class="panel__titulo">Nuevo combo</h2>
+    <div class="panel__encabezado">
+      <h2 class="panel__titulo">{{ id() ? 'Editar combo' : 'Nuevo combo' }}</h2>
+
+      @if (id()) {
+        <div class="panel__acciones">
+          <label class="toggle">
+            <input type="checkbox" [checked]="activo()" (change)="alternarActivo()" />
+            <span class="toggle__riel"><span class="toggle__perilla"></span></span>
+            <span class="toggle__texto">{{ activo() ? 'Activo' : 'Inactivo' }}</span>
+          </label>
+
+          <app-boton variante="icono-peligro" ariaLabel="Eliminar combo" (clic)="eliminarCombo()">
+            <img src="/trash.png" alt="" />
+          </app-boton>
+        </div>
+      }
+    </div>
 
     <form class="formulario" [formGroup]="formulario" (ngSubmit)="guardar()">
       <label class="campo">
@@ -11,11 +27,6 @@
       <label class="campo">
         <span class="campo__etiqueta">Precio del combo</span>
         <input class="campo__input" type="number" min="0" formControlName="precio" />
-      </label>
-
-      <label class="campo campo--checkbox">
-        <input type="checkbox" [checked]="activo()" (change)="alternarActivo()" />
-        <span class="campo__etiqueta">Activo (visible al comprar candy)</span>
       </label>
 
       <div class="campo">
@@ -42,7 +53,7 @@
 
       <div class="formulario__acciones">
         <app-boton variante="menu" tipo="submit" [disabled]="formulario.invalid">
-          Crear combo
+          {{ id() ? 'Guardar cambios' : 'Crear combo' }}
         </app-boton>
 
         <app-boton variante="claro-negro" (clic)="cancelar()">Cancelar</app-boton>

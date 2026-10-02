@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { GeneroServicio } from '../../../servicios/genero/genero';
 import { Errores } from '../../../servicios/errores/errores';
 import { Genero } from '../../../interfaces/genero';
@@ -20,6 +20,17 @@ export class Generos {
   private logger = inject(Logger);
 
   protected generos = signal<Genero[]>([]);
+  protected busqueda = signal('');
+
+  protected generosFiltrados = computed(() => {
+    const texto = this.busqueda().toLowerCase().trim();
+
+    if (!texto) {
+      return this.generos();
+    }
+
+    return this.generos().filter((genero) => genero.nombre.toLowerCase().includes(texto));
+  });
 
   constructor() {
     this.cargar();
@@ -33,6 +44,10 @@ export class Generos {
     } else {
       this.generos.set(data ?? []);
     }
+  }
+
+  buscar(texto: string) {
+    this.busqueda.set(texto);
   }
 
   async eliminar(id: string) {

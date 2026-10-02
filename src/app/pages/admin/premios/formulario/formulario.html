@@ -1,6 +1,22 @@
 <main class="pagina pagina--centrada">
   <section class="panel-flotante panel--angosto">
-    <h2 class="panel__titulo">Nuevo premio</h2>
+    <div class="panel__encabezado">
+      <h2 class="panel__titulo">{{ id() ? 'Editar premio' : 'Nuevo premio' }}</h2>
+
+      @if (id()) {
+        <div class="panel__acciones">
+          <label class="toggle">
+            <input type="checkbox" [checked]="activa()" (change)="alternarActiva()" />
+            <span class="toggle__riel"><span class="toggle__perilla"></span></span>
+            <span class="toggle__texto">{{ activa() ? 'Activo' : 'Inactivo' }}</span>
+          </label>
+
+          <app-boton variante="icono-peligro" ariaLabel="Eliminar premio" (clic)="eliminarPremio()">
+            <img src="/trash.png" alt="" />
+          </app-boton>
+        </div>
+      }
+    </div>
 
     <form class="formulario" [formGroup]="formulario" (ngSubmit)="guardar()">
       <label class="campo">
@@ -33,14 +49,9 @@
         />
       </label>
 
-      <label class="campo campo--checkbox">
-        <input type="checkbox" [checked]="activa()" (change)="alternarActiva()" />
-        <span class="campo__etiqueta">Activo (visible para canjear)</span>
-      </label>
-
       <div class="formulario__acciones">
         <app-boton variante="menu" tipo="submit" [disabled]="formulario.invalid">
-          Crear premio
+          {{ id() ? 'Guardar cambios' : 'Crear premio' }}
         </app-boton>
 
         <app-boton variante="claro-negro" (clic)="cancelar()">Cancelar</app-boton>

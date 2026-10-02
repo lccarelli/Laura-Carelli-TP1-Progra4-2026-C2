@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { PremioServicio } from '../../../servicios/premio/premio';
 import { Errores } from '../../../servicios/errores/errores';
 import { Premio } from '../../../interfaces/premio';
@@ -22,6 +22,17 @@ export class Premios {
   private diasValidosPipe = new DiasValidosPipe();
 
   protected premios = signal<Premio[]>([]);
+  protected busqueda = signal('');
+
+  protected premiosFiltrados = computed(() => {
+    const texto = this.busqueda().toLowerCase().trim();
+
+    if (!texto) {
+      return this.premios();
+    }
+
+    return this.premios().filter((premio) => premio.nombre.toLowerCase().includes(texto));
+  });
 
   constructor() {
     this.cargar();
@@ -40,6 +51,10 @@ export class Premios {
   protected condicionesDe(premio: Premio): string {
     const dias = this.diasValidosPipe.transform(premio.dias_validos);
     return premio.cantidad_entradas ? `${dias} · ${premio.cantidad_entradas} entradas` : dias;
+  }
+
+  buscar(texto: string) {
+    this.busqueda.set(texto);
   }
 
   async eliminar(id: string) {

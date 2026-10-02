@@ -4,6 +4,11 @@
   flex: 1;
 }
 
+.panel-flotante {
+  max-width: 76rem;
+  margin-inline: auto;
+}
+
 .panel__titulo,
 .tabla-contenedor {
   max-width: 40rem;

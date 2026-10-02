@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { ProductoCandyServicio } from '../../../servicios/producto-candy/producto-candy';
 import { Errores } from '../../../servicios/errores/errores';
@@ -21,6 +21,17 @@ export class Candy {
   private logger = inject(Logger);
 
   protected productos = signal<ProductoCandy[]>([]);
+  protected busqueda = signal('');
+
+  protected productosFiltrados = computed(() => {
+    const texto = this.busqueda().toLowerCase().trim();
+
+    if (!texto) {
+      return this.productos();
+    }
+
+    return this.productos().filter((producto) => producto.nombre.toLowerCase().includes(texto));
+  });
 
   constructor() {
     this.cargar();
@@ -34,6 +45,10 @@ export class Candy {
     } else {
       this.productos.set(data ?? []);
     }
+  }
+
+  buscar(texto: string) {
+    this.busqueda.set(texto);
   }
 
   async eliminar(id: string) {

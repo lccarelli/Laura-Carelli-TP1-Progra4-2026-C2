@@ -46,6 +46,14 @@
                   <img src="/compose.png" alt="" />
                 </app-boton-link>
                 <app-boton
+                  variante="icono"
+                  [disabled]="enviandoMail() === premio.id"
+                  [ariaLabel]="'Avisar por mail ' + premio.nombre"
+                  (clic)="avisarPorMail(premio)"
+                >
+                  <img src="/coupon-black.png" alt="" />
+                </app-boton>
+                <app-boton
                   variante="icono-peligro"
                   [ariaLabel]="'Eliminar ' + premio.nombre"
                   (clic)="eliminar(premio.id)"

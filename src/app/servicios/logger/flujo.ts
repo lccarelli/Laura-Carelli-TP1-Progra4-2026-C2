@@ -31,4 +31,7 @@ export enum Flujo {
   CancelacionCompra = 'CancelacionCompra',
   ValidacionQr = 'ValidacionQr',
   AlertaDisponibilidad = 'AlertaDisponibilidad',
+  AvisoPushCompra = 'AvisoPushCompra',
+  AvisoPushPremio = 'AvisoPushPremio',
+  AvisoEmailPremio = 'AvisoEmailPremio',
 }

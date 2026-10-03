@@ -25,7 +25,7 @@ export class PremioServicio {
   }
 
   crear(premio: PremioPorCrear) {
-    return this.supabase.crear(this.tabla, premio);
+    return this.supabase.Supabase.from(this.tabla).insert(premio).select().single<Premio>();
   }
 
   editar({ id, ...datos }: PremioPorCrear & { id: string }) {
@@ -34,5 +34,22 @@ export class PremioServicio {
 
   eliminar(id: string) {
     return this.supabase.eliminar(this.tabla, id);
+  }
+
+  avisarPorPush(premioId: string, premioNombre: string, costoPuntos: number) {
+    return this.supabase.Supabase.functions.invoke('enviar-push-premio', {
+      body: { premioId, premioNombre, costoPuntos },
+    });
+  }
+
+  avisarPorMail(
+    premioId: string,
+    premioNombre: string,
+    costoPuntos: number,
+    montoDescuento: number | null,
+  ) {
+    return this.supabase.Supabase.functions.invoke('enviar-email-premio', {
+      body: { premioId, premioNombre, costoPuntos, montoDescuento },
+    });
   }
 }

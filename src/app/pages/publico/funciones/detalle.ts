@@ -742,6 +742,25 @@ export class Detalle implements OnDestroy {
     });
     this.mailEnviado.set(!errorMail);
 
+    const clienteId = this.auth.usuario()?.id;
+
+    if (clienteId) {
+      try {
+        const { error: errorPush } = await this.compraServicio.enviarPushCompraConfirmada(
+          clienteId,
+          pelicula?.nombre ?? '',
+          codigo,
+        );
+
+        if (errorPush) {
+          this.logger.registrar(Flujo.AvisoPushCompra, TipoEvento.Error, errorPush.message);
+        }
+      } catch (error) {
+        // best-effort: si falla el push no queremos romper la confirmación de la compra
+        this.logger.registrar(Flujo.AvisoPushCompra, TipoEvento.Error, String(error));
+      }
+    }
+
     this.logger.registrar(Flujo.AltaCompra, TipoEvento.Exito, codigo);
     this.enviando.set(false);
     this.avanzarA('listo');

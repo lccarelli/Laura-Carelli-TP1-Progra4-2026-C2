@@ -76,6 +76,16 @@ export class CompraServicio {
     return this.supabase.Supabase.functions.invoke('resend-email', { body: datos });
   }
 
+  async enviarPushCompraConfirmada(
+    clienteId: string,
+    peliculaNombre: string,
+    codigoCompra: string,
+  ) {
+    return this.supabase.Supabase.functions.invoke('enviar-push-compra', {
+      body: { clienteId, peliculaNombre, codigoCompra },
+    });
+  }
+
   buscarPorCodigo(codigoCompra: string) {
     return this.supabase.Supabase.from(this.tabla)
       .select(

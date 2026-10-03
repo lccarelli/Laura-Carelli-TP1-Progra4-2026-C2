@@ -23,6 +23,7 @@ export class Premios {
 
   protected premios = signal<Premio[]>([]);
   protected busqueda = signal('');
+  protected enviandoMail = signal<string | null>(null);
 
   protected premiosFiltrados = computed(() => {
     const texto = this.busqueda().toLowerCase().trim();
@@ -67,5 +68,38 @@ export class Premios {
       this.logger.registrar(Flujo.BajaPremio, TipoEvento.Exito, id);
       await this.cargar();
     }
+  }
+
+  async avisarPorMail(premio: Premio) {
+    if (this.enviandoMail()) {
+      return;
+    }
+
+    this.enviandoMail.set(premio.id);
+    const { data, error } = await this.premioServicio.avisarPorMail(
+      premio.id,
+      premio.nombre,
+      premio.costo_puntos,
+      premio.monto_descuento,
+    );
+    this.enviandoMail.set(null);
+
+    if (error) {
+      this.logger.registrar(Flujo.AvisoEmailPremio, TipoEvento.Error, error.message);
+      this.errores.mostrar(error.message);
+      return;
+    }
+
+    const enviados = (data as { enviados?: number })?.enviados ?? 0;
+    this.logger.registrar(
+      Flujo.AvisoEmailPremio,
+      TipoEvento.Exito,
+      `${premio.nombre}: ${enviados}`,
+    );
+    this.errores.mostrar(
+      enviados > 0
+        ? `Se avisó por mail a ${enviados} cliente(s) que pueden canjear "${premio.nombre}".`
+        : `Nadie tiene puntos suficientes para "${premio.nombre}" todavía.`,
+    );
   }
 }

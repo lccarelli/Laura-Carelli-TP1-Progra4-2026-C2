@@ -117,18 +117,45 @@ export class FormularioPremio {
       monto_descuento: valores.monto_descuento,
     };
 
-    const { error } = idExistente
-      ? await this.premioServicio.editar({ ...datos, id: idExistente })
-      : await this.premioServicio.crear(datos);
+    if (idExistente) {
+      const { error } = await this.premioServicio.editar({ ...datos, id: idExistente });
 
-    if (error) {
-      this.logger.registrar(flujo, TipoEvento.Error, error.message);
-      this.errores.mostrar(error.message);
-      return;
+      if (error) {
+        this.logger.registrar(flujo, TipoEvento.Error, error.message);
+        this.errores.mostrar(error.message);
+        return;
+      }
+    } else {
+      const { data: premioCreado, error } = await this.premioServicio.crear(datos);
+
+      if (error) {
+        this.logger.registrar(flujo, TipoEvento.Error, error.message);
+        this.errores.mostrar(error.message);
+        return;
+      }
+
+      if (datos.activa && premioCreado) {
+        this.avisarPremioNuevo(premioCreado.id, premioCreado.nombre, premioCreado.costo_puntos);
+      }
     }
 
     this.logger.registrar(flujo, TipoEvento.Exito, valores.nombre);
     await this.router.navigate(['/admin/premios']);
+  }
+
+  private async avisarPremioNuevo(id: string, nombre: string, costoPuntos: number) {
+    try {
+      const { error } = await this.premioServicio.avisarPorPush(id, nombre, costoPuntos);
+
+      if (error) {
+        this.logger.registrar(Flujo.AvisoPushPremio, TipoEvento.Error, error.message);
+      } else {
+        this.logger.registrar(Flujo.AvisoPushPremio, TipoEvento.Exito, nombre);
+      }
+    } catch (error) {
+      // best-effort: si falla el aviso push no queremos romper el alta del premio
+      this.logger.registrar(Flujo.AvisoPushPremio, TipoEvento.Error, String(error));
+    }
   }
 
   cancelar() {

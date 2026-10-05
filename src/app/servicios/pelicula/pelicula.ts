@@ -2,6 +2,7 @@ import { inject, Service } from '@angular/core';
 import { PeliculaPorCrear } from '../../interfaces/pelicula-por-crear';
 import { Supabase } from '../supabase/supabase';
 import { Pelicula } from '../../interfaces/pelicula';
+import { TrailerResultado } from '../../interfaces/trailer-resultado';
 
 const TABLA_NO_ENCONTRADA = 'PGRST205';
 const DIAS_VENTANA_MAS_VENDIDAS = 30;
@@ -67,6 +68,20 @@ export class PeliculaServicio {
       .returns<Pelicula[]>();
   }
 
+  buscarPorImdbId(imdbId: string) {
+    return this.supabase.Supabase.from(this.tabla)
+      .select('id, nombre')
+      .eq('imdb_id', imdbId)
+      .maybeSingle<Pick<Pelicula, 'id' | 'nombre'>>();
+  }
+
+  buscarTrailer(consulta: string) {
+    return this.supabase.Supabase.functions.invoke<{ resultados: TrailerResultado[] }>(
+      'buscar-trailer',
+      { body: { consulta } },
+    );
+  }
+
   buscarPorId(id: string) {
     return this.supabase.obtenerPorId<Pelicula>(this.tabla, id);
   }
@@ -75,8 +90,8 @@ export class PeliculaServicio {
     return this.supabase.Supabase.from(this.tabla).insert(pelicula).select().returns<Pelicula[]>();
   }
 
-  editar({ id, ...datos }: Pelicula) {
-    return this.supabase.actualizar<Pelicula>(this.tabla, id, datos);
+  editar({ id, ...datos }: PeliculaPorCrear & { id: string }) {
+    return this.supabase.actualizar<PeliculaPorCrear>(this.tabla, id, datos);
   }
 
   eliminar(id: string) {

@@ -86,3 +86,8 @@
   gap: 0.35rem;
   padding: 0.5rem;
 }
+
+.sync-texto {
+  font-size: 0.75rem;
+  color: color-mix(in srgb, var(--negro) 65%, transparent);
+}

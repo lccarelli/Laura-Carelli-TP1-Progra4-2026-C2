@@ -8,6 +8,8 @@ const contenido = `export const environment = {
   PROFESOR_EMAIL: '${process.env.PROFESOR_EMAIL}',
   PROFESOR_PASSWORD: '${process.env.PROFESOR_PASSWORD}',
   VAPID_PUBLIC_KEY: '${process.env.VAPID_PUBLIC_KEY}',
+  OMDB_URL: '${process.env.OMDB_URL ?? 'https://www.omdbapi.com/'}',
+  OMDB_KEY: '${process.env.OMDB_KEY ?? ''}',
 };
 `;
 

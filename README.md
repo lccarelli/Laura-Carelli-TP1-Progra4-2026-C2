@@ -61,6 +61,17 @@ npm start        # http://localhost:4200
 
 ---
 
+## Configuración de OMDb
+
+Los datos de las películas (sinopsis, póster, ratings) vienen de [OMDb](https://www.omdbapi.com/apikey.aspx). Se necesita una API key gratuita.
+
+- **Frontend:** agregar `OMDB_KEY` al `.env` (en Vercel, como variable de entorno). `npm start` y `npm run build` regeneran `src/environments/environment.ts`.
+- **Edge Function `sync-peliculas`:** `supabase secrets set OMDB_API_KEY=... CRON_SECRET=...` y desplegar con `supabase functions deploy sync-peliculas --no-verify-jwt`.
+- **Búsqueda de tráiler:** crear una API key de YouTube Data API v3 en Google Cloud, cargarla como secret `YOUTUBE_API_KEY` y desplegar `buscar-trailer` (con Verify JWT activado).
+- **Base de datos:** correr `supabase/migrations/20261004230000_omdb_en_pelicula.sql` y después `supabase/cron/sync-peliculas.sql` (reemplazando `CRON_SECRET`) para la sincronización diaria de las 5 AM.
+
+---
+
 ## Estructura de carpetas
 
 ```

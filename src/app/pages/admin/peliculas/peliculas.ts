@@ -7,13 +7,14 @@ import { Genero } from '../../../interfaces/genero';
 import { Boton } from '../../../componentes/boton/boton';
 import { BotonLink } from '../../../componentes/boton-link/boton-link';
 import { EstadoPunto } from '../../../componentes/estado-punto/estado-punto';
+import { HaceTiempoPipe } from '../../../pipes/hace-tiempo/hace-tiempo';
 import { RestriccionEdadPipe } from '../../../pipes/restriccion-edad/restriccion-edad';
 import { Logger } from '../../../servicios/logger/logger';
 import { Flujo } from '../../../servicios/logger/flujo';
 import { TipoEvento } from '../../../servicios/logger/tipo-evento';
 
 @Component({
-  imports: [Boton, BotonLink, EstadoPunto, RestriccionEdadPipe],
+  imports: [Boton, BotonLink, EstadoPunto, HaceTiempoPipe, RestriccionEdadPipe],
   selector: 'app-peliculas',
   styleUrl: './peliculas.css',
   templateUrl: './peliculas.html',

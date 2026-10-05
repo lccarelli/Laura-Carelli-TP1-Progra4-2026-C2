@@ -4,7 +4,8 @@
       class="campo__input buscador-trailer__input"
       type="text"
       placeholder="Ej: Interstellar 2014 trailer oficial"
-      [formControl]="consulta"
+      [value]="consulta()"
+      (input)="consulta.set($any($event.target).value)"
       (keydown.enter)="$event.preventDefault(); buscar()"
     />
     <app-boton variante="claro-negro" [disabled]="buscando()" (clic)="buscar()">
@@ -12,10 +13,8 @@
     </app-boton>
   </div>
 
-  @if (error(); as mensaje) {
-    <p class="buscador-trailer__estado buscador-trailer__estado--error">{{ mensaje }}</p>
-  } @else if (buscado() && resultados().length === 0) {
-    <p class="buscador-trailer__estado">No se encontraron videos.</p>
+  @if (mensaje()) {
+    <p class="buscador-trailer__estado">{{ mensaje() }}</p>
   }
 
   @if (resultados().length > 0) {

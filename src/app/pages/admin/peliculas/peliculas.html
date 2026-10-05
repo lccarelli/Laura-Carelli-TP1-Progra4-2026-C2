@@ -28,7 +28,6 @@
             <th>Duración</th>
             <th>Restricción</th>
             <th>Géneros</th>
-            <th>OMDb</th>
             <th>Acción</th>
           </tr>
         </thead>
@@ -57,15 +56,6 @@
                   <span class="tabla__sin-generos">—</span>
                 }
               </td>
-              <td>
-                <div class="sync">
-                  @if (pelicula.imdb_id) {
-                    <span class="sync-texto">{{ pelicula.sincronizado_en | haceTiempo }}</span>
-                  } @else {
-                    <span class="tabla__sin-generos">—</span>
-                  }
-                </div>
-              </td>
               <td class="tabla__acciones">
                 <app-boton-link
                   variante="icono"
@@ -85,7 +75,7 @@
             </tr>
           } @empty {
             <tr>
-              <td class="tabla__vacio" colspan="7">No hay películas cargadas todavía.</td>
+              <td class="tabla__vacio" colspan="6">No hay películas cargadas todavía.</td>
             </tr>
           }
         </tbody>

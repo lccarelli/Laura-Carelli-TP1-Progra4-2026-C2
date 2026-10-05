@@ -11,5 +11,6 @@ export class BotonLink {
   @Input() variante: VarianteBoton = 'claro-negro';
   @Input({ required: true }) ruta!: string | unknown[];
   @Input() fragment?: string;
+  @Input() queryParams?: Record<string, string>;
   @Input() ariaLabel: string | null = null;
 }

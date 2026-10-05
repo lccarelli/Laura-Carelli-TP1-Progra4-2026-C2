@@ -6,7 +6,7 @@ import { Cargando } from '../cargando/cargando';
 import { EstrellasPipe } from '../../pipes/estrellas/estrellas';
 import { RestriccionEdadPipe } from '../../pipes/restriccion-edad/restriccion-edad';
 import { DestacadaVista } from './destacada-vista';
-import { extraerIdYoutube } from '../../utilidades/youtube';
+import { extraerIdYoutube, urlEmbedYoutube } from '../../utilidades/youtube';
 
 @Component({
   imports: [RouterLink, Poster, Cargando, EstrellasPipe, RestriccionEdadPipe],
@@ -36,7 +36,7 @@ export class CarruselDestacadas implements OnChanges {
 
         return idYoutube
           ? this.sanitizer.bypassSecurityTrustResourceUrl(
-              `https://www.youtube.com/embed/${idYoutube}?autoplay=1&mute=1`,
+              `${urlEmbedYoutube(idYoutube)}?autoplay=1&mute=1`,
             )
           : null;
       }),

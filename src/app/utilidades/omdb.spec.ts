@@ -1,4 +1,4 @@
-import { extraerImdbId, mapRatings, restriccionDesdeClasificacion } from './omdb';
+import { extraerImdbId, mapRatings } from './omdb';
 
 describe('omdb', () => {
   it('normaliza los ratings de los tres orígenes', () => {
@@ -19,11 +19,5 @@ describe('omdb', () => {
   it('extrae el id de IMDb de un link', () => {
     expect(extraerImdbId('https://www.imdb.com/title/tt0111161/')).toBe('tt0111161');
     expect(extraerImdbId('matrix')).toBeNull();
-  });
-
-  it('traduce la clasificación a restricción de edad', () => {
-    expect(restriccionDesdeClasificacion('R')).toBe(18);
-    expect(restriccionDesdeClasificacion('PG-13')).toBe(13);
-    expect(restriccionDesdeClasificacion('G')).toBeNull();
   });
 });

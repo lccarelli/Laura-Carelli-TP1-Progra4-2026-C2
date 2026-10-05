@@ -16,13 +16,8 @@ import { SelectorChips } from '../../../../componentes/selector-chips/selector-c
 import { Logger } from '../../../../servicios/logger/logger';
 import { Flujo } from '../../../../servicios/logger/flujo';
 import { TipoEvento } from '../../../../servicios/logger/tipo-evento';
-import {
-  duracionEnMinutos,
-  fechaIso,
-  mapRatings,
-  posterValido,
-  restriccionDesdeClasificacion,
-} from '../../../../utilidades/omdb';
+import { mapRatings } from '../../../../utilidades/omdb';
+import { traduccionDisponible, traducirAlEspanol } from '../../../../utilidades/traducir';
 
 @Component({
   imports: [ReactiveFormsModule, Boton, BotonLink, BuscadorOmdb, BuscadorTrailer, SelectorChips],
@@ -46,6 +41,9 @@ export class Formulario {
   protected avisarNotificaciones = signal(true);
   protected imagenRota = signal(false);
   protected omdb = signal<OmdbDetalle | null>(null);
+  protected imdbIdVinculado = signal<string | null>(null);
+  protected puedeTraducir = traduccionDisponible;
+  protected traduciendo = signal(false);
   protected duplicada = signal<{ id: string; nombre: string } | null>(null);
   protected generos = signal<Genero[]>([]);
   protected generosSeleccionados = signal<Set<string>>(new Set());
@@ -103,7 +101,7 @@ export class Formulario {
   async elegirDeOmdb(detalle: OmdbDetalle) {
     const { data: existente } = await this.peliculaServicio.buscarPorImdbId(detalle.imdbID);
 
-    if (existente) {
+    if (existente && existente.id !== this.id()) {
       this.omdb.set(null);
       this.duplicada.set(existente);
       return;
@@ -112,16 +110,28 @@ export class Formulario {
     this.duplicada.set(null);
     this.omdb.set(detalle);
 
-    const restriccion = restriccionDesdeClasificacion(detalle.Rated);
-
     this.formulario.patchValue({
-      nombre: detalle.Title,
+      ...(this.id() ? {} : { nombre: detalle.Title }),
       sinopsis: detalle.Plot !== 'N/A' ? detalle.Plot : '',
-      duracion_minutos: duracionEnMinutos(detalle.Runtime) ?? 0,
-      imagen_url: posterValido(detalle.Poster) ?? '',
-      restriccion_edad: restriccion ? String(restriccion) : '',
-      fecha_estreno: fechaIso(detalle.Released) ?? '',
+      duracion_minutos: parseInt(detalle.Runtime) || 0,
+      imagen_url: detalle.Poster !== 'N/A' ? detalle.Poster : '',
     });
+  }
+
+  async traducirSinopsis() {
+    const control = this.formulario.controls.sinopsis;
+
+    if (!control.value || this.traduciendo()) return;
+
+    this.traduciendo.set(true);
+
+    try {
+      control.setValue(await traducirAlEspanol(control.value));
+    } catch {
+      this.errores.mostrar('No se pudo traducir. Probá con Chrome de escritorio actualizado.');
+    } finally {
+      this.traduciendo.set(false);
+    }
   }
 
   elegirTrailer(url: string) {
@@ -182,6 +192,7 @@ export class Formulario {
       porcentaje_preventa:
         data.porcentaje_preventa !== null ? String(data.porcentaje_preventa) : '',
     });
+    this.imdbIdVinculado.set(data.imdb_id);
     this.activa.set(data.activa);
     this.destacada.set(data.destacada);
     this.enProximamente.set(data.en_proximamente);
@@ -288,14 +299,14 @@ export class Formulario {
     const valores = this.formulario.getRawValue();
 
     const omdb = this.omdb();
+    const ratings = mapRatings(omdb?.Ratings);
     const datosOmdb = omdb
       ? {
           imdb_id: omdb.imdbID,
           omdb_data: omdb,
-          rotten: mapRatings(omdb.Ratings).rotten ?? null,
-          metacritic: mapRatings(omdb.Ratings).metacritic ?? null,
-          imdb: mapRatings(omdb.Ratings).imdb ?? null,
-          sincronizado_en: new Date().toISOString(),
+          rotten: ratings.rotten ?? null,
+          metacritic: ratings.metacritic ?? null,
+          imdb: ratings.imdb ?? null,
         }
       : {};
 

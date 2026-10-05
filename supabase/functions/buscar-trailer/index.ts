@@ -4,7 +4,8 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_API_KEY')!;
 
-const YOUTUBE_URL = 'https://www.googleapis.com/youtube/v3/search';
+const YOUTUBE_URL =
+  Deno.env.get('YOUTUBE_API_URL') ?? 'https://www.googleapis.com/youtube/v3/search';
 const CANTIDAD_RESULTADOS = 5;
 
 const CORS_HEADERS = {

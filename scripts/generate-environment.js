@@ -10,6 +10,8 @@ const contenido = `export const environment = {
   VAPID_PUBLIC_KEY: '${process.env.VAPID_PUBLIC_KEY}',
   OMDB_URL: '${process.env.OMDB_URL ?? 'https://www.omdbapi.com/'}',
   OMDB_KEY: '${process.env.OMDB_KEY ?? ''}',
+  YOUTUBE_EMBED_URL: '${process.env.YOUTUBE_EMBED_URL ?? 'https://www.youtube.com/embed/'}',
+  YOUTUBE_WATCH_URL: '${process.env.YOUTUBE_WATCH_URL ?? 'https://www.youtube.com/watch?v='}',
 };
 `;
 

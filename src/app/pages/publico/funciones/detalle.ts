@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, OnDestroy, signal } from '@angular/core';
 import { DatePipe, UpperCasePipe } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { toDataURL } from 'qrcode';
 import { FuncionServicio } from '../../../servicios/funcion/funcion';
 import { PeliculaServicio } from '../../../servicios/pelicula/pelicula';
@@ -87,6 +87,7 @@ function quitarPrefijoBase64(dataUrl: string): string {
 })
 export class Detalle implements OnDestroy {
   private route = inject(ActivatedRoute);
+  protected router = inject(Router);
   private funcionServicio = inject(FuncionServicio);
   private peliculaServicio = inject(PeliculaServicio);
   private salaServicio = inject(SalaServicio);

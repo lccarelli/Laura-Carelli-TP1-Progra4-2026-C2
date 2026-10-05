@@ -20,5 +20,4 @@ export interface Pelicula {
   rotten: number | null;
   metacritic: number | null;
   imdb: number | null;
-  sincronizado_en: string | null;
 }

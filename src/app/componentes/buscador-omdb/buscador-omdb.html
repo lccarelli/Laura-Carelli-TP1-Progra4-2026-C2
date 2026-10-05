@@ -4,17 +4,15 @@
     <input
       class="campo__input"
       type="text"
-      placeholder="Ej: Interstellar o https://www.imdb.com/title/tt0816692"
+      placeholder="Ej: La la land o https://www.imdb.com/title/tt3783958"
       [formControl]="texto"
     />
   </label>
 
   @if (cargando()) {
     <p class="buscador-omdb__estado">Buscando…</p>
-  } @else if (error(); as mensaje) {
-    <p class="buscador-omdb__estado buscador-omdb__estado--error">{{ mensaje }}</p>
-  } @else if (buscado() && candidatos().length === 0) {
-    <p class="buscador-omdb__estado">No se encontraron películas.</p>
+  } @else if (mensaje()) {
+    <p class="buscador-omdb__estado">{{ mensaje() }}</p>
   }
 
   @if (candidatos().length > 0) {
@@ -22,8 +20,8 @@
       @for (candidato of candidatos(); track candidato.imdbID) {
         <li>
           <button class="candidato" type="button" (click)="elegir(candidato)">
-            @if (posterDe(candidato); as poster) {
-              <img class="candidato__poster" [src]="poster" alt="" />
+            @if (candidato.Poster !== 'N/A') {
+              <img class="candidato__poster" [src]="candidato.Poster" alt="" />
             } @else {
               <span class="candidato__poster candidato__poster--vacio"></span>
             }

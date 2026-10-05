@@ -3,5 +3,4 @@ alter table pelicula
   add column if not exists omdb_data jsonb,
   add column if not exists rotten int,
   add column if not exists metacritic int,
-  add column if not exists imdb numeric(3, 1),
-  add column if not exists sincronizado_en timestamptz;
+  add column if not exists imdb numeric(3, 1);

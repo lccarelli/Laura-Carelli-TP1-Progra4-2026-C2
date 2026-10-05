@@ -88,7 +88,11 @@
               </app-boton>
             } @else {
               <p class="aviso-proximamente__login">
-                <app-boton-link variante="claro-negro" ruta="/login">
+                <app-boton-link
+                  variante="claro-negro"
+                  ruta="/login"
+                  [queryParams]="{ volver: router.url }"
+                >
                   Iniciá sesión
                 </app-boton-link>
                 para activar el aviso.

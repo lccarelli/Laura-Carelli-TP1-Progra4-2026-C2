@@ -36,11 +36,6 @@
   color: color-mix(in srgb, var(--negro) 70%, transparent);
 }
 
-.buscador-trailer__estado--error {
-  color: var(--rojo);
-  font-weight: 700;
-}
-
 .trailers {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));

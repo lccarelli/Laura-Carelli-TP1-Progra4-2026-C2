@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Auth } from '../../servicios/auth/auth';
 import { Errores } from '../../servicios/errores/errores';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Boton } from '../../componentes/boton/boton';
 import { BotonLink } from '../../componentes/boton-link/boton-link';
 import { Logger } from '../../servicios/logger/logger';
@@ -19,6 +19,7 @@ export class Login {
   private auth = inject(Auth);
   private errores = inject(Errores);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private formBuilder = inject(FormBuilder);
   private logger = inject(Logger);
 
@@ -43,8 +44,15 @@ export class Login {
     } else {
       this.logger.registrar(Flujo.Login, TipoEvento.Exito, email);
       const rol = data.user?.user_metadata?.['role'];
-      const destino = rol === 'admin' ? '/admin' : rol === 'empleado' ? '/boleteria' : '/peliculas';
-      await this.router.navigate([destino]);
+      const volver = this.route.snapshot.queryParamMap.get('volver');
+      const volverSeguro = volver?.startsWith('/') && !volver.startsWith('//') ? volver : null;
+      const destino =
+        rol === 'admin'
+          ? '/admin'
+          : rol === 'empleado'
+            ? '/boleteria'
+            : (volverSeguro ?? '/peliculas');
+      await this.router.navigateByUrl(destino);
     }
   }
 }

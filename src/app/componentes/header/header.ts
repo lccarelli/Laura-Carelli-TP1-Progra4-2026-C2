@@ -50,18 +50,35 @@ export class Header {
     await this.router.navigate(['/']);
   }
 
-  async ingresarComoProfesor() {
-    const { error } = await this.auth.loguear(
+  protected hayEmpleadoDemo = !!environment.EMPLEADO_EMAIL;
+
+  ingresarComoProfesor() {
+    return this.ingresarDirecto(
       environment.PROFESOR_EMAIL,
       environment.PROFESOR_PASSWORD,
+      '/admin',
+      'acceso directo profesor',
     );
+  }
+
+  ingresarComoEmpleado() {
+    return this.ingresarDirecto(
+      environment.EMPLEADO_EMAIL,
+      environment.EMPLEADO_PASSWORD,
+      '/boleteria',
+      'acceso directo empleado',
+    );
+  }
+
+  private async ingresarDirecto(email: string, password: string, destino: string, detalle: string) {
+    const { error } = await this.auth.loguear(email, password);
 
     if (error) {
       this.logger.registrar(Flujo.Login, TipoEvento.Error, error.message);
       this.errores.mostrar(error.message);
     } else {
-      this.logger.registrar(Flujo.Login, TipoEvento.Exito, 'acceso directo profesor');
-      await this.router.navigate(['/admin']);
+      this.logger.registrar(Flujo.Login, TipoEvento.Exito, detalle);
+      await this.router.navigate([destino]);
     }
   }
 }

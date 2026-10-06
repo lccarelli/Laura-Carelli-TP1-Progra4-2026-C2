@@ -1,0 +1,48 @@
+.busqueda {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1.5rem;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-width: 22rem;
+  flex: 1;
+  min-width: 14rem;
+}
+
+.campo__etiqueta {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--negro);
+}
+
+.campo__input {
+  border: none;
+  border-bottom: 2px solid var(--negro);
+  background: transparent;
+  padding: 0.5rem 0.1rem;
+  font-size: 1rem;
+  color: var(--negro);
+  font-family: inherit;
+}
+
+.campo__input:focus {
+  outline: none;
+}
+
+.acciones {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.lector {
+  max-width: 24rem;
+  margin-block: 1.5rem;
+  border: 2px solid var(--negro);
+}

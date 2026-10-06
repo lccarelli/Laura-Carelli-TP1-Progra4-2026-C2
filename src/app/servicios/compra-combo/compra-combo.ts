@@ -7,7 +7,9 @@ export interface ItemCombo {
 }
 
 export interface ItemComboDeCompra {
+  id: string;
   cantidad: number;
+  cantidad_entregada: number;
   combo: { nombre: string } | null;
 }
 
@@ -28,8 +30,15 @@ export class CompraComboServicio {
 
   listarPorCodigo(codigoCompra: string) {
     return this.supabase.Supabase.from(this.tabla)
-      .select('cantidad, combo(nombre)')
+      .select('id, cantidad, cantidad_entregada, combo(nombre)')
       .eq('codigo_compra', codigoCompra)
       .returns<ItemComboDeCompra[]>();
+  }
+
+  entregar(itemId: string, cantidad: number) {
+    return this.supabase.Supabase.rpc('entregar_combo', {
+      item_id: itemId,
+      cantidad_param: cantidad,
+    });
   }
 }

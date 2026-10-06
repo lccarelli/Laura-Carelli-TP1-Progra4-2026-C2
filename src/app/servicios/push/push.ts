@@ -5,6 +5,8 @@ import { Supabase } from '../supabase/supabase';
 import { Auth } from '../auth/auth';
 import { environment } from '../../../environments/environment';
 
+const TIEMPO_MAXIMO_SUSCRIPCION_MS = 15000;
+
 @Service()
 export class PushServicio {
   private swPush = inject(SwPush);
@@ -45,9 +47,18 @@ export class PushServicio {
     let suscripcion;
 
     try {
-      suscripcion = await this.swPush.requestSubscription({
-        serverPublicKey: environment.VAPID_PUBLIC_KEY,
-      });
+      suscripcion = await Promise.race([
+        this.swPush.requestSubscription({ serverPublicKey: environment.VAPID_PUBLIC_KEY }),
+        new Promise<never>((_, rechazar) =>
+          setTimeout(
+            () =>
+              rechazar(
+                new Error('No hubo respuesta del servicio de notificaciones. Revisá tu conexión.'),
+              ),
+            TIEMPO_MAXIMO_SUSCRIPCION_MS,
+          ),
+        ),
+      ]);
     } catch (error) {
       return { error: error as Error };
     }

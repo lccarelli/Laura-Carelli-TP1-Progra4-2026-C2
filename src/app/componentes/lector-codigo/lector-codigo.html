@@ -1,0 +1,21 @@
+<div class="busqueda">
+  <label class="campo">
+    <span class="campo__etiqueta">Código de compra</span>
+    <input
+      class="campo__input"
+      type="text"
+      [value]="codigo()"
+      (input)="codigo.set($any($event.target).value)"
+      (keydown.enter)="emitir()"
+    />
+  </label>
+
+  <div class="acciones">
+    <app-boton variante="menu" [disabled]="buscando()" (clic)="emitir()">Buscar</app-boton>
+    <app-boton variante="claro-negro" (clic)="alternarEscaner()">
+      {{ escaneando() ? 'Cancelar escaneo' : 'Escanear con cámara' }}
+    </app-boton>
+  </div>
+</div>
+
+<div id="lector-qr" class="lector" [hidden]="!escaneando()"></div>

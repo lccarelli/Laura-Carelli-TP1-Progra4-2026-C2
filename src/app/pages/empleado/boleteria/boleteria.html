@@ -4,26 +4,8 @@
     <p class="boleteria__ayuda">Buscá una compra por su código para validar el ingreso.</p>
 
     <div class="boleteria__busqueda">
-      <label class="campo">
-        <span class="campo__etiqueta">Código de compra</span>
-        <input
-          class="campo__input"
-          type="text"
-          [value]="codigo()"
-          (input)="actualizarCodigo($any($event.target).value)"
-          (keydown.enter)="buscar()"
-        />
-      </label>
-
-      <div class="boleteria__acciones">
-        <app-boton variante="menu" [disabled]="buscando()" (clic)="buscar()">Buscar</app-boton>
-        <app-boton variante="claro-negro" (clic)="alternarEscaner()">
-          {{ escaneando() ? 'Cancelar escaneo' : 'Escanear con cámara' }}
-        </app-boton>
-      </div>
+      <app-lector-codigo [buscando]="buscando()" (buscar)="buscar($event)" />
     </div>
-
-    <div id="lector-qr" class="boleteria__lector" [hidden]="!escaneando()"></div>
 
     @if (noEncontrada()) {
       <p class="boleteria__error">Código no encontrado.</p>
@@ -37,41 +19,45 @@
           {{ compra.funcion?.inicio | date: 'EEEE dd/MM/yyyy HH:mm' }}
         </p>
 
-        @if (butacas().length > 0) {
+        @if (compra.cancelada_en) {
+          <p class="boleteria__error">Esta compra fue cancelada. No corresponde el ingreso.</p>
+        } @else {
           <h4 class="boleteria__subtitulo">Butacas</h4>
           <ul class="boleteria__lista">
-            @for (item of butacas(); track $index) {
+            @for (item of butacas(); track item.id) {
               @if (item.butaca; as butaca) {
-                <li>{{ butaca.fila }}{{ butaca.numero }} ({{ butaca.tipo }})</li>
+                <li class="boleteria__fila">
+                  <span>{{ butaca.fila }}{{ butaca.numero }} ({{ butaca.tipo }})</span>
+
+                  @if (item.validada_en) {
+                    <span class="boleteria__ok">
+                      Ingresó el {{ item.validada_en | date: 'dd/MM HH:mm' }} ✔
+                    </span>
+                  } @else {
+                    <app-boton
+                      variante="claro-negro"
+                      [disabled]="validando()"
+                      (clic)="ingresar([item.id])"
+                    >
+                      Ingresar
+                    </app-boton>
+                  }
+                </li>
               }
             }
           </ul>
-        }
 
-        @if (candy().length > 0) {
-          <h4 class="boleteria__subtitulo">Candy</h4>
-          <ul class="boleteria__lista">
-            @for (item of candy(); track $index) {
-              <li>{{ item.cantidad }}x {{ item.producto_candy?.nombre ?? '—' }}</li>
-            }
-          </ul>
-        }
-
-        <p class="boleteria__total">Total: ${{ compra.total }}</p>
-
-        @if (compra.validada_en) {
-          @if (validacionExitosa()) {
-            <p class="boleteria__ok">Ingreso validado ✔.</p>
-          } @else {
-            <p class="boleteria__error">
-              Ya se usó este código el {{ compra.validada_en | date: 'dd/MM/yyyy HH:mm' }}. No debe
-              reingresar.
-            </p>
+          @if (pendientes().length > 1) {
+            <app-boton
+              variante="menu"
+              [disabled]="validando()"
+              (clic)="ingresar(ids(pendientes()))"
+            >
+              Ingresar todas ({{ pendientes().length }})
+            </app-boton>
+          } @else if (butacas().length > 0 && pendientes().length === 0) {
+            <p class="boleteria__ok">Todas las entradas ya ingresaron.</p>
           }
-        } @else {
-          <app-boton variante="menu" [disabled]="validando()" (clic)="confirmarIngreso()">
-            Confirmar ingreso
-          </app-boton>
         }
       </div>
     }

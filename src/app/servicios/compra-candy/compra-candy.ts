@@ -7,7 +7,9 @@ export interface ItemCandy {
 }
 
 export interface ItemCandyDeCompra {
+  id: string;
   cantidad: number;
+  cantidad_entregada: number;
   producto_candy: { nombre: string } | null;
 }
 
@@ -28,8 +30,15 @@ export class CompraCandyServicio {
 
   listarPorCodigo(codigoCompra: string) {
     return this.supabase.Supabase.from(this.tabla)
-      .select('cantidad, producto_candy(nombre)')
+      .select('id, cantidad, cantidad_entregada, producto_candy(nombre)')
       .eq('codigo_compra', codigoCompra)
       .returns<ItemCandyDeCompra[]>();
+  }
+
+  entregar(itemId: string, cantidad: number) {
+    return this.supabase.Supabase.rpc('entregar_candy', {
+      item_id: itemId,
+      cantidad_param: cantidad,
+    });
   }
 }

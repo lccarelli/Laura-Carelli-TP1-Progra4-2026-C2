@@ -184,6 +184,12 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/empleado/boleteria/boleteria').then((m) => m.Boleteria),
   },
   {
+    path: 'entrega-candy',
+    canActivate: [empleadoGuard],
+    loadComponent: () =>
+      import('./pages/empleado/entrega-candy/entrega-candy').then((m) => m.EntregaCandy),
+  },
+  {
     path: 'mis-puntos',
     canActivate: [clienteGuard],
     loadComponent: () => import('./pages/publico/mis-puntos/mis-puntos').then((m) => m.MisPuntos),

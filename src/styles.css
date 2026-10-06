@@ -14,7 +14,24 @@
 }
 
 body {
-  background: color-mix(in srgb, var(--crema) 70%, var(--gris-claro) 30%);
+  background-color: color-mix(in srgb, var(--crema) 70%, var(--gris-claro) 30%);
+  background-image:
+    radial-gradient(
+      circle,
+      color-mix(in srgb, var(--negro) 22%, transparent) 0.8px,
+      transparent 0.8px
+    ),
+    radial-gradient(
+      circle,
+      color-mix(in srgb, var(--negro) 22%, transparent) 0.8px,
+      transparent 0.8px
+    );
+  background-size:
+    5px 20px,
+    20px 5px;
+  background-position:
+    -2.5px -10px,
+    -10px -2.5px;
   font-family: var(--font-logo);
 }
 

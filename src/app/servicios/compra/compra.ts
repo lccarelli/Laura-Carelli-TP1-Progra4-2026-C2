@@ -16,10 +16,7 @@ export interface CompraConDetalle {
   } | null;
 }
 
-export interface CompraParaValidar extends CompraConDetalle {
-  validada_en: string | null;
-  validada_por: string | null;
-}
+export type CompraParaValidar = CompraConDetalle;
 
 export interface DatosEnvioQr {
   email: string;
@@ -89,27 +86,9 @@ export class CompraServicio {
   buscarPorCodigo(codigoCompra: string) {
     return this.supabase.Supabase.from(this.tabla)
       .select(
-        'id, codigo_compra, total, creada_en, validada_en, validada_por, funcion(inicio, pelicula(nombre), sala(nombre))',
+        'id, codigo_compra, total, creada_en, cancelada_en, funcion(inicio, pelicula(nombre), sala(nombre))',
       )
       .eq('codigo_compra', codigoCompra)
       .maybeSingle<CompraParaValidar>();
-  }
-
-  async validar(codigoCompra: string, empleadoId: string) {
-    const { data, error } = await this.supabase.Supabase.from(this.tabla)
-      .update({ validada_en: new Date().toISOString(), validada_por: empleadoId })
-      .eq('codigo_compra', codigoCompra)
-      .is('validada_en', null)
-      .select('id');
-
-    if (error) {
-      return { error: error.message };
-    }
-
-    if (!data || data.length === 0) {
-      return { error: 'Este código ya fue utilizado o no existe.' };
-    }
-
-    return { error: null };
   }
 }

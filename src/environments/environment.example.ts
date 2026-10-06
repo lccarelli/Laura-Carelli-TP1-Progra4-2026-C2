@@ -4,6 +4,8 @@ export const environment = {
   PROFESOR_EMAIL: '',
   PROFESOR_PASSWORD: '',
   VAPID_PUBLIC_KEY: '',
+  EMPLEADO_EMAIL: '',
+  EMPLEADO_PASSWORD: '',
   OMDB_URL: 'https://www.omdbapi.com/',
   OMDB_KEY: '',
   YOUTUBE_EMBED_URL: 'https://www.youtube.com/embed/',

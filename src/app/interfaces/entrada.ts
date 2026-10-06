@@ -7,4 +7,6 @@ export interface Entrada {
   codigo_compra: string | null;
   sesion_id: string | null;
   creada_en: string;
+  validada_en: string | null;
+  validada_por: string | null;
 }

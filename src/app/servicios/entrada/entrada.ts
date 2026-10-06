@@ -4,6 +4,8 @@ import { Entrada } from '../../interfaces/entrada';
 import { Butaca } from '../../interfaces/butaca';
 
 export interface ButacaDeEntrada {
+  id: string;
+  validada_en: string | null;
   butaca: Pick<Butaca, 'fila' | 'numero' | 'tipo'> | null;
 }
 
@@ -159,9 +161,16 @@ export class EntradaServicio {
 
   listarPorCodigoCompra(codigoCompra: string) {
     return this.supabase.Supabase.from(this.tabla)
-      .select('butaca(fila, numero, tipo)')
+      .select('id, validada_en, butaca(fila, numero, tipo)')
       .eq('codigo_compra', codigoCompra)
       .returns<ButacaDeEntrada[]>();
+  }
+
+  validar(codigoCompra: string, entradaIds: string[]) {
+    return this.supabase.Supabase.rpc('validar_entradas', {
+      codigo_compra_param: codigoCompra,
+      entrada_ids: entradaIds,
+    });
   }
 
   suscribirCambios(funcionId: string, alCambiar: () => void) {

@@ -34,6 +34,7 @@
       }
       @if (auth.esEmpleado() || auth.esAdmin()) {
         <app-boton-link variante="header" ruta="/boleteria">Boletería</app-boton-link>
+        <app-boton-link variante="header" ruta="/entrega-candy">Entrega de candy</app-boton-link>
       }
     </nav>
 
@@ -44,6 +45,11 @@
         <app-boton variante="header" (clic)="ingresarComoProfesor()">
           Ingresar como Administrador
         </app-boton>
+        @if (hayEmpleadoDemo) {
+          <app-boton variante="header" (clic)="ingresarComoEmpleado()">
+            Ingresar como Empleado
+          </app-boton>
+        }
         <app-boton-link variante="header" ruta="/login" [queryParams]="{ volver: router.url }">
           Iniciar sesión
         </app-boton-link>

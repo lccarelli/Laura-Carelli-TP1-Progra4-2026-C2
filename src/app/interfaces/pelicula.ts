@@ -1,3 +1,5 @@
+import { OmdbDetalle } from './omdb';
+
 export interface Pelicula {
   id: string;
   nombre: string;
@@ -13,4 +15,9 @@ export interface Pelicula {
   trailer_url: string | null;
   dias_preventa: number | null;
   porcentaje_preventa: number | null;
+  imdb_id: string | null;
+  omdb_data: OmdbDetalle | null;
+  rotten: number | null;
+  metacritic: number | null;
+  imdb: number | null;
 }

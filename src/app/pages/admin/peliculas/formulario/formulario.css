@@ -198,3 +198,25 @@
   justify-content: flex-end;
   gap: 1rem;
 }
+
+.aviso-omdb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0 0 1.5rem;
+  font-weight: 700;
+}
+
+.datos-omdb {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  margin-bottom: 1.5rem;
+}
+
+.datos-omdb__linea {
+  margin: 0;
+  font-size: 0.9rem;
+}

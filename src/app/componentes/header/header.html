@@ -29,6 +29,9 @@
         <app-boton-link variante="header" ruta="/mis-peliculas">Mis películas</app-boton-link>
         <app-boton-link variante="header" ruta="/mis-puntos">Mis puntos</app-boton-link>
       }
+      @if (auth.esAdmin()) {
+        <app-boton-link variante="header" ruta="/admin">Gestión</app-boton-link>
+      }
       @if (auth.esEmpleado() || auth.esAdmin()) {
         <app-boton-link variante="header" ruta="/boleteria">Boletería</app-boton-link>
       }
@@ -41,7 +44,9 @@
         <app-boton variante="header" (clic)="ingresarComoProfesor()">
           Ingresar como Administrador
         </app-boton>
-        <app-boton-link variante="header" ruta="/login">Iniciar sesión</app-boton-link>
+        <app-boton-link variante="header" ruta="/login" [queryParams]="{ volver: router.url }">
+          Iniciar sesión
+        </app-boton-link>
       }
     </div>
   </div>

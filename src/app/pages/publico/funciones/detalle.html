@@ -230,7 +230,10 @@
 
                     <p class="acceso-compra__cuenta">
                       ¿Ya tenés cuenta o querés guardar tus compras?
-                      <app-boton-link variante="claro-negro" ruta="/login"
+                      <app-boton-link
+                        variante="claro-negro"
+                        ruta="/login"
+                        [queryParams]="{ volver: router.url }"
                         >Iniciar sesión</app-boton-link
                       >
                       <app-boton-link variante="claro-negro" ruta="/registro"

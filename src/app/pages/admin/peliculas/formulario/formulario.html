@@ -24,6 +24,40 @@
       }
     </div>
 
+    <app-buscador-omdb (elegida)="elegirDeOmdb($event)" />
+
+    @if (imdbIdVinculado(); as imdbId) {
+      <p class="campo__ayuda">Vinculada a OMDb ({{ imdbId }}).</p>
+    }
+
+    @if (duplicada(); as existente) {
+      <p class="aviso-omdb">
+        Esa película ya está cargada como "{{ existente.nombre }}".
+        <app-boton-link
+          variante="claro-negro"
+          [ruta]="['/admin/peliculas', existente.id, 'editar']"
+        >
+          Editarla
+        </app-boton-link>
+      </p>
+    }
+
+    @if (omdb(); as datos) {
+      <div class="datos-omdb">
+        <p class="datos-omdb__linea"><strong>Director:</strong> {{ datos.Director }}</p>
+        <p class="datos-omdb__linea"><strong>Actores:</strong> {{ datos.Actors }}</p>
+        <p class="datos-omdb__linea"><strong>Género (OMDb):</strong> {{ datos.Genre }}</p>
+        <p class="campo__ayuda">
+          @if (id()) {
+            Se actualizaron sinopsis, duración e imagen con OMDb. El nombre no se modifica.
+          } @else {
+            Se completaron los datos con OMDb. El nombre es el título local y podés cambiarlo.
+          }
+        </p>
+        <app-boton variante="claro-negro" (clic)="quitarOmdb()">Descartar datos de OMDb</app-boton>
+      </div>
+    }
+
     <form class="formulario" [formGroup]="formulario" (ngSubmit)="guardar()">
       <div class="formulario__grid">
         <div class="formulario__columna-imagen">
@@ -52,6 +86,16 @@
               rows="4"
             ></textarea>
           </label>
+
+          @if (puedeTraducir) {
+            <app-boton
+              variante="claro-negro"
+              [disabled]="traduciendo()"
+              (clic)="traducirSinopsis()"
+            >
+              {{ traduciendo() ? 'Traduciendo…' : 'Traducir sinopsis al español' }}
+            </app-boton>
+          }
 
           <label class="campo">
             <span class="campo__etiqueta">Duración (minutos)</span>
@@ -108,6 +152,12 @@
         <span class="campo__etiqueta">Tráiler (link de YouTube)</span>
         <input class="campo__input" type="text" formControlName="trailer_url" />
       </label>
+
+      <app-buscador-trailer
+        [consultaInicial]="consultaTrailer()"
+        [urlActual]="trailerUrl()"
+        (elegido)="elegirTrailer($event)"
+      />
 
       <div class="campo campo--preventa">
         <span class="campo__etiqueta">Preventa (opcional)</span>

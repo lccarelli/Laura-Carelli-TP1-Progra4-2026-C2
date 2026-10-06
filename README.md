@@ -61,6 +61,16 @@ npm start        # http://localhost:4200
 
 ---
 
+## Configuración de OMDb y YouTube
+
+Los datos de las películas (sinopsis, póster, ratings) vienen de [OMDb](https://www.omdbapi.com/apikey.aspx). Se necesita una API key gratuita.
+
+- **Frontend:** agregar `OMDB_KEY` al `.env` (en Vercel, como variable de entorno). `npm start` y `npm run build` regeneran `src/environments/environment.ts`. Las URLs (`OMDB_URL`, `YOUTUBE_EMBED_URL`, `YOUTUBE_WATCH_URL`) también salen de ahí y tienen valor por defecto.
+- **Búsqueda de tráiler:** crear una API key de YouTube Data API v3 en Google Cloud, cargarla como secret `YOUTUBE_API_KEY` y desplegar `buscar-trailer` (con Verify JWT activado). La URL de la API se puede cambiar con el secret opcional `YOUTUBE_API_URL`.
+- **Base de datos:** correr `supabase/migrations/20261004230000_omdb_en_pelicula.sql`.
+
+---
+
 ## Estructura de carpetas
 
 ```

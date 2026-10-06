@@ -26,6 +26,24 @@
               <span class="insignia">{{ pelicula.restriccion_edad | restriccionEdad }}</span>
             </div>
 
+            @if (
+              pelicula.rotten !== null || pelicula.metacritic !== null || pelicula.imdb !== null
+            ) {
+              <div class="encabezado__insignias">
+                @if (pelicula.rotten !== null) {
+                  <span class="insignia">
+                    {{ pelicula.rotten >= 60 ? '🍅' : '🤢' }} Rotten Tomatoes {{ pelicula.rotten }}%
+                  </span>
+                }
+                @if (pelicula.metacritic !== null) {
+                  <span class="insignia">Metacritic {{ pelicula.metacritic }}</span>
+                }
+                @if (pelicula.imdb !== null) {
+                  <span class="insignia">IMDb {{ pelicula.imdb }}</span>
+                }
+              </div>
+            }
+
             <h2 class="panel__titulo">{{ pelicula.nombre }}</h2>
 
             <p class="sinopsis">{{ pelicula.sinopsis }}</p>
@@ -70,7 +88,11 @@
               </app-boton>
             } @else {
               <p class="aviso-proximamente__login">
-                <app-boton-link variante="claro-negro" ruta="/login">
+                <app-boton-link
+                  variante="claro-negro"
+                  ruta="/login"
+                  [queryParams]="{ volver: router.url }"
+                >
                   Iniciá sesión
                 </app-boton-link>
                 para activar el aviso.

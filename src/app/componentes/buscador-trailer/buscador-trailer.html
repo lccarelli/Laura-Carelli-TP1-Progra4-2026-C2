@@ -1,0 +1,58 @@
+<section class="buscador-trailer">
+  <div class="buscador-trailer__fila">
+    <input
+      class="campo__input buscador-trailer__input"
+      type="text"
+      placeholder="Ej: Interstellar 2014 trailer oficial"
+      [value]="consulta()"
+      (input)="consulta.set($any($event.target).value)"
+      (keydown.enter)="$event.preventDefault(); buscar()"
+    />
+    <app-boton variante="claro-negro" [disabled]="buscando()" (clic)="buscar()">
+      {{ buscando() ? 'Buscando…' : 'Buscar tráiler' }}
+    </app-boton>
+  </div>
+
+  @if (mensaje()) {
+    <p class="buscador-trailer__estado">{{ mensaje() }}</p>
+  }
+
+  @if (resultados().length > 0) {
+    <ul class="trailers">
+      @for (resultado of resultados(); track resultado.id) {
+        <li>
+          <button
+            class="trailer-opcion"
+            [class.trailer-opcion--elegido]="resultado.id === idActual()"
+            type="button"
+            (click)="elegir(resultado)"
+          >
+            @if (resultado.miniatura; as miniatura) {
+              <img class="trailer-opcion__miniatura" [src]="miniatura" alt="" />
+            } @else {
+              <span class="trailer-opcion__miniatura"></span>
+            }
+            <span class="trailer-opcion__titulo">{{ resultado.titulo }}</span>
+            <span class="trailer-opcion__canal">{{ resultado.canal }}</span>
+            @if (resultado.id === idActual()) {
+              <span class="trailer-opcion__marca">✓ Elegido</span>
+            }
+          </button>
+        </li>
+      }
+    </ul>
+  }
+
+  @if (vistaPrevia(); as vista) {
+    <div class="vista-previa">
+      <span class="vista-previa__etiqueta">Tráiler elegido</span>
+      <iframe
+        class="vista-previa__video"
+        [src]="vista"
+        title="Vista previa del tráiler"
+        allow="encrypted-media; picture-in-picture"
+        allowfullscreen
+      ></iframe>
+    </div>
+  }
+</section>

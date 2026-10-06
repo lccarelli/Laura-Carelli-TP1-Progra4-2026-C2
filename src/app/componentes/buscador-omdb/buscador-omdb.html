@@ -1,0 +1,35 @@
+<section class="buscador-omdb">
+  <label class="campo">
+    <span class="campo__etiqueta">Buscar en OMDb (título o link de IMDb)</span>
+    <input
+      class="campo__input"
+      type="text"
+      placeholder="Ej: La la land o https://www.imdb.com/title/tt3783958"
+      [formControl]="texto"
+    />
+  </label>
+
+  @if (cargando()) {
+    <p class="buscador-omdb__estado">Buscando…</p>
+  } @else if (mensaje()) {
+    <p class="buscador-omdb__estado">{{ mensaje() }}</p>
+  }
+
+  @if (candidatos().length > 0) {
+    <ul class="candidatos">
+      @for (candidato of candidatos(); track candidato.imdbID) {
+        <li>
+          <button class="candidato" type="button" (click)="elegir(candidato)">
+            @if (candidato.Poster !== 'N/A') {
+              <img class="candidato__poster" [src]="candidato.Poster" alt="" />
+            } @else {
+              <span class="candidato__poster candidato__poster--vacio"></span>
+            }
+            <span class="candidato__titulo">{{ candidato.Title }}</span>
+            <span class="candidato__anio">{{ candidato.Year }}</span>
+          </button>
+        </li>
+      }
+    </ul>
+  }
+</section>

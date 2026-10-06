@@ -25,7 +25,7 @@ import { RestriccionEdadPipe } from '../../../pipes/restriccion-edad/restriccion
 import { Logger } from '../../../servicios/logger/logger';
 import { Flujo } from '../../../servicios/logger/flujo';
 import { TipoEvento } from '../../../servicios/logger/tipo-evento';
-import { extraerIdYoutube } from '../../../utilidades/youtube';
+import { extraerIdYoutube, urlEmbedYoutube } from '../../../utilidades/youtube';
 
 const PUNTAJES = [1, 2, 3, 4, 5];
 const DIAS_CALENDARIO = 14;
@@ -56,7 +56,7 @@ function claveDia(fecha: Date): string {
 })
 export class Detalle {
   private route = inject(ActivatedRoute);
-  private router = inject(Router);
+  protected router = inject(Router);
   private peliculaServicio = inject(PeliculaServicio);
   private generoServicio = inject(GeneroServicio);
   private resenaServicio = inject(ResenaServicio);
@@ -164,9 +164,7 @@ export class Detalle {
       return null;
     }
 
-    return this.sanitizer.bypassSecurityTrustResourceUrl(
-      `https://www.youtube.com/embed/${idYoutube}`,
-    );
+    return this.sanitizer.bypassSecurityTrustResourceUrl(urlEmbedYoutube(idYoutube));
   });
 
   constructor() {

@@ -22,7 +22,7 @@ export class Header {
   protected menuAbierto = signal(false);
   // se inyecta sin usarlo para activar su escucha global de clicks en notificaciones
   private push = inject(PushServicio);
-  private router = inject(Router);
+  protected router = inject(Router);
   private errores = inject(Errores);
   private logger = inject(Logger);
 

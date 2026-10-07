@@ -1,7 +1,6 @@
-import { TestBed } from '@angular/core/testing';
 import { Butaca } from '../../interfaces/butaca';
 import { Entrada } from '../../interfaces/entrada';
-import { EntradaServicio } from '../entrada/entrada';
+import { CambioDeEntrada, EntradaServicio } from '../entrada/entrada';
 import { Errores } from '../errores/errores';
 import { SalaServicio } from '../sala/sala';
 import { ReservaButacas } from './reserva-butacas';
@@ -34,6 +33,13 @@ const entrada = (datos: Partial<Entrada>): Entrada => ({
 
 const enMinutos = (minutos: number) => new Date(AHORA.getTime() + minutos * 60_000).toISOString();
 
+const insercion = (nueva: Entrada) =>
+  ({ eventType: 'INSERT', new: nueva, old: {} }) as CambioDeEntrada;
+const actualizacion = (nueva: Entrada) =>
+  ({ eventType: 'UPDATE', new: nueva, old: { id: nueva.id } }) as CambioDeEntrada;
+const baja = (id: string | undefined) =>
+  ({ eventType: 'DELETE', new: {}, old: id ? { id } : {} }) as CambioDeEntrada;
+
 describe('ReservaButacas', () => {
   let reserva: ReservaButacas;
   let errores: { mostrar: ReturnType<typeof vi.fn> };
@@ -41,17 +47,10 @@ describe('ReservaButacas', () => {
     sesionId: ReturnType<typeof vi.fn>;
     listarPorFuncion: ReturnType<typeof vi.fn>;
     reservar: ReturnType<typeof vi.fn>;
-    suscribirCambios: ReturnType<typeof vi.fn>;
-    desuscribir: ReturnType<typeof vi.fn>;
   };
   let salaServicio: { listarButacas: ReturnType<typeof vi.fn> };
-  let alCambiar: () => void;
 
   const cargar = () => reserva.cargar('f1', 's1');
-  const actualizar = async () => {
-    TestBed.tick();
-    await Promise.resolve();
-  };
 
   beforeEach(() => {
     vi.useFakeTimers();
@@ -65,25 +64,17 @@ describe('ReservaButacas', () => {
       sesionId: vi.fn().mockReturnValue(SESION),
       listarPorFuncion: vi.fn().mockResolvedValue({ data: [], error: null }),
       reservar: vi.fn().mockResolvedValue({ error: null }),
-      suscribirCambios: vi.fn().mockImplementation((_funcionId, callback) => {
-        alCambiar = callback;
-        return 'canal';
-      }),
-      desuscribir: vi.fn(),
     };
 
-    TestBed.configureTestingModule({
-      providers: [
-        ReservaButacas,
-        { provide: EntradaServicio, useValue: entradaServicio },
-        { provide: SalaServicio, useValue: salaServicio },
-        { provide: Errores, useValue: errores },
-      ],
-    });
-    reserva = TestBed.inject(ReservaButacas);
+    reserva = new ReservaButacas(
+      entradaServicio as unknown as EntradaServicio,
+      salaServicio as unknown as SalaServicio,
+      errores as unknown as Errores,
+    );
   });
 
   afterEach(() => {
+    reserva.destruir();
     vi.useRealTimers();
   });
 
@@ -98,12 +89,6 @@ describe('ReservaButacas', () => {
       expect(entradaServicio.listarPorFuncion).toHaveBeenCalledWith('f1');
       expect(reserva.butacas().map((b) => b.id)).toEqual(['b1', 'b2']);
       expect(reserva.entradas()).toEqual([ocupada]);
-    });
-
-    it('se suscribe a los cambios de la función', async () => {
-      await cargar();
-
-      expect(entradaServicio.suscribirCambios).toHaveBeenCalledWith('f1', expect.any(Function));
     });
 
     it('muestra el error si fallan las butacas y no las carga', async () => {
@@ -137,14 +122,63 @@ describe('ReservaButacas', () => {
       expect(errores.mostrar).not.toHaveBeenCalled();
       expect(reserva.entradas()).toEqual([]);
     });
+  });
 
-    it('recarga las entradas cuando el canal avisa un cambio', async () => {
+  describe('aplicarCambio', () => {
+    beforeEach(async () => {
+      await cargar();
+    });
+
+    it('agrega la entrada de un INSERT', () => {
+      const nueva = entrada({ id: 'e2', butaca_id: 'b2', sesion_id: 'otra' });
+
+      reserva.aplicarCambio(insercion(nueva));
+
+      expect(reserva.entradas()).toEqual([nueva]);
+    });
+
+    it('reemplaza la entrada de un UPDATE', () => {
+      reserva.aplicarCambio(insercion(entrada({ id: 'e2', butaca_id: 'b2', sesion_id: 'otra' })));
+      const vendida = entrada({ id: 'e2', butaca_id: 'b2', sesion_id: 'otra', estado: 'vendida' });
+
+      reserva.aplicarCambio(actualizacion(vendida));
+
+      expect(reserva.entradas()).toEqual([vendida]);
+    });
+
+    it('quita la entrada de un DELETE', () => {
+      reserva.aplicarCambio(insercion(entrada({ id: 'e2', butaca_id: 'b2', sesion_id: 'otra' })));
+
+      reserva.aplicarCambio(baja('e2'));
+
+      expect(reserva.entradas()).toEqual([]);
+    });
+
+    it('ignora un DELETE sin id', () => {
+      reserva.aplicarCambio(insercion(entrada({ id: 'e2', butaca_id: 'b2' })));
+
+      reserva.aplicarCambio(baja(undefined));
+
+      expect(reserva.entradas()).toHaveLength(1);
+    });
+
+    it('no duplica la entrada si el mismo INSERT llega dos veces', () => {
+      const nueva = entrada({ id: 'e2', butaca_id: 'b2' });
+
+      reserva.aplicarCambio(insercion(nueva));
+      reserva.aplicarCambio(insercion(nueva));
+
+      expect(reserva.entradas()).toHaveLength(1);
+    });
+  });
+
+  describe('recargarEntradas', () => {
+    it('vuelve a pedir las entradas y reemplaza la lista', async () => {
       await cargar();
       const nueva = entrada({ butaca_id: 'b2', sesion_id: 'otra' });
       entradaServicio.listarPorFuncion.mockResolvedValue({ data: [nueva], error: null });
 
-      alCambiar();
-      await vi.advanceTimersByTimeAsync(0);
+      await reserva.recargarEntradas();
 
       expect(reserva.entradas()).toEqual([nueva]);
     });
@@ -155,10 +189,15 @@ describe('ReservaButacas', () => {
       await cargar();
       entradaServicio.listarPorFuncion.mockResolvedValue({ data: null, error: { message: 'x' } });
 
-      alCambiar();
-      await vi.advanceTimersByTimeAsync(0);
+      await reserva.recargarEntradas();
 
       expect(reserva.entradas()).toEqual([inicial]);
+    });
+
+    it('no pide nada si todavía no se cargó una función', async () => {
+      await reserva.recargarEntradas();
+
+      expect(entradaServicio.listarPorFuncion).not.toHaveBeenCalled();
     });
   });
 
@@ -228,17 +267,11 @@ describe('ReservaButacas', () => {
     });
 
     it('no hace nada si todavía no se cargó una función', async () => {
-      TestBed.resetTestingModule();
-      TestBed.configureTestingModule({
-        providers: [
-          ReservaButacas,
-          { provide: EntradaServicio, useValue: entradaServicio },
-          { provide: SalaServicio, useValue: salaServicio },
-          { provide: Errores, useValue: errores },
-        ],
-      });
-      const sinCargar = TestBed.inject(ReservaButacas);
-      entradaServicio.reservar.mockClear();
+      const sinCargar = new ReservaButacas(
+        entradaServicio as unknown as EntradaServicio,
+        salaServicio as unknown as SalaServicio,
+        errores as unknown as Errores,
+      );
 
       await sinCargar.alternar('b1');
 
@@ -275,6 +308,15 @@ describe('ReservaButacas', () => {
 
       expect(await reserva.confirmar()).toBe(true);
       expect(entradaServicio.reservar).toHaveBeenCalledWith('f1', ['b1']);
+    });
+
+    it('vuelve a pedir las entradas para quedar al día con la base', async () => {
+      await reserva.alternar('b1');
+      entradaServicio.listarPorFuncion.mockClear();
+
+      await reserva.confirmar();
+
+      expect(entradaServicio.listarPorFuncion).toHaveBeenCalledWith('f1');
     });
 
     it('devuelve false y muestra el error si la reserva falla', async () => {
@@ -318,7 +360,6 @@ describe('ReservaButacas', () => {
       });
 
       await cargar();
-      await actualizar();
 
       expect(reserva.tiempoRestanteTexto()).toBe('4:00');
     });
@@ -329,7 +370,6 @@ describe('ReservaButacas', () => {
         error: null,
       });
       await cargar();
-      await actualizar();
 
       await vi.advanceTimersByTimeAsync(1000);
 
@@ -343,46 +383,59 @@ describe('ReservaButacas', () => {
       });
 
       await cargar();
-      await actualizar();
 
       expect(reserva.tiempoRestanteTexto()).toBe('0:00');
     });
 
-    it('no deja un reloj corriendo si no hay reservas propias', async () => {
+    it('empieza a contar cuando llega por el canal una reserva propia', async () => {
       await cargar();
-      await actualizar();
+      expect(reserva.tiempoRestanteTexto()).toBeNull();
 
-      expect(vi.getTimerCount()).toBe(0);
+      reserva.aplicarCambio(insercion(entrada({ reservada_hasta: enMinutos(10) })));
+
+      expect(reserva.tiempoRestanteTexto()).toBe('10:00');
     });
   });
 
-  describe('al destruirse', () => {
-    it('cancela la suscripción a los cambios', async () => {
+  describe('reloj', () => {
+    it('no deja un reloj corriendo si no hay reservas propias', async () => {
       await cargar();
-
-      TestBed.resetTestingModule();
-
-      expect(entradaServicio.desuscribir).toHaveBeenCalledWith('canal');
-    });
-
-    it('no cancela nada si nunca se suscribió', () => {
-      TestBed.resetTestingModule();
-
-      expect(entradaServicio.desuscribir).not.toHaveBeenCalled();
-    });
-
-    it('detiene el reloj', async () => {
-      entradaServicio.listarPorFuncion.mockResolvedValue({
-        data: [entrada({ reservada_hasta: enMinutos(5) })],
-        error: null,
-      });
-      await cargar();
-      await actualizar();
-      expect(vi.getTimerCount()).toBe(1);
-
-      TestBed.resetTestingModule();
 
       expect(vi.getTimerCount()).toBe(0);
+    });
+
+    it('arranca un solo reloj aunque lleguen varios cambios', async () => {
+      await cargar();
+
+      reserva.aplicarCambio(insercion(entrada({ id: 'e1', reservada_hasta: enMinutos(5) })));
+      reserva.aplicarCambio(
+        insercion(entrada({ id: 'e2', butaca_id: 'b2', reservada_hasta: enMinutos(5) })),
+      );
+
+      expect(vi.getTimerCount()).toBe(1);
+    });
+
+    it('se apaga cuando se libera la última reserva propia', async () => {
+      await cargar();
+      reserva.aplicarCambio(insercion(entrada({ id: 'e1', reservada_hasta: enMinutos(5) })));
+      expect(vi.getTimerCount()).toBe(1);
+
+      reserva.aplicarCambio(baja('e1'));
+
+      expect(vi.getTimerCount()).toBe(0);
+    });
+
+    it('destruir detiene el reloj', async () => {
+      await cargar();
+      reserva.aplicarCambio(insercion(entrada({ reservada_hasta: enMinutos(5) })));
+
+      reserva.destruir();
+
+      expect(vi.getTimerCount()).toBe(0);
+    });
+
+    it('destruir no falla si nunca arrancó', () => {
+      expect(() => reserva.destruir()).not.toThrow();
     });
   });
 });

@@ -1,21 +1,17 @@
-import { DestroyRef, Service, computed, effect, inject, signal } from '@angular/core';
+import { computed, signal } from '@angular/core';
 import { Butaca } from '../../interfaces/butaca';
 import { Entrada } from '../../interfaces/entrada';
+import { guardarEntrada, quitarEntrada } from '../../utilidades/entrada';
 import { TABLA_NO_ENCONTRADA } from '../../utilidades/postgrest';
-import { EntradaServicio } from '../entrada/entrada';
+import { CambioDeEntrada, EntradaServicio } from '../entrada/entrada';
 import { Errores } from '../errores/errores';
 import { SalaServicio } from '../sala/sala';
 
 const INTERVALO_RELOJ_MS = 1000;
 
-@Service({ autoProvided: false })
 export class ReservaButacas {
-  private entradaServicio = inject(EntradaServicio);
-  private salaServicio = inject(SalaServicio);
-  private errores = inject(Errores);
-
   private funcionId: string | null = null;
-  private canal: ReturnType<EntradaServicio['suscribirCambios']> | null = null;
+  private reloj: ReturnType<typeof setInterval> | null = null;
   private ahora = signal(Date.now());
 
   private butacasDeSala = signal<Butaca[]>([]);
@@ -68,19 +64,11 @@ export class ReservaButacas {
     return `${minutos}:${resto.toString().padStart(2, '0')}`;
   });
 
-  constructor() {
-    effect((alLimpiar) => {
-      if (this.expiracion() === null) {
-        return;
-      }
-
-      this.ahora.set(Date.now());
-      const reloj = setInterval(() => this.ahora.set(Date.now()), INTERVALO_RELOJ_MS);
-      alLimpiar(() => clearInterval(reloj));
-    });
-
-    inject(DestroyRef).onDestroy(() => this.dejarDeEscuchar());
-  }
+  constructor(
+    private entradaServicio: EntradaServicio,
+    private salaServicio: SalaServicio,
+    private errores: Errores,
+  ) {}
 
   async cargar(funcionId: string, salaId: string) {
     this.funcionId = funcionId;
@@ -103,7 +91,41 @@ export class ReservaButacas {
       this.entradasVigentes.set(entradas ?? []);
     }
 
-    this.canal = this.entradaServicio.suscribirCambios(funcionId, () => this.actualizarEntradas());
+    this.actualizarReloj();
+  }
+
+  aplicarCambio(cambio: CambioDeEntrada) {
+    switch (cambio.eventType) {
+      case 'INSERT':
+      case 'UPDATE':
+        this.entradasVigentes.update((actuales) => guardarEntrada(actuales, cambio.new));
+        break;
+      case 'DELETE':
+        if (cambio.old.id) {
+          const id = cambio.old.id;
+          this.entradasVigentes.update((actuales) => quitarEntrada(actuales, id));
+        }
+        break;
+    }
+
+    this.actualizarReloj();
+  }
+
+  async recargarEntradas() {
+    if (!this.funcionId) {
+      return;
+    }
+
+    const { data: entradas, error } = await this.entradaServicio.listarPorFuncion(this.funcionId);
+
+    if (!error) {
+      this.entradasVigentes.set(entradas ?? []);
+      this.actualizarReloj();
+    }
+  }
+
+  destruir() {
+    this.detenerReloj();
   }
 
   async alternar(butacaId: string) {
@@ -145,25 +167,24 @@ export class ReservaButacas {
       return false;
     }
 
+    await this.recargarEntradas();
+
     return true;
   }
 
-  private async actualizarEntradas() {
-    if (!this.funcionId) {
-      return;
-    }
-
-    const { data: entradas, error } = await this.entradaServicio.listarPorFuncion(this.funcionId);
-
-    if (!error) {
-      this.entradasVigentes.set(entradas ?? []);
+  private actualizarReloj() {
+    if (this.expiracion() === null) {
+      this.detenerReloj();
+    } else if (!this.reloj) {
+      this.ahora.set(Date.now());
+      this.reloj = setInterval(() => this.ahora.set(Date.now()), INTERVALO_RELOJ_MS);
     }
   }
 
-  private dejarDeEscuchar() {
-    if (this.canal) {
-      this.entradaServicio.desuscribir(this.canal);
-      this.canal = null;
+  private detenerReloj() {
+    if (this.reloj) {
+      clearInterval(this.reloj);
+      this.reloj = null;
     }
   }
 }

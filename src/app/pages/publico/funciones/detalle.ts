@@ -1,8 +1,9 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnDestroy, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FuncionServicio } from '../../../servicios/funcion/funcion';
 import { PeliculaServicio } from '../../../servicios/pelicula/pelicula';
 import { SalaServicio } from '../../../servicios/sala/sala';
+import { EntradaServicio } from '../../../servicios/entrada/entrada';
 import { ReservaButacas } from '../../../servicios/reserva-butacas/reserva-butacas';
 import { ProductoCandyServicio } from '../../../servicios/producto-candy/producto-candy';
 import { ComboServicio, ComboConProductos } from '../../../servicios/combo/combo';
@@ -64,17 +65,16 @@ const EMAIL_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     ResumenCompra,
     ConfirmacionCompra,
   ],
-  providers: [ReservaButacas],
   selector: 'app-detalle-funcion',
   styleUrl: './detalle.css',
   templateUrl: './detalle.html',
 })
-export class Detalle {
+export class Detalle implements OnDestroy {
   private route = inject(ActivatedRoute);
   private funcionServicio = inject(FuncionServicio);
   private peliculaServicio = inject(PeliculaServicio);
   private salaServicio = inject(SalaServicio);
-  protected reserva = inject(ReservaButacas);
+  private entradaServicio = inject(EntradaServicio);
   private productoCandyServicio = inject(ProductoCandyServicio);
   private comboServicio = inject(ComboServicio);
   private procesoCompra = inject(ProcesoCompra);
@@ -83,6 +83,10 @@ export class Detalle {
   private premioServicio = inject(PremioServicio);
   protected auth = inject(Auth);
   private errores = inject(Errores);
+
+  protected reserva = new ReservaButacas(this.entradaServicio, this.salaServicio, this.errores);
+
+  private canalEntradas: ReturnType<EntradaServicio['suscribirCambios']> | null = null;
 
   protected funcion = signal<Funcion | null>(null);
   protected pelicula = signal<Pelicula | null>(null);
@@ -363,12 +367,25 @@ export class Detalle {
     }
 
     await this.reserva.cargar(id, data.sala_id);
+    this.canalEntradas = this.entradaServicio.suscribirCambios(
+      id,
+      (cambio) => this.reserva.aplicarCambio(cambio),
+      () => this.reserva.recargarEntradas(),
+    );
 
     const { data: cuponConfig } = await this.configuracionCuponServicio.obtener();
     this.cuponConfig.set(cuponConfig ?? null);
 
     const { data: premios } = await this.premioServicio.listarActivas();
     this.premios.set(premios ?? []);
+  }
+
+  ngOnDestroy() {
+    if (this.canalEntradas) {
+      this.entradaServicio.desuscribir(this.canalEntradas);
+    }
+
+    this.reserva.destruir();
   }
 
   protected elegirPremio(id: string) {

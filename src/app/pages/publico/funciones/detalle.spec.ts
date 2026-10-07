@@ -12,7 +12,7 @@ import { Auth } from '../../../servicios/auth/auth';
 import { ClienteServicio } from '../../../servicios/cliente/cliente';
 import { ComboServicio } from '../../../servicios/combo/combo';
 import { ConfiguracionCuponServicio } from '../../../servicios/configuracion-cupon/configuracion-cupon';
-import { EntradaServicio } from '../../../servicios/entrada/entrada';
+import { CambioDeEntrada, EntradaServicio } from '../../../servicios/entrada/entrada';
 import { Errores } from '../../../servicios/errores/errores';
 import { FuncionServicio } from '../../../servicios/funcion/funcion';
 import { PeliculaServicio } from '../../../servicios/pelicula/pelicula';
@@ -89,10 +89,13 @@ describe('Detalle', () => {
   let clienteServicio: { obtenerOCrear: ReturnType<typeof vi.fn> };
   let procesoCompra: { completar: ReturnType<typeof vi.fn> };
   let entradaServicio: Record<string, ReturnType<typeof vi.fn>>;
+  let alCambiar: (cambio: CambioDeEntrada) => void;
+  let alConectar: () => void;
 
   const html = () => fixture.nativeElement as HTMLElement;
   const texto = () => html().textContent?.replace(/\s+/g, ' ') ?? '';
-  const reserva = () => fixture.debugElement.injector.get(ReservaButacas);
+  const reserva = () =>
+    (fixture.componentInstance as unknown as { reserva: ReservaButacas }).reserva;
   const esperar = async () => {
     for (let i = 0; i < 10; i++) {
       await Promise.resolve();
@@ -144,7 +147,11 @@ describe('Detalle', () => {
       sesionId: vi.fn().mockReturnValue('sesion-1'),
       listarPorFuncion: vi.fn().mockResolvedValue({ data: [], error: null }),
       reservar: vi.fn().mockResolvedValue({ error: null }),
-      suscribirCambios: vi.fn().mockReturnValue('canal'),
+      suscribirCambios: vi.fn().mockImplementation((_id, cambio, conectar) => {
+        alCambiar = cambio;
+        alConectar = conectar;
+        return 'canal';
+      }),
       desuscribir: vi.fn(),
     };
 
@@ -228,6 +235,68 @@ describe('Detalle', () => {
 
       expect(html().querySelector('app-mapa-butacas')).not.toBeNull();
       expect(pestanas.map((p) => p.disabled)).toEqual([false, true, true]);
+    });
+  });
+
+  describe('tiempo real', () => {
+    it('se suscribe a los cambios de la función que está mirando', async () => {
+      await crear();
+
+      expect(entradaServicio['suscribirCambios']).toHaveBeenCalledWith(
+        'f1',
+        expect.any(Function),
+        expect.any(Function),
+      );
+    });
+
+    it('muestra como ocupada la butaca que otra persona reserva', async () => {
+      await crear();
+
+      alCambiar({
+        eventType: 'INSERT',
+        new: {
+          id: 'e9',
+          funcion_id: 'f1',
+          butaca_id: 'b1',
+          estado: 'reservada',
+          reservada_hasta: new Date(Date.now() + 600_000).toISOString(),
+          sesion_id: 'otra-sesion',
+        },
+        old: {},
+      } as CambioDeEntrada);
+      await esperar();
+
+      const butaca = html().querySelector<HTMLButtonElement>('button[title="A1"]');
+
+      expect(butaca?.disabled).toBe(true);
+      expect(butaca?.classList).toContain('butaca--reservada');
+    });
+
+    it('vuelve a pedir las entradas cuando el canal se conecta', async () => {
+      await crear();
+      entradaServicio['listarPorFuncion'].mockClear();
+
+      alConectar();
+      await esperar();
+
+      expect(entradaServicio['listarPorFuncion']).toHaveBeenCalledWith('f1');
+    });
+
+    it('cierra el canal al salir de la pantalla', async () => {
+      await crear();
+
+      fixture.destroy();
+
+      expect(entradaServicio['desuscribir']).toHaveBeenCalledWith('canal');
+    });
+
+    it('no intenta cerrar un canal que nunca se abrió', async () => {
+      funcionServicio.buscarPorId.mockResolvedValue({ data: null, error: { message: 'x' } });
+      await crear();
+
+      fixture.destroy();
+
+      expect(entradaServicio['desuscribir']).not.toHaveBeenCalled();
     });
   });
 

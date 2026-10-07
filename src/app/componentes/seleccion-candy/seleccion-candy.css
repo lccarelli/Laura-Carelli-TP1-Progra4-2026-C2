@@ -1,0 +1,80 @@
+.combos-destacados__titulo {
+  font-size: 1rem;
+  font-weight: 800;
+  margin: 0 0 0.75rem;
+}
+
+.combos-destacados {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.combo-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  border: 2px solid var(--negro);
+  background: var(--negro);
+  color: var(--crema);
+  padding: 1rem 0.75rem;
+  text-align: center;
+}
+
+.combo-item__nombre {
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.combo-item__incluye {
+  font-size: 0.75rem;
+  color: color-mix(in srgb, var(--crema) 75%, transparent);
+}
+
+.combo-item__precio {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.combo-item app-selector-cantidad {
+  --selector-color: var(--crema);
+}
+
+.candy-grilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: 1rem;
+}
+
+.candy-grilla__vacio {
+  color: color-mix(in srgb, var(--negro) 60%, transparent);
+  font-size: 0.85rem;
+}
+
+.candy-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  border: 2px solid var(--negro);
+  padding: 1rem 0.75rem;
+  text-align: center;
+}
+
+.candy-item__imagen {
+  width: 4rem;
+  height: 4rem;
+  object-fit: contain;
+}
+
+.candy-item__nombre {
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.candy-item__precio {
+  font-size: 0.8rem;
+  color: color-mix(in srgb, var(--negro) 65%, transparent);
+}

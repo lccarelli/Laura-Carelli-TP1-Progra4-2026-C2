@@ -1,0 +1,56 @@
+.acceso-compra {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-width: 22rem;
+}
+
+.campo__etiqueta {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--negro);
+}
+
+.campo__input {
+  border: none;
+  border-bottom: 2px solid var(--negro);
+  background: transparent;
+  padding: 0.5rem 0.1rem;
+  font-size: 1rem;
+  color: var(--negro);
+  font-family: inherit;
+}
+
+.campo__input:focus {
+  outline: none;
+  border-bottom-color: var(--negro);
+}
+
+.acceso-compra__cliente {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.acceso-compra__error {
+  font-size: 0.85rem;
+  color: var(--rojo);
+  margin: 0;
+}
+
+.acceso-compra__cuenta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: color-mix(in srgb, var(--negro) 65%, transparent);
+  margin-top: 0.5rem;
+}

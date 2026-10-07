@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 import { Supabase } from '../supabase/supabase';
-import { CompraPorCrear } from '../../interfaces/compra-por-crear';
+import { CompraPorConfirmar } from '../../interfaces/compra-por-confirmar';
 import { Pelicula } from '../../interfaces/pelicula';
 
 export interface CompraConDetalle {
@@ -47,8 +47,21 @@ export class CompraServicio {
   private supabase = inject(Supabase);
   private readonly tabla = 'compra';
 
-  crear(compra: CompraPorCrear) {
-    return this.supabase.crear(this.tabla, compra);
+  confirmar(compra: CompraPorConfirmar) {
+    return this.supabase.Supabase.rpc('confirmar_compra', {
+      codigo_param: compra.codigo,
+      funcion_id_param: compra.funcionId,
+      butaca_ids: compra.butacaIds,
+      sesion_id_param: compra.sesionId,
+      email_param: compra.email,
+      edad_declarada_param: compra.edadDeclarada,
+      total_param: compra.total,
+      descuento_cupon_param: compra.descuentoCupon,
+      premio_id_param: compra.premioId,
+      credito_param: compra.credito,
+      candy_param: compra.candy,
+      combos_param: compra.combos,
+    });
   }
 
   listarPeliculasVistasPorCliente(clienteId: string) {

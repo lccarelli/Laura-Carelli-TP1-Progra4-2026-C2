@@ -11,13 +11,18 @@ export interface OmdbCandidato {
   Poster: string;
 }
 
-export interface OmdbBusqueda {
+export interface OmdbRespuesta {
+  Response?: string;
+  Error?: string;
+}
+
+export interface OmdbBusqueda extends OmdbRespuesta {
   Search: OmdbCandidato[];
   totalResults: string;
   Response: string;
 }
 
-export interface OmdbDetalle {
+export interface OmdbDetalle extends OmdbRespuesta {
   Title: string;
   Year: string;
   Rated: string;

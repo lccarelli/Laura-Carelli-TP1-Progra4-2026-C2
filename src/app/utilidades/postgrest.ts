@@ -1,0 +1,1 @@
+export const TABLA_NO_ENCONTRADA = 'PGRST205';

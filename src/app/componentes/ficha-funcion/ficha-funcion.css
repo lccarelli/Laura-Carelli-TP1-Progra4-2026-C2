@@ -1,0 +1,20 @@
+.encabezado {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.encabezado__poster {
+  width: 100%;
+  max-width: 14rem;
+  margin-inline: auto;
+  --poster-ancho: 100%;
+  --poster-alto: auto;
+}
+
+.encabezado__info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}

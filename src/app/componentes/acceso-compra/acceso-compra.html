@@ -1,0 +1,46 @@
+<div class="acceso-compra">
+  @if (esCliente()) {
+    <p class="acceso-compra__cliente">
+      Comprando como <strong>{{ emailCliente() }}</strong>
+    </p>
+    @if (!edadClienteValida()) {
+      <p class="acceso-compra__error">
+        Esta película es para {{ restriccionEdad() }} años o más, y tu perfil no cumple esa edad.
+      </p>
+    }
+  } @else {
+    <label class="campo">
+      <span class="campo__etiqueta">Mail (para enviarte el QR)</span>
+      <input
+        class="campo__input"
+        type="email"
+        [value]="emailAnonimo()"
+        (input)="emailCambiado.emit($any($event.target).value)"
+      />
+    </label>
+
+    @if (restriccionEdad(); as restriccion) {
+      <label class="campo">
+        <span class="campo__etiqueta">Tu edad (esta película es +{{ restriccion }})</span>
+        <input
+          class="campo__input"
+          type="number"
+          min="0"
+          [value]="edadAnonima() ?? ''"
+          (input)="cambiarEdad($any($event.target).value)"
+        />
+      </label>
+      @if (!edadAnonimaValida() && edadAnonima() !== null) {
+        <p class="acceso-compra__error">No alcanza la edad mínima para esta función.</p>
+      }
+    }
+
+    <p class="acceso-compra__cuenta">
+      ¿Ya tenés cuenta o querés guardar tus compras?
+      <app-boton-link variante="claro-negro" ruta="/login" [queryParams]="{ volver: router.url }"
+        >Iniciar sesión</app-boton-link
+      >
+      <app-boton-link variante="claro-negro" ruta="/registro">Registrarme</app-boton-link>
+    </p>
+  }
+</div>

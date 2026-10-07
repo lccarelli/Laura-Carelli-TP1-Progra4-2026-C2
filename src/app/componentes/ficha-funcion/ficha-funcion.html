@@ -1,0 +1,30 @@
+<div class="encabezado">
+  <app-poster class="encabezado__poster" [imagen]="pelicula()?.imagen_url ?? null" />
+
+  <div class="encabezado__info">
+    <h2 class="panel__titulo">{{ pelicula()?.nombre }}</h2>
+
+    <dl class="detalle">
+      <div class="detalle__fila">
+        <dt>Sala</dt>
+        <dd>{{ sala() }}</dd>
+      </div>
+      <div class="detalle__fila">
+        <dt>Día</dt>
+        <dd>{{ funcion().inicio | date: 'EEEE dd/MM/yyyy' }}</dd>
+      </div>
+      <div class="detalle__fila">
+        <dt>Hora</dt>
+        <dd>{{ funcion().inicio | date: 'HH:mm' }}</dd>
+      </div>
+      <div class="detalle__fila">
+        <dt>Formato</dt>
+        <dd>{{ funcion().formato | uppercase }}</dd>
+      </div>
+      <div class="detalle__fila">
+        <dt>Idioma</dt>
+        <dd>{{ funcion().idioma }}</dd>
+      </div>
+    </dl>
+  </div>
+</div>

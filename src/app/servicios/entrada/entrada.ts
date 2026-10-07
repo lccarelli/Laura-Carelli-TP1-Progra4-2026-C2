@@ -2,6 +2,7 @@ import { inject, Service } from '@angular/core';
 import { Supabase } from '../supabase/supabase';
 import { Entrada } from '../../interfaces/entrada';
 import { Butaca } from '../../interfaces/butaca';
+import { entradaVigente } from '../../utilidades/entrada';
 
 export interface ButacaDeEntrada {
   id: string;
@@ -11,14 +12,6 @@ export interface ButacaDeEntrada {
 
 const MINUTOS_RESERVA = 10;
 const CLAVE_SESION = 'cine_sesion_compra';
-
-function entradaVigente(entrada: Entrada): boolean {
-  if (entrada.estado === 'vendida') {
-    return true;
-  }
-
-  return !entrada.reservada_hasta || new Date(entrada.reservada_hasta) > new Date();
-}
 
 @Service()
 export class EntradaServicio {
@@ -113,47 +106,6 @@ export class EntradaServicio {
 
         return { error: errorInsercion.message };
       }
-    }
-
-    return { error: null };
-  }
-
-  async confirmarCompra(funcionId: string, butacaIds: string[], codigoCompra: string) {
-    const sesionId = this.sesionId();
-    const { data: entradas, error } = await this.listarPorFuncion(funcionId);
-
-    if (error) {
-      return { error: error.message };
-    }
-
-    const propias = (entradas ?? []).filter(
-      (entrada) =>
-        entrada.estado === 'reservada' &&
-        entrada.sesion_id === sesionId &&
-        butacaIds.includes(entrada.butaca_id),
-    );
-
-    if (propias.length !== butacaIds.length) {
-      return { error: 'La reserva venció. Volvé a elegir las butacas.' };
-    }
-
-    const { error: errorActualizacion } = await this.supabase.Supabase.from(this.tabla)
-      .update({ estado: 'vendida', codigo_compra: codigoCompra, reservada_hasta: null })
-      .eq('funcion_id', funcionId)
-      .eq('estado', 'reservada')
-      .in(
-        'butaca_id',
-        propias.map((entrada) => entrada.butaca_id),
-      );
-
-    if (errorActualizacion) {
-      if (errorActualizacion.code === '23505') {
-        return {
-          error: 'Alguna de estas butacas ya fue comprada por otra persona. Volvé a elegir.',
-        };
-      }
-
-      return { error: errorActualizacion.message };
     }
 
     return { error: null };

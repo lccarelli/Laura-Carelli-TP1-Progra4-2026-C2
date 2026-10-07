@@ -1,0 +1,29 @@
+<div class="confirmacion">
+  <p class="confirmacion__titulo">¡Compra confirmada!</p>
+  <app-aviso-edad [restriccion]="restriccionEdad()" />
+  @if (qr(); as imagen) {
+    <img class="confirmacion__qr" [src]="imagen" alt="Código QR de la compra" />
+  }
+  @if (descuentoCupon() > 0) {
+    <p class="confirmacion__cupon">Se aplicó tu cupón de bienvenida: -${{ descuentoCupon() }}</p>
+  }
+  @if (credito() > 0) {
+    <p class="confirmacion__cupon">Usaste tu crédito: -${{ credito() }}</p>
+  }
+  <p class="confirmacion__codigo">Código: {{ codigo() | codigoCompra }}</p>
+  <p class="confirmacion__ayuda">Mostrá este código en boletería para retirar.</p>
+  @if (mailEnviado() === true) {
+    <p class="confirmacion__mail">Te enviamos el QR a {{ email() }}.</p>
+  } @else if (mailEnviado() === false) {
+    <p class="confirmacion__mail confirmacion__mail--error">
+      No pudimos enviarte el mail, pero tu compra quedó confirmada igual.
+    </p>
+  }
+
+  <div class="confirmacion__acciones">
+    <app-boton variante="claro-negro" (clic)="descargarComprobante()">
+      Descargar comprobante (PDF)
+    </app-boton>
+    <app-boton-link variante="claro-negro" ruta="/peliculas">Volver a la cartelera</app-boton-link>
+  </div>
+</div>

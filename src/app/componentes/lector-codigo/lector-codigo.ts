@@ -1,6 +1,7 @@
 import { Component, OnDestroy, inject, input, output, signal } from '@angular/core';
 import { Html5Qrcode } from 'html5-qrcode';
 import { Errores } from '../../servicios/errores/errores';
+import { normalizarCodigo } from '../../utilidades/codigo-compra';
 import { Boton } from '../boton/boton';
 
 const ID_LECTOR = 'lector-qr';
@@ -24,7 +25,7 @@ export class LectorCodigo implements OnDestroy {
   private lector: Html5Qrcode | null = null;
 
   emitir() {
-    const codigo = this.codigo().trim();
+    const codigo = normalizarCodigo(this.codigo());
 
     if (codigo) {
       this.buscar.emit(codigo);

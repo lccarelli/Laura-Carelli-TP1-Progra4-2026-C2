@@ -120,6 +120,34 @@
               <option value="subtitulada">Subtitulada</option>
             </select>
           </label>
+
+          <div class="campo">
+            <span class="campo__etiqueta">Precio por tipo de butaca</span>
+            <div class="formulario__grid-precios">
+              @for (tipo of tiposDePrecio; track tipo.control) {
+                <label class="campo">
+                  <span class="campo__etiqueta">{{ tipo.etiqueta }}</span>
+                  <span class="campo__moneda">
+                    <span class="campo__simbolo" aria-hidden="true">$</span>
+                    <input
+                      class="campo__input"
+                      type="number"
+                      min="1"
+                      step="100"
+                      [formControlName]="tipo.control"
+                      [attr.name]="tipo.control"
+                    />
+                  </span>
+                  <span class="campo__formato">
+                    {{
+                      formulario.controls[tipo.control].value
+                        | currency: 'ARS' : 'symbol-narrow' : '1.0-0'
+                    }}
+                  </span>
+                </label>
+              }
+            </div>
+          </div>
         </div>
       </div>
 

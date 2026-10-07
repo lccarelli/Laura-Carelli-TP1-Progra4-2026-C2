@@ -1,0 +1,7 @@
+<span class="insignia">{{ restriccion() | restriccionEdad }}</span>
+
+@if (restriccion(); as edad) {
+  <p class="aviso-adulto">
+    Esta función es +{{ edad }}: debe ir acompañado de un adulto responsable.
+  </p>
+}

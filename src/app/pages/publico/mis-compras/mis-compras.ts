@@ -7,6 +7,7 @@ import { Auth } from '../../../servicios/auth/auth';
 import { Errores } from '../../../servicios/errores/errores';
 import { BotonLink } from '../../../componentes/boton-link/boton-link';
 import { Boton } from '../../../componentes/boton/boton';
+import { CodigoCompraPipe } from '../../../pipes/codigo-compra/codigo-compra';
 import { Logger } from '../../../servicios/logger/logger';
 import { Flujo } from '../../../servicios/logger/flujo';
 import { TipoEvento } from '../../../servicios/logger/tipo-evento';
@@ -14,7 +15,7 @@ import { TipoEvento } from '../../../servicios/logger/tipo-evento';
 const MS_VENTANA_CANCELACION = 2 * 60 * 60 * 1000;
 
 @Component({
-  imports: [BotonLink, Boton, DatePipe],
+  imports: [BotonLink, Boton, DatePipe, CodigoCompraPipe],
   selector: 'app-mis-compras',
   styleUrl: './mis-compras.css',
   templateUrl: './mis-compras.html',

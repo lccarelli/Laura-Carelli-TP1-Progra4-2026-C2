@@ -25,23 +25,8 @@ export class ClienteServicio {
     return this.supabase.Supabase.from(this.tabla).insert({ id }).select('*').single<Cliente>();
   }
 
-  usarCuponBienvenida() {
-    return this.supabase.Supabase.rpc('usar_cupon_bienvenida');
-  }
-
-  sumarPuntosCompra(monto: number) {
-    return this.supabase.Supabase.rpc('sumar_puntos_compra', { monto });
-  }
-
   cancelarCompra(codigoCompra: string) {
     return this.supabase.Supabase.rpc('cancelar_compra', { codigo_compra_param: codigoCompra });
-  }
-
-  usarCredito(codigoCompra: string, monto: number) {
-    return this.supabase.Supabase.rpc('usar_credito', {
-      codigo_compra_param: codigoCompra,
-      monto_param: monto,
-    });
   }
 
   listarMovimientosCredito(clienteId: string) {

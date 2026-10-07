@@ -1,0 +1,24 @@
+<div class="premios-lista">
+  @for (item of premios(); track item.premio.id) {
+    <button
+      type="button"
+      class="premio-tile"
+      [class.premio-tile--activo]="seleccionado() === item.premio.id"
+      [disabled]="!item.aplicable"
+      (click)="elegir.emit(item.premio.id)"
+    >
+      <span class="premio-tile__nombre">{{ item.premio.nombre }}</span>
+      <span class="premio-tile__detalle">
+        {{ item.premio.costo_puntos }} pts · -${{ item.premio.monto_descuento }}
+      </span>
+      @if (!item.aplicable) {
+        <span class="premio-tile__motivo">
+          Sólo {{ item.premio.dias_validos | diasValidos }}
+          @if (item.premio.cantidad_entradas) {
+            · {{ item.premio.cantidad_entradas }} entradas
+          }
+        </span>
+      }
+    </button>
+  }
+</div>

@@ -1,3 +1,5 @@
+import { PreciosButaca } from './precios-butaca';
+
 export interface FuncionRecurrentePorCrear {
   pelicula_id: string;
   dias: number[];
@@ -6,4 +8,5 @@ export interface FuncionRecurrentePorCrear {
   hasta: string;
   formato: '2d' | '3d' | '4d' | '5d';
   idioma: 'castellano' | 'subtitulada';
+  precios: PreciosButaca;
 }

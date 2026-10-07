@@ -154,6 +154,7 @@ export class FuncionServicio {
         inicio: inicio.toISOString(),
         formato: datos.formato,
         idioma: datos.idioma,
+        precios: datos.precios,
       };
 
       const resultado = await this.crearOcurrencia(
@@ -258,6 +259,9 @@ export class FuncionServicio {
             fin: fin.toISOString(),
             formato: datos.formato,
             idioma: datos.idioma,
+            precio_normal: datos.precios.normal,
+            precio_accesible: datos.precios.accesible,
+            precio_vip: datos.precios.vip,
           })
           .select()
           .returns<Funcion[]>();

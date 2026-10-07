@@ -10,7 +10,7 @@ import { DatePipe, registerLocaleData } from '@angular/common';
 import localeEsAr from '@angular/common/locales/es-AR';
 import { routes } from './app.routes';
 import { provideServiceWorker } from '@angular/service-worker';
-import { omdbInterceptor } from './interceptores/omdb';
+import { omdbInterceptor } from './interceptores/omdb-interceptor';
 
 registerLocaleData(localeEsAr);
 

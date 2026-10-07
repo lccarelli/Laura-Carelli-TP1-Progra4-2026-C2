@@ -29,65 +29,11 @@
   }
 }
 
-.encabezado {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.encabezado__poster {
-  width: 100%;
-  max-width: 14rem;
-  margin-inline: auto;
-  --poster-ancho: 100%;
-  --poster-alto: auto;
-}
-
-.encabezado__info {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
 @media (max-width: 860px) {
   .compra {
     border-top: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
     padding-top: 1.5rem;
   }
-}
-
-.compra__tabs {
-  display: flex;
-  border: 2px solid var(--negro);
-  margin-bottom: 1.5rem;
-}
-
-.compra__tab {
-  flex: 1;
-  border: none;
-  border-right: 1px solid var(--negro);
-  background: transparent;
-  font-family: inherit;
-  font-weight: 700;
-  font-size: 0.85rem;
-  color: var(--negro);
-  padding: 0.75rem 0.5rem;
-  cursor: pointer;
-}
-
-.compra__tab:last-child {
-  border-right: none;
-}
-
-.compra__tab:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-
-.compra__tab--activo {
-  background: var(--negro);
-  color: var(--crema);
 }
 
 .compra__confirmar {
@@ -132,113 +78,6 @@
   margin-left: auto;
 }
 
-.combos-destacados__titulo {
-  font-size: 1rem;
-  font-weight: 800;
-  margin: 0 0 0.75rem;
-}
-
-.combos-destacados {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.combo-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.35rem;
-  border: 2px solid var(--negro);
-  background: var(--negro);
-  color: var(--crema);
-  padding: 1rem 0.75rem;
-  text-align: center;
-}
-
-.combo-item__nombre {
-  font-weight: 800;
-  font-size: 0.9rem;
-}
-
-.combo-item__incluye {
-  font-size: 0.75rem;
-  color: color-mix(in srgb, var(--crema) 75%, transparent);
-}
-
-.combo-item__precio {
-  font-size: 0.85rem;
-  font-weight: 700;
-}
-
-.combo-item .candy-item__stepper button {
-  border-color: var(--crema);
-  color: var(--crema);
-}
-
-.candy-grilla {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
-  gap: 1rem;
-}
-
-.candy-grilla__vacio {
-  color: color-mix(in srgb, var(--negro) 60%, transparent);
-  font-size: 0.85rem;
-}
-
-.candy-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.35rem;
-  border: 2px solid var(--negro);
-  padding: 1rem 0.75rem;
-  text-align: center;
-}
-
-.candy-item__imagen {
-  width: 4rem;
-  height: 4rem;
-  object-fit: contain;
-}
-
-.candy-item__nombre {
-  font-weight: 700;
-  font-size: 0.85rem;
-}
-
-.candy-item__precio {
-  font-size: 0.8rem;
-  color: color-mix(in srgb, var(--negro) 65%, transparent);
-}
-
-.candy-item__stepper {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-top: 0.35rem;
-}
-
-.candy-item__stepper button {
-  width: 1.75rem;
-  height: 1.75rem;
-  border: 2px solid var(--negro);
-  background: transparent;
-  font-family: inherit;
-  font-weight: 800;
-  font-size: 1rem;
-  color: var(--negro);
-  cursor: pointer;
-}
-
-.candy-item__stepper span {
-  font-weight: 700;
-  min-width: 1rem;
-  text-align: center;
-}
-
 .resumen-compra__avisos {
   display: flex;
   flex-direction: column;
@@ -246,8 +85,8 @@
   margin-bottom: 1.5rem;
 }
 
-.resumen-compra__avisos > .insignia {
-  align-self: flex-start;
+.resumen-compra__avisos app-aviso-edad {
+  --insignia-alineacion: flex-start;
 }
 
 .resumen-compra-grid {
@@ -265,223 +104,11 @@
   }
 }
 
-.resumen-compra {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.resumen-compra__titulo {
-  font-size: 0.85rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin: 0.5rem 0 0;
-  color: var(--negro);
-}
-
-.premios-lista {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.premio-tile {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.15rem;
-  border: 2px solid var(--negro);
-  background: transparent;
-  font-family: inherit;
-  color: var(--negro);
-  cursor: pointer;
-  padding: 0.5rem 0.75rem;
-  text-align: left;
-}
-
-.premio-tile:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.premio-tile:not(:disabled):hover {
-  background: color-mix(in srgb, var(--negro) 8%, transparent);
-}
-
-.premio-tile--activo {
-  background: var(--negro);
-  color: var(--crema);
-}
-
-.premio-tile__nombre {
-  font-weight: 800;
-  font-size: 0.9rem;
-}
-
-.premio-tile__detalle {
-  font-size: 0.8rem;
-}
-
-.premio-tile__motivo {
-  font-size: 0.7rem;
-  opacity: 0.7;
-}
-
-.resumen-compra__lista {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  font-size: 0.9rem;
-}
-
-.resumen-compra__descuento {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--verde);
-  margin: 0.5rem 0 0;
-}
-
-.resumen-compra__total {
-  font-size: 1.2rem;
-  font-weight: 800;
-  margin: 1rem 0 0;
-  color: var(--negro);
-}
-
-.confirmacion {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 2rem 0;
-  text-align: center;
-}
-
-.confirmacion__titulo {
-  font-size: 1.3rem;
-  font-weight: 800;
-  margin: 0;
-  color: var(--negro);
-}
-
-.confirmacion__qr {
-  width: 12rem;
-  height: 12rem;
-  border: 2px solid var(--negro);
-}
-
-.confirmacion__codigo {
-  font-family: monospace;
-  font-size: 0.9rem;
-  color: var(--negro);
-  word-break: break-all;
-}
-
-.confirmacion__ayuda {
-  font-size: 0.85rem;
-  color: color-mix(in srgb, var(--negro) 65%, transparent);
-  margin: 0;
-}
-
-.confirmacion__mail {
-  font-size: 0.85rem;
-  color: color-mix(in srgb, var(--negro) 65%, transparent);
-  margin: 0;
-}
-
-.confirmacion__mail--error {
-  color: var(--rojo);
-}
-
-.confirmacion__cupon {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--verde);
-  margin: 0;
-}
-
-.confirmacion__acciones {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.75rem;
-  margin-top: 0.75rem;
-}
-
 @media print {
   .panel__volver,
-  .compra__tabs,
-  .confirmacion__acciones {
+  app-pasos-compra {
     display: none !important;
   }
-}
-
-.acceso-compra {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.campo {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  max-width: 22rem;
-}
-
-.campo__etiqueta {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--negro);
-}
-
-.campo__input {
-  border: none;
-  border-bottom: 2px solid var(--negro);
-  background: transparent;
-  padding: 0.5rem 0.1rem;
-  font-size: 1rem;
-  color: var(--negro);
-  font-family: inherit;
-}
-
-.campo__input:focus {
-  outline: none;
-  border-bottom-color: var(--negro);
-}
-
-.acceso-compra__cliente {
-  font-size: 0.9rem;
-  margin: 0;
-}
-
-.acceso-compra__error {
-  font-size: 0.85rem;
-  color: var(--rojo);
-  margin: 0;
-}
-
-.aviso-adulto {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--negro);
-  background: var(--amarillo);
-  border: 1.5px solid var(--negro);
-  padding: 0.5rem 0.75rem;
-  margin: 0.5rem 0 0;
-}
-
-.aviso-vip {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--crema);
-  background: var(--gris);
-  border: 1.5px solid var(--negro);
-  padding: 0.5rem 0.75rem;
-  margin: 0.5rem 0 0;
 }
 
 .aviso-preventa {
@@ -502,14 +129,4 @@
   border: 1.5px solid var(--negro);
   padding: 0.5rem 0.75rem;
   margin: 0 0 0.75rem;
-}
-
-.acceso-compra__cuenta {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  font-size: 0.85rem;
-  color: color-mix(in srgb, var(--negro) 65%, transparent);
-  margin-top: 0.5rem;
 }

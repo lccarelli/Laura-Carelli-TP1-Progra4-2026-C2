@@ -4,6 +4,9 @@
     <input
       class="campo__input"
       type="text"
+      autocapitalize="characters"
+      autocomplete="off"
+      spellcheck="false"
       [value]="codigo()"
       (input)="codigo.set($any($event.target).value)"
       (keydown.enter)="emitir()"

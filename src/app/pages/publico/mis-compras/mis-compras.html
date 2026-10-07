@@ -15,7 +15,9 @@
               {{ compra.funcion?.sala?.nombre ?? '—' }} ·
               {{ compra.funcion?.inicio | date: 'EEEE dd/MM/yyyy HH:mm' }}
             </span>
-            <span class="compra-item__codigo">Código: {{ compra.codigo_compra }}</span>
+            <span class="compra-item__codigo"
+              >Código: {{ compra.codigo_compra | codigoCompra }}</span
+            >
           </div>
 
           @if (compra.cancelada_en) {

@@ -18,16 +18,6 @@ export class CompraCandyServicio {
   private supabase = inject(Supabase);
   private readonly tabla = 'compra_candy';
 
-  registrar(codigoCompra: string, items: ItemCandy[]) {
-    if (items.length === 0) {
-      return Promise.resolve({ error: null });
-    }
-
-    return this.supabase.Supabase.from(this.tabla).insert(
-      items.map((item) => ({ codigo_compra: codigoCompra, ...item })),
-    );
-  }
-
   listarPorCodigo(codigoCompra: string) {
     return this.supabase.Supabase.from(this.tabla)
       .select('id, cantidad, cantidad_entregada, producto_candy(nombre)')

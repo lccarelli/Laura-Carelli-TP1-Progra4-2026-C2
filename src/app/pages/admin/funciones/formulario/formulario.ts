@@ -8,10 +8,12 @@ import { Errores } from '../../../../servicios/errores/errores';
 import { Pelicula } from '../../../../interfaces/pelicula';
 import { FuncionPorCrear } from '../../../../interfaces/funcion-por-crear';
 import { FuncionRecurrentePorCrear } from '../../../../interfaces/funcion-recurrente-por-crear';
+import { PreciosButaca } from '../../../../interfaces/precios-butaca';
+import { PRECIOS_POR_DEFECTO } from '../../../../utilidades/precios';
 import { Boton } from '../../../../componentes/boton/boton';
 import { SelectorChips } from '../../../../componentes/selector-chips/selector-chips';
 import { RestriccionEdadPipe } from '../../../../pipes/restriccion-edad/restriccion-edad';
-import { DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Logger } from '../../../../servicios/logger/logger';
 import { Flujo } from '../../../../servicios/logger/flujo';
 import { TipoEvento } from '../../../../servicios/logger/tipo-evento';
@@ -28,8 +30,14 @@ const DIAS_SEMANA = [
   { valor: 0, etiqueta: 'Dom' },
 ];
 
+const TIPOS_DE_PRECIO = [
+  { control: 'precio_normal', etiqueta: 'Normal' },
+  { control: 'precio_accesible', etiqueta: 'Accesible' },
+  { control: 'precio_vip', etiqueta: 'VIP' },
+] as const;
+
 @Component({
-  imports: [ReactiveFormsModule, Boton, SelectorChips, RestriccionEdadPipe, DatePipe],
+  imports: [ReactiveFormsModule, Boton, SelectorChips, RestriccionEdadPipe, DatePipe, CurrencyPipe],
   selector: 'app-formulario-funcion',
   styleUrl: './formulario.css',
   templateUrl: './formulario.html',
@@ -43,6 +51,7 @@ export class FormularioFuncion {
   private logger = inject(Logger);
 
   protected diasSemana = DIAS_SEMANA;
+  protected tiposDePrecio = TIPOS_DE_PRECIO;
   protected peliculas = signal<Pelicula[]>([]);
   protected modo = signal<'unica' | 'recurrente'>('unica');
   protected diasSeleccionados = signal<Set<number>>(new Set());
@@ -57,6 +66,9 @@ export class FormularioFuncion {
     hasta: [''],
     formato: ['2d', Validators.required],
     idioma: ['castellano', Validators.required],
+    precio_normal: [PRECIOS_POR_DEFECTO.normal, [Validators.required, Validators.min(1)]],
+    precio_accesible: [PRECIOS_POR_DEFECTO.accesible, [Validators.required, Validators.min(1)]],
+    precio_vip: [PRECIOS_POR_DEFECTO.vip, [Validators.required, Validators.min(1)]],
   });
 
   private peliculaIdSeleccionada = toSignal(this.formulario.controls.pelicula_id.valueChanges, {
@@ -151,7 +163,7 @@ export class FormularioFuncion {
   }
 
   async guardar() {
-    if (this.enviando()) {
+    if (this.enviando() || this.formulario.invalid) {
       return;
     }
 
@@ -177,7 +189,11 @@ export class FormularioFuncion {
       return;
     }
 
-    this.logger.registrar(Flujo.AltaFuncion, TipoEvento.Exito, this.peliculaSeleccionada()?.nombre);
+    this.logger.registrar(
+      Flujo.AltaFuncion,
+      TipoEvento.Exito,
+      `${this.peliculaSeleccionada()?.nombre} (${this.descripcionPrecios()})`,
+    );
     await this.router.navigate(['/admin/funciones']);
   }
 
@@ -210,7 +226,7 @@ export class FormularioFuncion {
       this.logger.registrar(
         Flujo.AltaFuncion,
         TipoEvento.Exito,
-        `${pelicula}: ${(resultados ?? []).length} funciones`,
+        `${pelicula}: ${(resultados ?? []).length} funciones (${this.descripcionPrecios()})`,
       );
       await this.router.navigate(['/admin/funciones']);
     }
@@ -228,6 +244,7 @@ export class FormularioFuncion {
       inicio: valores.inicio,
       formato: valores.formato as FuncionPorCrear['formato'],
       idioma: valores.idioma as FuncionPorCrear['idioma'],
+      precios: this.preciosIngresados(),
     };
   }
 
@@ -242,7 +259,20 @@ export class FormularioFuncion {
       hasta: valores.hasta,
       formato: valores.formato as FuncionRecurrentePorCrear['formato'],
       idioma: valores.idioma as FuncionRecurrentePorCrear['idioma'],
+      precios: this.preciosIngresados(),
     };
+  }
+
+  private descripcionPrecios(): string {
+    const { normal, accesible, vip } = this.preciosIngresados();
+
+    return `normal $${normal}, accesible $${accesible}, VIP $${vip}`;
+  }
+
+  private preciosIngresados(): PreciosButaca {
+    const { precio_normal, precio_accesible, precio_vip } = this.formulario.getRawValue();
+
+    return { normal: precio_normal, accesible: precio_accesible, vip: precio_vip };
   }
 
   private horaDeHoy(hora: string): Date {

@@ -1,0 +1,36 @@
+@if (combos().length > 0) {
+  <h3 class="combos-destacados__titulo">Combos</h3>
+  <div class="combos-destacados">
+    @for (combo of combos(); track combo.id) {
+      <div class="combo-item">
+        <span class="combo-item__nombre">{{ combo.nombre }}</span>
+        <span class="combo-item__incluye">{{ productosDeCombo(combo) }}</span>
+        <span class="combo-item__precio">${{ combo.precio }}</span>
+        <app-selector-cantidad
+          [cantidad]="carritoCombos().de(combo.id)"
+          (sumar)="carritoCombos().sumar(combo.id)"
+          (restar)="carritoCombos().restar(combo.id)"
+        />
+      </div>
+    }
+  </div>
+}
+
+<div class="candy-grilla">
+  @for (producto of productos(); track producto.id) {
+    <div class="candy-item">
+      @if (producto.imagen_url) {
+        <img class="candy-item__imagen" [src]="producto.imagen_url" alt="" />
+      }
+      <span class="candy-item__nombre">{{ producto.nombre }}</span>
+      <span class="candy-item__precio">${{ producto.precio }}</span>
+      <app-selector-cantidad
+        [cantidad]="carritoCandy().de(producto.id)"
+        (sumar)="carritoCandy().sumar(producto.id)"
+        (restar)="carritoCandy().restar(producto.id)"
+      />
+    </div>
+  } @empty {
+    <p class="candy-grilla__vacio">No hay candy disponible por ahora.</p>
+  }
+</div>

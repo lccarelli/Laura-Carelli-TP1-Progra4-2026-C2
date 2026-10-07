@@ -1,0 +1,13 @@
+<div class="compra__tabs">
+  @for (pestana of pestanas; track pestana.paso) {
+    <button
+      type="button"
+      class="compra__tab"
+      [class.compra__tab--activo]="paso() === pestana.paso"
+      [disabled]="!disponible(pestana.paso)"
+      (click)="elegir.emit(pestana.paso)"
+    >
+      {{ pestana.etiqueta }}
+    </button>
+  }
+</div>

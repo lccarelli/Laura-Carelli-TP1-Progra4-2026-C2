@@ -1,0 +1,32 @@
+.compra__tabs {
+  display: flex;
+  border: 2px solid var(--negro);
+  margin-bottom: 1.5rem;
+}
+
+.compra__tab {
+  flex: 1;
+  border: none;
+  border-right: 1px solid var(--negro);
+  background: transparent;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--negro);
+  padding: 0.75rem 0.5rem;
+  cursor: pointer;
+}
+
+.compra__tab:last-child {
+  border-right: none;
+}
+
+.compra__tab:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.compra__tab--activo {
+  background: var(--negro);
+  color: var(--crema);
+}

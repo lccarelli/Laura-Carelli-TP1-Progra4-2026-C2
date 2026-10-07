@@ -1,0 +1,47 @@
+<div class="resumen-compra">
+  @if (cantidadVip() > 0) {
+    <p class="aviso-vip">
+      Estás comprando {{ cantidadVip() }} butaca(s) VIP, con precio diferenciado.
+    </p>
+  }
+
+  <h3 class="resumen-compra__titulo">Butacas</h3>
+  <ul class="resumen-compra__lista">
+    @for (butaca of butacas(); track butaca.id) {
+      <li>{{ butaca.fila }}{{ butaca.numero }} ({{ butaca.tipo }})</li>
+    }
+  </ul>
+
+  @if (combos().length > 0) {
+    <h3 class="resumen-compra__titulo">Combos</h3>
+    <ul class="resumen-compra__lista">
+      @for (item of combos(); track item.nombre) {
+        <li>{{ item.cantidad }}x {{ item.nombre }}</li>
+      }
+    </ul>
+  }
+
+  @if (candy().length > 0) {
+    <h3 class="resumen-compra__titulo">Candy</h3>
+    <ul class="resumen-compra__lista">
+      @for (item of candy(); track item.nombre) {
+        <li>{{ item.cantidad }}x {{ item.nombre }}</li>
+      }
+    </ul>
+  }
+
+  @if (premios().length > 0) {
+    <h3 class="resumen-compra__titulo">Premios</h3>
+    <app-lista-premios
+      [premios]="premios()"
+      [seleccionado]="premioSeleccionado()"
+      (elegir)="elegirPremio.emit($event)"
+    />
+  }
+
+  @for (descuento of descuentos(); track descuento.etiqueta) {
+    <p class="resumen-compra__descuento">{{ descuento.etiqueta }}: -${{ descuento.monto }}</p>
+  }
+
+  <p class="resumen-compra__total">Total: ${{ total() }}</p>
+</div>

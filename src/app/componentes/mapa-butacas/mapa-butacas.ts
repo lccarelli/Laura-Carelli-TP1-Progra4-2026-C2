@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, Output, signal } from '@angular/core';
 import { Butaca } from '../../interfaces/butaca';
 import { Entrada } from '../../interfaces/entrada';
+import { entradaVigente } from '../../utilidades/entrada';
 
 type EstadoButaca = 'libre' | 'reservada' | 'vendida';
 
@@ -8,14 +9,6 @@ interface ButacaConEstado {
   butaca: Butaca;
   estado: EstadoButaca;
   seleccionada: boolean;
-}
-
-function entradaVigente(entrada: Entrada): boolean {
-  if (entrada.estado === 'vendida') {
-    return true;
-  }
-
-  return !entrada.reservada_hasta || new Date(entrada.reservada_hasta) > new Date();
 }
 
 interface FilaDeButacas {
@@ -51,8 +44,8 @@ export class MapaButacas implements OnChanges {
   @Input() butacas: Butaca[] = [];
   @Input() entradas: Entrada[] = [];
   @Input() interactiva = false;
-  @Input() seleccionadas = new Set<string>();
-  @Input() reservadasPropias = new Set<string>();
+  @Input() seleccionadas: ReadonlySet<string> = new Set<string>();
+  @Input() reservadasPropias: ReadonlySet<string> = new Set<string>();
   @Output() alternar = new EventEmitter<string>();
 
   protected filas = signal<FilaDeButacas[]>([]);

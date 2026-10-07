@@ -70,6 +70,12 @@
   gap: 1rem;
 }
 
+.formulario__grid-precios {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
 .preview-pelicula {
   border: 2px solid var(--negro);
   overflow: hidden;
@@ -152,6 +158,32 @@
   border-bottom-color: var(--naranja);
 }
 
+.campo__moneda {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  border-bottom: 2px solid var(--negro);
+}
+
+.campo__moneda:focus-within {
+  border-bottom-color: var(--naranja);
+}
+
+.campo__moneda .campo__input {
+  flex: 1;
+  min-width: 0;
+  border-bottom: none;
+}
+
+.campo__simbolo {
+  font-weight: 700;
+}
+
+.campo__formato {
+  font-size: 0.8rem;
+  color: color-mix(in srgb, var(--negro) 70%, transparent);
+}
+
 .formulario__acciones {
   display: flex;
   align-items: center;
@@ -176,6 +208,10 @@
 
 @media (max-width: 480px) {
   .formulario__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .formulario__grid-precios {
     grid-template-columns: 1fr;
   }
 }

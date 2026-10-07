@@ -1,6 +1,6 @@
-@if (items.length > 0) {
+@if (items().length > 0) {
   <div class="carrusel">
-    @for (item of items; track item.pelicula.id; let i = $index) {
+    @for (item of items(); track item.pelicula.id; let i = $index) {
       <a
         class="carrusel__slide"
         [hidden]="i !== indiceActual()"
@@ -8,7 +8,7 @@
       >
         <div class="carrusel__media">
           @if (trailersEmbebidos()[i]; as trailer) {
-            @if (!trailersCargados().has(i)) {
+            @if (!trailersCargados().has(item.pelicula.id)) {
               <app-cargando class="carrusel__cargando" />
             }
             <iframe
@@ -17,7 +17,7 @@
               title="Tráiler de {{ item.pelicula.nombre }}"
               allow="autoplay; encrypted-media"
               allowfullscreen
-              (load)="trailerCargo(i)"
+              (load)="trailerCargo(item.pelicula.id)"
             ></iframe>
           } @else {
             <app-poster class="carrusel__poster" [imagen]="item.pelicula.imagen_url" />
@@ -49,9 +49,9 @@
       </a>
     }
 
-    @if (items.length > 1) {
+    @if (items().length > 1) {
       <div class="carrusel__puntos">
-        @for (item of items; track item.pelicula.id; let indice = $index) {
+        @for (item of items(); track item.pelicula.id; let indice = $index) {
           <button
             type="button"
             class="carrusel__punto"

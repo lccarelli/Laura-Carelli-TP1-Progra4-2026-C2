@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges, inject, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Poster } from '../poster/poster';
@@ -14,40 +14,37 @@ import { extraerIdYoutube, urlEmbedYoutube } from '../../utilidades/youtube';
   styleUrl: './carrusel-destacadas.css',
   templateUrl: './carrusel-destacadas.html',
 })
-export class CarruselDestacadas implements OnChanges {
-  @Input() items: DestacadaVista[] = [];
+export class CarruselDestacadas {
+  readonly items = input<DestacadaVista[]>([]);
 
   private sanitizer = inject(DomSanitizer);
-  protected indiceActual = signal(0);
-  protected trailersEmbebidos = signal<(SafeResourceUrl | null)[]>([]);
-  protected trailersCargados = signal<Set<number>>(new Set());
+  private peliculaActivaId = signal<string | null>(null);
+  protected trailersCargados = signal<ReadonlySet<string>>(new Set());
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (!changes['items']) {
-      return;
-    }
+  protected indiceActual = computed(() => {
+    const indice = this.items().findIndex((item) => item.pelicula.id === this.peliculaActivaId());
 
-    this.indiceActual.set(0);
-    this.trailersCargados.set(new Set());
-    this.trailersEmbebidos.set(
-      this.items.map((item) => {
-        const trailerUrl = item.pelicula.trailer_url;
-        const idYoutube = trailerUrl ? extraerIdYoutube(trailerUrl) : null;
+    return indice === -1 ? 0 : indice;
+  });
 
-        return idYoutube
-          ? this.sanitizer.bypassSecurityTrustResourceUrl(
-              `${urlEmbedYoutube(idYoutube)}?autoplay=1&mute=1`,
-            )
-          : null;
-      }),
-    );
+  protected trailersEmbebidos = computed<(SafeResourceUrl | null)[]>(() =>
+    this.items().map((item) => {
+      const trailerUrl = item.pelicula.trailer_url;
+      const idYoutube = trailerUrl ? extraerIdYoutube(trailerUrl) : null;
+
+      return idYoutube
+        ? this.sanitizer.bypassSecurityTrustResourceUrl(
+            `${urlEmbedYoutube(idYoutube)}?autoplay=1&mute=1`,
+          )
+        : null;
+    }),
+  );
+
+  protected trailerCargo(peliculaId: string) {
+    this.trailersCargados.update((actuales) => new Set(actuales).add(peliculaId));
   }
 
-  trailerCargo(indice: number) {
-    this.trailersCargados.update((actuales) => new Set(actuales).add(indice));
-  }
-
-  irA(indice: number) {
-    this.indiceActual.set(indice);
+  protected irA(indice: number) {
+    this.peliculaActivaId.set(this.items()[indice]?.pelicula.id ?? null);
   }
 }

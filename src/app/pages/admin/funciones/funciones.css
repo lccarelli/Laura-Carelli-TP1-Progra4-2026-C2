@@ -40,3 +40,7 @@
 .tabla {
   min-width: 24rem;
 }
+
+.tabla__acciones {
+  gap: 0.35rem;
+}

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Pelicula } from '../../interfaces/pelicula';
 import { Genero } from '../../interfaces/genero';
@@ -13,9 +13,9 @@ import { RestriccionEdadPipe } from '../../pipes/restriccion-edad/restriccion-ed
   templateUrl: './tarjeta-pelicula.html',
 })
 export class TarjetaPelicula {
-  @Input({ required: true }) pelicula!: Pelicula;
-  @Input() promedio: number | null = null;
-  @Input() esEstreno = false;
-  @Input() esPreventa = false;
-  @Input() generos: Genero[] = [];
+  readonly pelicula = input.required<Pelicula>();
+  readonly promedio = input<number | null>(null);
+  readonly esEstreno = input(false);
+  readonly esPreventa = input(false);
+  readonly generos = input<Genero[]>([]);
 }

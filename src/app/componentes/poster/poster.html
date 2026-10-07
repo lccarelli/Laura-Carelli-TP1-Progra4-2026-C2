@@ -1,5 +1,5 @@
-@if (imagen) {
-  <img class="poster" [src]="imagen" alt="" />
+@if (imagen(); as src) {
+  <img class="poster" [src]="src" alt="" />
 } @else {
   <div class="poster poster--vacia"></div>
 }

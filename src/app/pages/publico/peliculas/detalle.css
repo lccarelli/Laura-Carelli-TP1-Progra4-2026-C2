@@ -88,20 +88,6 @@
   background: var(--negro);
 }
 
-.overlay-cargando {
-  position: fixed;
-  inset: 0;
-  z-index: 300;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(19, 19, 19, 0.75);
-}
-
-.overlay-cargando__icono {
-  --cargando-tamano: 5rem;
-}
-
 .ficha__funciones {
   border-top: 1px solid color-mix(in srgb, var(--negro) 15%, transparent);
   padding-top: 1.5rem;

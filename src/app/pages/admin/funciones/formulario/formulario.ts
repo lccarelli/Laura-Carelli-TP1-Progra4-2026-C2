@@ -1,7 +1,7 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, computed, inject, OnDestroy, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { FuncionServicio, ResultadoOcurrencia } from '../../../../servicios/funcion/funcion';
 import { PeliculaServicio } from '../../../../servicios/pelicula/pelicula';
 import { Errores } from '../../../../servicios/errores/errores';
@@ -42,7 +42,7 @@ const TIPOS_DE_PRECIO = [
   styleUrl: './formulario.css',
   templateUrl: './formulario.html',
 })
-export class FormularioFuncion {
+export class FormularioFuncion implements OnDestroy {
   private funcionServicio = inject(FuncionServicio);
   private peliculaServicio = inject(PeliculaServicio);
   private errores = inject(Errores);
@@ -71,15 +71,10 @@ export class FormularioFuncion {
     precio_vip: [PRECIOS_POR_DEFECTO.vip, [Validators.required, Validators.min(1)]],
   });
 
-  private peliculaIdSeleccionada = toSignal(this.formulario.controls.pelicula_id.valueChanges, {
-    initialValue: '',
-  });
-  private inicioIngresado = toSignal(this.formulario.controls.inicio.valueChanges, {
-    initialValue: '',
-  });
-  private horaIngresada = toSignal(this.formulario.controls.hora.valueChanges, {
-    initialValue: '',
-  });
+  private peliculaIdSeleccionada = signal('');
+  private inicioIngresado = signal('');
+  private horaIngresada = signal('');
+  private suscripcion?: Subscription;
 
   protected peliculaSeleccionada = computed(() =>
     this.peliculas().find((pelicula) => pelicula.id === this.peliculaIdSeleccionada()),
@@ -107,27 +102,13 @@ export class FormularioFuncion {
 
   constructor() {
     this.cargarPeliculas();
+    this.ajustarValidadores();
 
-    effect(() => {
-      const controles = this.formulario.controls;
+    this.suscripcion = this.formulario.valueChanges.subscribe(() => this.copiarCampos());
+  }
 
-      if (this.modo() === 'unica') {
-        controles.inicio.setValidators(Validators.required);
-        controles.hora.clearValidators();
-        controles.desde.clearValidators();
-        controles.hasta.clearValidators();
-      } else {
-        controles.inicio.clearValidators();
-        controles.hora.setValidators(Validators.required);
-        controles.desde.setValidators(Validators.required);
-        controles.hasta.setValidators(Validators.required);
-      }
-
-      controles.inicio.updateValueAndValidity({ emitEvent: false });
-      controles.hora.updateValueAndValidity({ emitEvent: false });
-      controles.desde.updateValueAndValidity({ emitEvent: false });
-      controles.hasta.updateValueAndValidity({ emitEvent: false });
-    });
+  ngOnDestroy() {
+    this.suscripcion?.unsubscribe();
   }
 
   protected puedeGuardar = computed(
@@ -147,6 +128,7 @@ export class FormularioFuncion {
   cambiarModo(modo: 'unica' | 'recurrente') {
     this.modo.set(modo);
     this.resultados.set(null);
+    this.ajustarValidadores();
   }
 
   alternarDia(valor: string | number) {
@@ -178,6 +160,35 @@ export class FormularioFuncion {
     } finally {
       this.enviando.set(false);
     }
+  }
+
+  private copiarCampos() {
+    const { pelicula_id, inicio, hora } = this.formulario.getRawValue();
+
+    this.peliculaIdSeleccionada.set(pelicula_id);
+    this.inicioIngresado.set(inicio);
+    this.horaIngresada.set(hora);
+  }
+
+  private ajustarValidadores() {
+    const controles = this.formulario.controls;
+
+    if (this.modo() === 'unica') {
+      controles.inicio.setValidators(Validators.required);
+      controles.hora.clearValidators();
+      controles.desde.clearValidators();
+      controles.hasta.clearValidators();
+    } else {
+      controles.inicio.clearValidators();
+      controles.hora.setValidators(Validators.required);
+      controles.desde.setValidators(Validators.required);
+      controles.hasta.setValidators(Validators.required);
+    }
+
+    controles.inicio.updateValueAndValidity({ emitEvent: false });
+    controles.hora.updateValueAndValidity({ emitEvent: false });
+    controles.desde.updateValueAndValidity({ emitEvent: false });
+    controles.hasta.updateValueAndValidity({ emitEvent: false });
   }
 
   private async guardarUnica() {

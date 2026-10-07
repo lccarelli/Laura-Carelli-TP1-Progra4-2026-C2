@@ -4,8 +4,15 @@ import { PeliculaServicio } from '../../../servicios/pelicula/pelicula';
 import { Errores } from '../../../servicios/errores/errores';
 import { Funcion } from '../../../interfaces/funcion';
 import { Pelicula } from '../../../interfaces/pelicula';
+import { Cargando } from '../../../componentes/cargando/cargando';
+import { Boton } from '../../../componentes/boton/boton';
+import { ConfirmarAccion } from '../../../componentes/confirmar-accion/confirmar-accion';
 import { BotonLink } from '../../../componentes/boton-link/boton-link';
 import { EstadoPunto } from '../../../componentes/estado-punto/estado-punto';
+import { Logger } from '../../../servicios/logger/logger';
+import { Flujo } from '../../../servicios/logger/flujo';
+import { TipoEvento } from '../../../servicios/logger/tipo-evento';
+import { avisoDeConservadas, descripcionDeBaja } from '../../../utilidades/baja-funciones';
 
 interface FilaPelicula {
   peliculaId: string;
@@ -15,7 +22,7 @@ interface FilaPelicula {
 }
 
 @Component({
-  imports: [BotonLink, EstadoPunto],
+  imports: [Boton, BotonLink, Cargando, ConfirmarAccion, EstadoPunto],
   selector: 'app-funciones',
   styleUrl: './funciones.css',
   templateUrl: './funciones.html',
@@ -24,10 +31,13 @@ export class Funciones {
   private funcionServicio = inject(FuncionServicio);
   private peliculaServicio = inject(PeliculaServicio);
   private errores = inject(Errores);
+  private logger = inject(Logger);
 
   private funciones = signal<Funcion[]>([]);
   private peliculas = signal<Pelicula[]>([]);
   protected busqueda = signal('');
+  protected filaAEliminar = signal<FilaPelicula | null>(null);
+  protected eliminando = signal(false);
 
   private filasPelicula = computed<FilaPelicula[]>(() => {
     const porPelicula = new Map<string, Funcion[]>();
@@ -79,5 +89,51 @@ export class Funciones {
 
   buscar(texto: string) {
     this.busqueda.set(texto);
+  }
+
+  pedirEliminar(fila: FilaPelicula) {
+    this.filaAEliminar.set(fila);
+  }
+
+  cancelarEliminar() {
+    this.filaAEliminar.set(null);
+  }
+
+  async eliminarFunciones() {
+    const fila = this.filaAEliminar();
+
+    if (!fila || this.eliminando()) {
+      return;
+    }
+
+    this.eliminando.set(true);
+
+    try {
+      const { eliminadas, conservadas, error } = await this.funcionServicio.eliminarDePelicula(
+        fila.peliculaId,
+      );
+
+      if (error) {
+        this.logger.registrar(Flujo.BajaFuncion, TipoEvento.Error, error.message);
+        this.errores.mostrar(error.message);
+        return;
+      }
+
+      this.logger.registrar(
+        Flujo.BajaFuncion,
+        TipoEvento.Exito,
+        `${fila.nombre}: ${descripcionDeBaja(eliminadas)}`,
+      );
+
+      const aviso = avisoDeConservadas(conservadas);
+      if (aviso) {
+        this.errores.mostrar(aviso);
+      }
+
+      this.filaAEliminar.set(null);
+      await this.cargar();
+    } finally {
+      this.eliminando.set(false);
+    }
   }
 }

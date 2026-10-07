@@ -28,6 +28,12 @@ function fechasEntre(desde: string, hasta: string): Date[] {
   return fechas;
 }
 
+export interface ResultadoBaja {
+  eliminadas: number;
+  conservadas: number;
+  error?: { message: string };
+}
+
 export interface ResultadoOcurrencia {
   fecha: Date;
   sala?: string;
@@ -83,6 +89,41 @@ export class FuncionServicio {
 
   eliminar(id: string) {
     return this.supabase.eliminar(this.tabla, id);
+  }
+
+  async eliminarDePelicula(peliculaId: string): Promise<ResultadoBaja> {
+    const { data, error } = await this.supabase.Supabase.rpc('eliminar_funciones_de_pelicula', {
+      pelicula_id_param: peliculaId,
+    });
+
+    return this.resultadoDeBaja(data, error);
+  }
+
+  async eliminarVarias(ids: string[]): Promise<ResultadoBaja> {
+    if (ids.length === 0) {
+      return { eliminadas: 0, conservadas: 0 };
+    }
+
+    const { data, error } = await this.supabase.Supabase.rpc('eliminar_funciones', {
+      funcion_ids: ids,
+    });
+
+    return this.resultadoDeBaja(data, error);
+  }
+
+  private resultadoDeBaja(
+    data: { eliminadas: number; conservadas: number } | null,
+    error: { message: string } | null,
+  ): ResultadoBaja {
+    if (error || !data) {
+      return {
+        eliminadas: 0,
+        conservadas: 0,
+        error: error ?? { message: 'No se pudieron eliminar las funciones.' },
+      };
+    }
+
+    return { eliminadas: data.eliminadas, conservadas: data.conservadas };
   }
 
   async crear(datos: FuncionPorCrear) {

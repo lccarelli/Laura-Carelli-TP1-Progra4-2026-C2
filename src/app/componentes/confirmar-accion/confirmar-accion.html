@@ -1,0 +1,8 @@
+<div class="confirmacion" role="alert">
+  <p class="confirmacion__mensaje">{{ mensaje() }}</p>
+
+  <div class="confirmacion__acciones">
+    <app-boton variante="claro-negro" (clic)="cancelar.emit()">Cancelar</app-boton>
+    <app-boton variante="claro-rojo" (clic)="confirmar.emit()">{{ etiqueta() }}</app-boton>
+  </div>
+</div>

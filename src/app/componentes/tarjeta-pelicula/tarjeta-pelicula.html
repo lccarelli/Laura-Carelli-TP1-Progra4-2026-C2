@@ -1,25 +1,27 @@
-<a class="tarjeta-pelicula" [routerLink]="['/peliculas', pelicula.id]">
+@let nota = promedio();
+
+<a class="tarjeta-pelicula" [routerLink]="['/peliculas', pelicula().id]">
   <div class="tarjeta-pelicula__poster-contenedor">
-    <app-poster [imagen]="pelicula.imagen_url" />
+    <app-poster [imagen]="pelicula().imagen_url" />
 
     <div class="tarjeta-pelicula__insignias">
-      @if (promedio !== null) {
-        <span class="insignia">{{ promedio | estrellas }}</span>
+      @if (nota !== null) {
+        <span class="insignia">{{ nota | estrellas }}</span>
       }
-      @if (esEstreno) {
+      @if (esEstreno()) {
         <span class="insignia">Estreno</span>
       }
-      @if (esPreventa) {
+      @if (esPreventa()) {
         <span class="insignia">Preventa</span>
       }
-      @if (pelicula.restriccion_edad) {
-        <span class="insignia">{{ pelicula.restriccion_edad | restriccionEdad }}</span>
+      @if (pelicula().restriccion_edad) {
+        <span class="insignia">{{ pelicula().restriccion_edad | restriccionEdad }}</span>
       }
-      @for (genero of generos; track genero.id) {
+      @for (genero of generos(); track genero.id) {
         <span class="insignia">{{ genero.nombre }}</span>
       }
     </div>
   </div>
 
-  <span class="tarjeta-pelicula__nombre">{{ pelicula.nombre }}</span>
+  <span class="tarjeta-pelicula__nombre">{{ pelicula().nombre }}</span>
 </a>

@@ -1,7 +1,7 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, computed, inject, OnDestroy, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { PeliculaServicio } from '../../../../servicios/pelicula/pelicula';
 import { GeneroServicio } from '../../../../servicios/genero/genero';
 import { Errores } from '../../../../servicios/errores/errores';
@@ -25,7 +25,7 @@ import { traduccionDisponible, traducirAlEspanol } from '../../../../utilidades/
   styleUrl: './formulario.css',
   templateUrl: './formulario.html',
 })
-export class Formulario {
+export class Formulario implements OnDestroy {
   private peliculaServicio = inject(PeliculaServicio);
   private generoServicio = inject(GeneroServicio);
   private errores = inject(Errores);
@@ -64,22 +64,15 @@ export class Formulario {
     porcentaje_preventa: [''],
   });
 
-  protected nombre = toSignal(this.formulario.controls.nombre.valueChanges, { initialValue: '' });
-  protected fechaEstreno = toSignal(this.formulario.controls.fecha_estreno.valueChanges, {
-    initialValue: '',
-  });
+  protected nombre = signal('');
+  protected fechaEstreno = signal('');
+  protected trailerUrl = signal('');
+  protected imagenUrl = signal('');
+  private suscripcion?: Subscription;
 
   protected consultaTrailer = computed(() => {
     const anio = this.fechaEstreno().slice(0, 4);
     return [this.nombre(), anio, 'trailer oficial'].filter(Boolean).join(' ');
-  });
-
-  protected trailerUrl = toSignal(this.formulario.controls.trailer_url.valueChanges, {
-    initialValue: '',
-  });
-
-  protected imagenUrl = toSignal(this.formulario.controls.imagen_url.valueChanges, {
-    initialValue: '',
   });
 
   constructor() {
@@ -92,10 +85,24 @@ export class Formulario {
       this.cargar(id);
     }
 
-    effect(() => {
-      this.imagenUrl();
+    this.suscripcion = this.formulario.valueChanges.subscribe(() => this.copiarCampos());
+  }
+
+  ngOnDestroy() {
+    this.suscripcion?.unsubscribe();
+  }
+
+  private copiarCampos() {
+    const { nombre, fecha_estreno, trailer_url, imagen_url } = this.formulario.getRawValue();
+
+    if (imagen_url !== this.imagenUrl()) {
       this.imagenRota.set(false);
-    });
+    }
+
+    this.nombre.set(nombre);
+    this.fechaEstreno.set(fecha_estreno);
+    this.trailerUrl.set(trailer_url);
+    this.imagenUrl.set(imagen_url);
   }
 
   async elegirDeOmdb(detalle: OmdbDetalle) {

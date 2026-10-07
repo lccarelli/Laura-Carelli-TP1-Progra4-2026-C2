@@ -1,7 +1,7 @@
-import { Component, effect, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, inject, OnDestroy, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { ProductoCandyServicio } from '../../../../servicios/producto-candy/producto-candy';
 import { Errores } from '../../../../servicios/errores/errores';
 import { Boton } from '../../../../componentes/boton/boton';
@@ -15,7 +15,7 @@ import { TipoEvento } from '../../../../servicios/logger/tipo-evento';
   styleUrl: './formulario.css',
   templateUrl: './formulario.html',
 })
-export class FormularioCandy {
+export class FormularioCandy implements OnDestroy {
   private productoCandyServicio = inject(ProductoCandyServicio);
   private errores = inject(Errores);
   private formBuilder = inject(FormBuilder);
@@ -33,9 +33,8 @@ export class FormularioCandy {
     imagen_url: [''],
   });
 
-  protected imagenUrl = toSignal(this.formulario.controls.imagen_url.valueChanges, {
-    initialValue: '',
-  });
+  protected imagenUrl = signal('');
+  private suscripcion?: Subscription;
 
   constructor() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -45,10 +44,14 @@ export class FormularioCandy {
       this.cargar(id);
     }
 
-    effect(() => {
-      this.imagenUrl();
+    this.suscripcion = this.formulario.controls.imagen_url.valueChanges.subscribe((url) => {
+      this.imagenUrl.set(url);
       this.imagenRota.set(false);
     });
+  }
+
+  ngOnDestroy() {
+    this.suscripcion?.unsubscribe();
   }
 
   imagenFallo() {

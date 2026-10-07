@@ -389,6 +389,20 @@ body {
   padding-block: 1.5rem;
 }
 
+.overlay-cargando {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(19, 19, 19, 0.75);
+}
+
+.overlay-cargando__icono {
+  --cargando-tamano: 5rem;
+}
+
 @media print {
   app-header {
     display: none !important;

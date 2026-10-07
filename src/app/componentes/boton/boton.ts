@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { VarianteBoton } from '../variante-boton';
 
 @Component({
@@ -7,10 +7,10 @@ import { VarianteBoton } from '../variante-boton';
   templateUrl: './boton.html',
 })
 export class Boton {
-  @Input() variante: VarianteBoton = 'claro-negro';
-  @Input() tipo: 'button' | 'submit' = 'button';
-  @Input() disabled = false;
-  @Input() ariaLabel: string | null = null;
+  readonly variante = input<VarianteBoton>('claro-negro');
+  readonly tipo = input<'button' | 'submit'>('button');
+  readonly disabled = input(false);
+  readonly ariaLabel = input<string | null>(null);
 
-  @Output() clic = new EventEmitter<void>();
+  readonly clic = output<void>();
 }

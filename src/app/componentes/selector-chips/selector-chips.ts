@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { OpcionChip } from './opcion-chip';
 
 @Component({
@@ -8,9 +8,9 @@ import { OpcionChip } from './opcion-chip';
   styleUrl: './selector-chips.css',
 })
 export class SelectorChips {
-  @Input() opciones: OpcionChip[] = [];
-  @Input() seleccionados = new Set<string | number>();
-  @Input() variante: 'pill' | 'rectangular' = 'pill';
+  readonly opciones = input<OpcionChip[]>([]);
+  readonly seleccionados = input<ReadonlySet<string | number>>(new Set<string | number>());
+  readonly variante = input<'pill' | 'rectangular'>('pill');
 
-  @Output() alternar = new EventEmitter<string | number>();
+  readonly alternar = output<string | number>();
 }

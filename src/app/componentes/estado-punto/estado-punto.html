@@ -1,7 +1,7 @@
 <span
   class="estado-punto"
-  [class.estado-punto--activa]="activa"
-  [class.estado-punto--inactiva]="!activa"
-  [attr.aria-label]="activa ? 'Activa' : 'Desactivada'"
-  [title]="activa ? 'Activa' : 'Desactivada'"
+  [class.estado-punto--activa]="activa()"
+  [class.estado-punto--inactiva]="!activa()"
+  [attr.aria-label]="activa() ? 'Activa' : 'Desactivada'"
+  [title]="activa() ? 'Activa' : 'Desactivada'"
 ></span>

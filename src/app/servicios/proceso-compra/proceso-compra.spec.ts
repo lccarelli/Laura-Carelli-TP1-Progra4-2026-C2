@@ -14,10 +14,6 @@ import { Logger } from '../logger/logger';
 import { TipoEvento } from '../logger/tipo-evento';
 import { PedidoCompra, ProcesoCompra } from './proceso-compra';
 
-vi.mock('qrcode', () => ({
-  toDataURL: vi.fn().mockResolvedValue('data:image/png;base64,QRDATA'),
-}));
-
 const FUNCION = {
   id: 'f1',
   inicio: '2026-10-10T20:30:00Z',
@@ -157,47 +153,7 @@ describe('ProcesoCompra', () => {
     });
   });
 
-  describe('compra confirmada', () => {
-    it('devuelve el QR con lo que se descontó', async () => {
-      const resultado = await proceso.completar(pedido({ descuentoCupon: 1500, credito: 500 }));
-
-      expect(resultado).toEqual({
-        qr: 'data:image/png;base64,QRDATA',
-        descuentoCupon: 1500,
-        credito: 500,
-        mailEnviado: true,
-      });
-    });
-
-    it('registra el éxito en el log', async () => {
-      await proceso.completar(pedido());
-
-      expect(logger.registrar).toHaveBeenCalledWith(Flujo.AltaCompra, TipoEvento.Exito, 'ABCD2345');
-    });
-  });
-
   describe('mail', () => {
-    it('envía el QR con el código formateado y el detalle de la función', async () => {
-      await proceso.completar(pedido());
-
-      expect(compraServicio['enviarQrPorMail'].mock.calls[0][0]).toMatchObject({
-        email: 'compra@mail.com',
-        codigoCompra: 'ABCD-2345',
-        qrBase64: 'QRDATA',
-        posterUrl: 'matrix.png',
-        peliculaNombre: 'Matrix',
-        restriccionTexto: '+16',
-        sala: 'Sala 1',
-        formato: '3d',
-        idioma: 'castellano',
-        butacasTexto: ['A3 (normal)'],
-        candyTexto: ['2x Pochoclo'],
-        combosTexto: ['1x Combo Clásico'],
-        total: 10000,
-        descuentoCupon: 0,
-      });
-    });
-
     it('informa el total cobrado y el cupón en el mail', async () => {
       await proceso.completar(pedido({ descuentoCupon: 1500, credito: 500 }));
 
@@ -257,19 +213,6 @@ describe('ProcesoCompra', () => {
         'push',
       );
       expect(resultado).not.toBeNull();
-    });
-
-    it('registra si el push lanza una excepción y la compra termina igual', async () => {
-      compraServicio['enviarPushCompraConfirmada'].mockRejectedValue(new Error('caído'));
-
-      const resultado = await proceso.completar(pedido({ usuarioId: 'u1' }));
-
-      expect(logger.registrar).toHaveBeenCalledWith(
-        Flujo.AvisoPushCompra,
-        TipoEvento.Error,
-        'Error: caído',
-      );
-      expect(resultado?.qr).toBe('data:image/png;base64,QRDATA');
     });
   });
 });

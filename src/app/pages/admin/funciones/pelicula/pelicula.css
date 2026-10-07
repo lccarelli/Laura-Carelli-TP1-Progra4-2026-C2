@@ -22,3 +22,33 @@
 .tabla td {
   white-space: nowrap;
 }
+
+.tabla__col-seleccion {
+  width: 2rem;
+}
+
+.tabla__acciones {
+  gap: 0.35rem;
+}
+
+.seleccion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  max-width: 70rem;
+  margin: 0 auto 1.5rem;
+}
+
+.seleccion__cantidad {
+  font-weight: 700;
+  color: var(--negro);
+}
+
+.tabla input[type='checkbox'] {
+  accent-color: var(--naranja);
+  width: 1.1rem;
+  height: 1.1rem;
+  cursor: pointer;
+}

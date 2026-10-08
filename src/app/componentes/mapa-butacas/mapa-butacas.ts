@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, signal } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { Butaca } from '../../interfaces/butaca';
 import { Entrada } from '../../interfaces/entrada';
 import { entradaVigente } from '../../utilidades/entrada';
@@ -40,82 +40,81 @@ function porNumero(a: ButacaConEstado, b: ButacaConEstado): number {
   styleUrl: './mapa-butacas.css',
   templateUrl: './mapa-butacas.html',
 })
-export class MapaButacas implements OnChanges {
-  @Input() butacas: Butaca[] = [];
-  @Input() entradas: Entrada[] = [];
-  @Input() interactiva = false;
-  @Input() seleccionadas: ReadonlySet<string> = new Set<string>();
-  @Input() reservadasPropias: ReadonlySet<string> = new Set<string>();
-  @Output() alternar = new EventEmitter<string>();
+export class MapaButacas {
+  readonly butacas = input<Butaca[]>([]);
+  readonly entradas = input<Entrada[]>([]);
+  readonly interactiva = input(false);
+  readonly seleccionadas = input<ReadonlySet<string>>(new Set<string>());
+  readonly reservadasPropias = input<ReadonlySet<string>>(new Set<string>());
+  readonly alternar = output<string>();
 
-  protected filas = signal<FilaDeButacas[]>([]);
-  protected resumen = signal<FilaDeResumen[]>([]);
-  protected resumenTotal = signal<FilaDeResumen | null>(null);
-
-  ngOnChanges() {
+  private vistas = computed<ButacaConEstado[]>(() => {
     const entradaPorButaca = new Map(
-      this.entradas.filter(entradaVigente).map((entrada) => [entrada.butaca_id, entrada]),
+      this.entradas()
+        .filter(entradaVigente)
+        .map((entrada) => [entrada.butaca_id, entrada]),
     );
-    const butacasPorFila = new Map<string, ButacaConEstado[]>();
-    const conteo: Record<EstadoButaca, Record<Butaca['tipo'], number>> = {
-      libre: { normal: 0, accesible: 0, vip: 0 },
-      reservada: { normal: 0, accesible: 0, vip: 0 },
-      vendida: { normal: 0, accesible: 0, vip: 0 },
-    };
 
-    for (const butaca of this.butacas) {
+    return this.butacas().map((butaca) => {
       const estadoReal: EstadoButaca = entradaPorButaca.get(butaca.id)?.estado ?? 'libre';
-      const seleccionada = this.seleccionadas.has(butaca.id);
-      let estado: EstadoButaca = estadoReal;
+      // la reserva es mía: si la deseleccioné, vuelve a estar libre para mí
+      const esMia = estadoReal === 'reservada' && this.reservadasPropias().has(butaca.id);
 
-      if (estadoReal === 'reservada' && this.reservadasPropias.has(butaca.id)) {
-        // la reserva es mía: si la deseleccioné, vuelve a estar libre para mí
-        estado = 'libre';
-      }
+      return {
+        butaca,
+        estado: esMia ? 'libre' : estadoReal,
+        seleccionada: this.seleccionadas().has(butaca.id),
+      };
+    });
+  });
 
-      const butacaConEstado: ButacaConEstado = { butaca, estado, seleccionada };
-      const butacasDeFila = butacasPorFila.get(butaca.fila) ?? [];
-      butacasDeFila.push(butacaConEstado);
-      butacasPorFila.set(butaca.fila, butacasDeFila);
-      conteo[estado][butaca.tipo]++;
+  protected filas = computed<FilaDeButacas[]>(() => {
+    const butacasPorFila = new Map<string, ButacaConEstado[]>();
+
+    for (const vista of this.vistas()) {
+      const deLaFila = butacasPorFila.get(vista.butaca.fila) ?? [];
+      deLaFila.push(vista);
+      butacasPorFila.set(vista.butaca.fila, deLaFila);
     }
 
-    this.filas.set(
-      [...butacasPorFila.entries()]
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([fila, butacasDeFila]) => ({
-          fila,
-          bloques: [
-            butacasDeFila.filter((b) => b.butaca.bloque === 'izquierdo').sort(porNumero),
-            butacasDeFila.filter((b) => b.butaca.bloque === 'centro').sort(porNumero),
-            butacasDeFila.filter((b) => b.butaca.bloque === 'derecho').sort(porNumero),
-          ],
-        })),
-    );
+    return [...butacasPorFila.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([fila, deLaFila]) => ({
+        fila,
+        bloques: [
+          deLaFila.filter((v) => v.butaca.bloque === 'izquierdo').sort(porNumero),
+          deLaFila.filter((v) => v.butaca.bloque === 'centro').sort(porNumero),
+          deLaFila.filter((v) => v.butaca.bloque === 'derecho').sort(porNumero),
+        ],
+      }));
+  });
 
-    this.resumen.set(
-      ESTADOS.map(({ estado, etiqueta }) => {
-        const { normal, accesible, vip } = conteo[estado];
-        return { etiqueta, normal, accesible, vip, total: normal + accesible + vip };
+  protected resumen = computed<FilaDeResumen[]>(() =>
+    ESTADOS.map(({ estado, etiqueta }) => {
+      const delEstado = this.vistas().filter((v) => v.estado === estado);
+      const contar = (tipo: Butaca['tipo']) =>
+        delEstado.filter((v) => v.butaca.tipo === tipo).length;
+      const [normal, accesible, vip] = [contar('normal'), contar('accesible'), contar('vip')];
+
+      return { etiqueta, normal, accesible, vip, total: normal + accesible + vip };
+    }),
+  );
+
+  protected resumenTotal = computed<FilaDeResumen>(() =>
+    this.resumen().reduce(
+      (acumulado, fila) => ({
+        etiqueta: 'Total',
+        normal: acumulado.normal + fila.normal,
+        accesible: acumulado.accesible + fila.accesible,
+        vip: acumulado.vip + fila.vip,
+        total: acumulado.total + fila.total,
       }),
-    );
-
-    this.resumenTotal.set(
-      this.resumen().reduce(
-        (acumulado, fila) => ({
-          etiqueta: 'Total',
-          normal: acumulado.normal + fila.normal,
-          accesible: acumulado.accesible + fila.accesible,
-          vip: acumulado.vip + fila.vip,
-          total: acumulado.total + fila.total,
-        }),
-        { etiqueta: 'Total', normal: 0, accesible: 0, vip: 0, total: 0 },
-      ),
-    );
-  }
+      { etiqueta: 'Total', normal: 0, accesible: 0, vip: 0, total: 0 },
+    ),
+  );
 
   protected clic(v: ButacaConEstado) {
-    if (!this.interactiva) {
+    if (!this.interactiva()) {
       return;
     }
 

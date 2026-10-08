@@ -192,4 +192,73 @@ describe('FormularioFuncion', () => {
       );
     });
   });
+
+  describe('vista previa del horario', () => {
+    const horario = () =>
+      html().querySelector('.preview-horario')?.textContent?.replace(/\s+/g, ' ').trim();
+
+    it('no aparece hasta elegir película y horario', () => {
+      expect(horario()).toBeUndefined();
+
+      escribir('pelicula_id', 'p1');
+
+      expect(horario()).toBeUndefined();
+    });
+
+    it('calcula cuándo termina y cuándo se libera la sala', () => {
+      completarFuncionUnica();
+
+      expect(horario()).toContain('Termina a las 22:16');
+      expect(horario()).toContain('Sala libre desde las 22:46');
+    });
+
+    it('en modo recurrente usa la hora elegida', () => {
+      html().querySelectorAll<HTMLButtonElement>('.modo-toggle__boton')[1].click();
+      fixture.detectChanges();
+      escribir('pelicula_id', 'p1');
+      escribir('hora', '18:00');
+
+      expect(horario()).toContain('Termina a las 20:16');
+    });
+  });
+
+  describe('campos obligatorios según el modo', () => {
+    const cambiarARecurrente = () => {
+      html().querySelectorAll<HTMLButtonElement>('.modo-toggle__boton')[1].click();
+      fixture.detectChanges();
+    };
+
+    it('en función única pide la fecha y hora de inicio', () => {
+      escribir('pelicula_id', 'p1');
+
+      expect(botonGuardar().disabled).toBe(true);
+
+      escribir('inicio', '2026-10-20T20:00');
+
+      expect(botonGuardar().disabled).toBe(false);
+    });
+
+    it('en recurrente pide hora, desde y hasta, y ya no la fecha única', () => {
+      cambiarARecurrente();
+      escribir('pelicula_id', 'p1');
+
+      expect(fixture.componentInstance['formulario'].controls.inicio.valid).toBe(true);
+      expect(fixture.componentInstance['formulario'].valid).toBe(false);
+
+      escribir('hora', '18:00');
+      escribir('desde', '2026-10-20');
+      escribir('hasta', '2026-10-27');
+
+      expect(fixture.componentInstance['formulario'].valid).toBe(true);
+    });
+
+    it('al volver a función única vuelve a pedir el inicio', () => {
+      cambiarARecurrente();
+      html().querySelectorAll<HTMLButtonElement>('.modo-toggle__boton')[0].click();
+      fixture.detectChanges();
+      escribir('pelicula_id', 'p1');
+
+      expect(fixture.componentInstance['formulario'].controls.inicio.valid).toBe(false);
+    });
+  });
 });

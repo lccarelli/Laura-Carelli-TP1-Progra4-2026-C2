@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { VarianteBoton } from '../variante-boton';
 
@@ -8,9 +8,9 @@ import { VarianteBoton } from '../variante-boton';
   templateUrl: './boton-link.html',
 })
 export class BotonLink {
-  @Input() variante: VarianteBoton = 'claro-negro';
-  @Input({ required: true }) ruta!: string | unknown[];
-  @Input() fragment?: string;
-  @Input() queryParams?: Record<string, string>;
-  @Input() ariaLabel: string | null = null;
+  readonly variante = input<VarianteBoton>('claro-negro');
+  readonly ruta = input.required<string | unknown[]>();
+  readonly fragment = input<string>();
+  readonly queryParams = input<Record<string, string>>();
+  readonly ariaLabel = input<string | null>(null);
 }

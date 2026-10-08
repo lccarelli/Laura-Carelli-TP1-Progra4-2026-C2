@@ -1,4 +1,5 @@
 import { inject, Service } from '@angular/core';
+import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 import { Supabase } from '../supabase/supabase';
 import { Entrada } from '../../interfaces/entrada';
 import { Butaca } from '../../interfaces/butaca';
@@ -9,6 +10,8 @@ export interface ButacaDeEntrada {
   validada_en: string | null;
   butaca: Pick<Butaca, 'fila' | 'numero' | 'tipo'> | null;
 }
+
+export type CambioDeEntrada = RealtimePostgresChangesPayload<Entrada>;
 
 const MINUTOS_RESERVA = 10;
 const CLAVE_SESION = 'cine_sesion_compra';
@@ -125,9 +128,13 @@ export class EntradaServicio {
     });
   }
 
-  suscribirCambios(funcionId: string, alCambiar: () => void) {
+  suscribirCambios(
+    funcionId: string,
+    alCambiar: (cambio: CambioDeEntrada) => void,
+    alConectar: () => void,
+  ) {
     return this.supabase.Supabase.channel(`entrada-funcion-${funcionId}`)
-      .on(
+      .on<Entrada>(
         'postgres_changes',
         {
           event: '*',
@@ -137,7 +144,11 @@ export class EntradaServicio {
         },
         alCambiar,
       )
-      .subscribe();
+      .subscribe((estado) => {
+        if (estado === 'SUBSCRIBED') {
+          alConectar();
+        }
+      });
   }
 
   desuscribir(canal: ReturnType<EntradaServicio['suscribirCambios']>) {

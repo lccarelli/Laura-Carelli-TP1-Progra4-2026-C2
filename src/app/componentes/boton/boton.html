@@ -1,8 +1,8 @@
 <button
-  [class]="'boton boton--' + variante"
-  [type]="tipo"
-  [disabled]="disabled"
-  [attr.aria-label]="ariaLabel"
+  [class]="'boton boton--' + variante()"
+  [type]="tipo()"
+  [disabled]="disabled()"
+  [attr.aria-label]="ariaLabel()"
   (click)="clic.emit()"
 >
   <ng-content />

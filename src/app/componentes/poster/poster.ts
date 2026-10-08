@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
   imports: [],
@@ -7,5 +7,5 @@ import { Component, Input } from '@angular/core';
   templateUrl: './poster.html',
 })
 export class Poster {
-  @Input() imagen: string | null = null;
+  readonly imagen = input<string | null>(null);
 }

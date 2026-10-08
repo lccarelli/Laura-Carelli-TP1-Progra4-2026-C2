@@ -1,3 +1,9 @@
+@if (eliminando()) {
+  <div class="overlay-cargando">
+    <app-cargando class="overlay-cargando__icono" />
+  </div>
+}
+
 <main class="pagina">
   <section class="panel-flotante panel--ancho">
     <app-boton-link variante="claro-negro" ruta="/admin/funciones" class="panel__volver">
@@ -11,10 +17,49 @@
       </app-boton-link>
     </div>
 
+    @if (seleccion.cantidad() > 0) {
+      <div class="seleccion">
+        <span class="seleccion__cantidad">
+          {{ seleccion.cantidad() }}
+          {{ seleccion.cantidad() === 1 ? 'seleccionada' : 'seleccionadas' }}
+        </span>
+        <div class="seleccion__acciones">
+          <app-boton
+            variante="icono-peligro"
+            ariaLabel="Eliminar las funciones seleccionadas"
+            (clic)="pedirEliminar()"
+          >
+            <img src="/trash.png" alt="" />
+          </app-boton>
+        </div>
+      </div>
+    }
+
+    @if (confirmando() && seleccion.cantidad() > 0) {
+      <app-confirmar-accion
+        [mensaje]="
+          '¿Eliminar ' +
+          seleccion.cantidad() +
+          (seleccion.cantidad() === 1 ? ' función' : ' funciones') +
+          '? No se puede deshacer.'
+        "
+        (confirmar)="eliminarSeleccionadas()"
+        (cancelar)="cancelarEliminar()"
+      />
+    }
+
     <div class="tabla-contenedor">
       <table class="tabla">
         <thead>
           <tr>
+            <th class="tabla__col-seleccion">
+              <input
+                type="checkbox"
+                aria-label="Seleccionar todas"
+                [checked]="seleccion.incluye(idsVisibles())"
+                (change)="seleccion.alternarTodos(idsVisibles())"
+              />
+            </th>
             <th class="tabla__col-estado">Estado</th>
             <th>Sala</th>
             <th>Inicio</th>
@@ -27,6 +72,14 @@
         <tbody>
           @for (fila of filas(); track fila.id) {
             <tr>
+              <td class="tabla__col-seleccion">
+                <input
+                  type="checkbox"
+                  aria-label="Seleccionar función"
+                  [checked]="seleccion.tiene(fila.id)"
+                  (change)="seleccion.alternar(fila.id)"
+                />
+              </td>
               <td class="tabla__col-estado">
                 <app-estado-punto [activa]="fila.activa" />
               </td>
@@ -47,7 +100,7 @@
             </tr>
           } @empty {
             <tr>
-              <td class="tabla__vacio" colspan="7">Esta película todavía no tiene funciones.</td>
+              <td class="tabla__vacio" colspan="8">Esta película todavía no tiene funciones.</td>
             </tr>
           }
         </tbody>

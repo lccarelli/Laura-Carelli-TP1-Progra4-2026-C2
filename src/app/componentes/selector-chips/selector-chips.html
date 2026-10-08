@@ -1,10 +1,10 @@
 <div class="chips">
-  @for (opcion of opciones; track opcion.valor) {
+  @for (opcion of opciones(); track opcion.valor) {
     <button
       class="chips__boton"
       type="button"
-      [class.chips__boton--activo]="seleccionados.has(opcion.valor)"
-      [class.chips__boton--rectangular]="variante === 'rectangular'"
+      [class.chips__boton--activo]="seleccionados().has(opcion.valor)"
+      [class.chips__boton--rectangular]="variante() === 'rectangular'"
       (click)="alternar.emit(opcion.valor)"
     >
       {{ opcion.etiqueta }}

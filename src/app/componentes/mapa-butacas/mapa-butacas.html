@@ -24,9 +24,9 @@
                       [class.butaca--vendida]="v.estado === 'vendida'"
                       [class.butaca--seleccionada]="v.seleccionada"
                       [class.butaca--clickeable]="
-                        interactiva && (v.estado === 'libre' || v.seleccionada)
+                        interactiva() && (v.estado === 'libre' || v.seleccionada)
                       "
-                      [disabled]="!interactiva || (v.estado !== 'libre' && !v.seleccionada)"
+                      [disabled]="!interactiva() || (v.estado !== 'libre' && !v.seleccionada)"
                       [title]="fila.fila + v.butaca.numero"
                       (click)="clic(v)"
                     ></button>
@@ -53,7 +53,7 @@
       </div>
     </div>
 
-    @if (!interactiva) {
+    @if (!interactiva()) {
       <div class="mapa__columna-resumen">
         <table class="mapa__resumen">
           <thead>

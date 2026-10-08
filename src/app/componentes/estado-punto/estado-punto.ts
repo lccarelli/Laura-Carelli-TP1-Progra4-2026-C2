@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
   imports: [],
@@ -7,5 +7,5 @@ import { Component, Input } from '@angular/core';
   styleUrl: './estado-punto.css',
 })
 export class EstadoPunto {
-  @Input() activa = false;
+  readonly activa = input(false);
 }

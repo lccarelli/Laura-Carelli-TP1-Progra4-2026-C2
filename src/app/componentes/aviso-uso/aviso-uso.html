@@ -1,0 +1,8 @@
+<div class="aviso" [class.aviso--usado]="usado()" role="status">
+  <img class="aviso__icono" src="/checkbox.png" alt="" />
+
+  <div class="aviso__texto">
+    <p class="aviso__titulo">{{ titulo() }}</p>
+    <p class="aviso__detalle"><ng-content /></p>
+  </div>
+</div>

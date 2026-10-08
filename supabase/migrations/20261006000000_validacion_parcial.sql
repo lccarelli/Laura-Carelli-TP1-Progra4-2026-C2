@@ -31,7 +31,7 @@ where c.codigo_compra = i.codigo_compra and c.candy_retirado_en is not null;
 
 create or replace function validar_entradas(codigo_compra_param text, entrada_ids uuid[])
 returns int
-language plpgsql
+language plpgsqlgit
 security definer
 as $$
 declare

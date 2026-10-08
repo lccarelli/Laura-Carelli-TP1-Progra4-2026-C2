@@ -58,4 +58,36 @@ describe('CompraServicio', () => {
       });
     });
   });
+
+  describe('enviarPushDeUso', () => {
+    let invoke: ReturnType<typeof vi.fn>;
+
+    beforeEach(() => {
+      invoke = vi.fn().mockResolvedValue({ error: null });
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          CompraServicio,
+          { provide: Supabase, useValue: { Supabase: { functions: { invoke } } } },
+        ],
+      });
+      servicio = TestBed.inject(CompraServicio);
+    });
+
+    it('invoca enviar-push-uso con el código y el tipo de uso', async () => {
+      await servicio.enviarPushDeUso('ABCD2345', 'entrada');
+
+      expect(invoke).toHaveBeenCalledWith('enviar-push-uso', {
+        body: { codigoCompra: 'ABCD2345', tipo: 'entrada' },
+      });
+    });
+
+    it('sirve también para el retiro de candy', async () => {
+      await servicio.enviarPushDeUso('ABCD2345', 'candy');
+
+      expect(invoke).toHaveBeenCalledWith('enviar-push-uso', {
+        body: { codigoCompra: 'ABCD2345', tipo: 'candy' },
+      });
+    });
+  });
 });

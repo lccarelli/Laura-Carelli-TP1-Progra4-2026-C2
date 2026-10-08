@@ -1,13 +1,16 @@
 <main class="pagina">
   <section class="panel-flotante panel--ancho">
     <h2 class="panel__titulo">Entrega de candy</h2>
-    <p class="boleteria__ayuda">Buscá una compra por su código para entregar el candy.</p>
+    <p class="boleteria__ayuda">
+      Escaneá o escribí el código de la compra: el candy se entrega al instante y se puede retirar
+      una sola vez.
+    </p>
 
     <div class="boleteria__busqueda">
-      <app-lector-codigo [buscando]="buscando()" (buscar)="buscar($event)" />
+      <app-lector-codigo [buscando]="buscando() || entregando()" (buscar)="buscar($event)" />
     </div>
 
-    @if (noEncontrada()) {
+    @if (compraNoEncontrada()) {
       <p class="boleteria__error">Código no encontrado.</p>
     }
 
@@ -20,38 +23,30 @@
 
         @if (compra.cancelada_en) {
           <p class="boleteria__error">Esta compra fue cancelada. No corresponde la entrega.</p>
-        } @else if (items().length === 0) {
+        } @else if (productos().length === 0) {
           <p class="boleteria__error">Esta compra no tiene candy.</p>
         } @else {
+          @if (estado() === 'habilitado') {
+            <app-aviso-uso titulo="Candy entregado">
+              Se registró la entrega de todo lo pendiente.
+            </app-aviso-uso>
+          } @else if (estado() === 'usado') {
+            <app-aviso-uso titulo="Este candy ya fue retirado" [usado]="true">
+              Todo lo de esta compra ya se entregó.
+            </app-aviso-uso>
+          }
+
           <h4 class="boleteria__subtitulo">Candy</h4>
           <ul class="boleteria__lista">
-            @for (item of items(); track item.tipo + item.id) {
+            @for (producto of productos(); track producto.tipo + producto.id) {
               <li class="boleteria__fila">
                 <span>
-                  {{ item.nombre }}: {{ item.entregada }} de {{ item.cantidad }} entregados
+                  {{ producto.nombre }}: {{ producto.cantidadEntregada }} de
+                  {{ producto.cantidad }} entregados
                 </span>
 
-                @if (item.entregada === item.cantidad) {
+                @if (producto.cantidadEntregada === producto.cantidad) {
                   <span class="boleteria__ok">Completo ✔</span>
-                } @else {
-                  <span class="boleteria__acciones-item">
-                    <app-boton
-                      variante="claro-negro"
-                      [disabled]="entregando()"
-                      (clic)="entregar(item, 1)"
-                    >
-                      Entregar 1
-                    </app-boton>
-                    @if (item.cantidad - item.entregada > 1) {
-                      <app-boton
-                        variante="menu"
-                        [disabled]="entregando()"
-                        (clic)="entregar(item, item.cantidad - item.entregada)"
-                      >
-                        Entregar los {{ item.cantidad - item.entregada }} restantes
-                      </app-boton>
-                    }
-                  </span>
                 }
               </li>
             }

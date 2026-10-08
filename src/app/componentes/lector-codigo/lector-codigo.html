@@ -9,15 +9,19 @@
       spellcheck="false"
       [value]="codigo()"
       (input)="codigo.set($any($event.target).value)"
-      (keydown.enter)="emitir()"
+      (keydown.enter)="emitirCodigo()"
     />
   </label>
 
   <div class="acciones">
-    <app-boton variante="menu" [disabled]="buscando()" (clic)="emitir()">Buscar</app-boton>
-    <app-boton variante="claro-negro" (clic)="alternarEscaner()">
-      {{ escaneando() ? 'Cancelar escaneo' : 'Escanear con cámara' }}
-    </app-boton>
+    <app-boton variante="menu" [disabled]="buscando()" (clic)="emitirCodigo()">Buscar</app-boton>
+    @if (escaneando()) {
+      <app-boton variante="claro-negro" (clic)="alternarEscaner()">Cancelar escaneo</app-boton>
+    } @else {
+      <app-boton variante="icono" ariaLabel="Escanear con cámara" (clic)="alternarEscaner()">
+        <img src="/scanner.png" alt="" />
+      </app-boton>
+    }
   </div>
 </div>
 

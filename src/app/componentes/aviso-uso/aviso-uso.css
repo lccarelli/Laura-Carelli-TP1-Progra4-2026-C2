@@ -1,0 +1,37 @@
+.aviso {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  margin-top: 1rem;
+  border: 2px solid var(--verde);
+  background: color-mix(in srgb, var(--verde) 12%, transparent);
+}
+
+.aviso--usado {
+  border-color: var(--rojo);
+  background: color-mix(in srgb, var(--rojo) 10%, transparent);
+}
+
+.aviso__icono {
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+}
+
+.aviso__titulo {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--negro);
+}
+
+.aviso__detalle {
+  margin: 0.15rem 0 0;
+  font-size: 0.9rem;
+  color: color-mix(in srgb, var(--negro) 70%, transparent);
+}
+
+.aviso__detalle:empty {
+  display: none;
+}

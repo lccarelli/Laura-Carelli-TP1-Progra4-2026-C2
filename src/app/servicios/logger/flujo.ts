@@ -33,6 +33,7 @@ export enum Flujo {
   EntregaCandy = 'EntregaCandy',
   AlertaDisponibilidad = 'AlertaDisponibilidad',
   AvisoPushCompra = 'AvisoPushCompra',
+  AvisoPushUso = 'AvisoPushUso',
   AvisoPushPremio = 'AvisoPushPremio',
   AvisoEmailPremio = 'AvisoEmailPremio',
 }

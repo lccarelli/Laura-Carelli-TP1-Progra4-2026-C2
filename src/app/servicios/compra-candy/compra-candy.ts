@@ -25,10 +25,9 @@ export class CompraCandyServicio {
       .returns<ItemCandyDeCompra[]>();
   }
 
-  entregar(itemId: string, cantidad: number) {
-    return this.supabase.Supabase.rpc('entregar_candy', {
-      item_id: itemId,
-      cantidad_param: cantidad,
+  entregarPendientes(codigoCompra: string) {
+    return this.supabase.Supabase.rpc('entregar_pendientes_candy', {
+      codigo_compra_param: codigoCompra,
     });
   }
 }

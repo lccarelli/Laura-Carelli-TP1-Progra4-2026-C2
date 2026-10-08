@@ -18,6 +18,8 @@ export interface CompraConDetalle {
 
 export type CompraParaValidar = CompraConDetalle;
 
+export type TipoUso = 'entrada' | 'candy';
+
 export interface DatosEnvioQr {
   email: string;
   codigoCompra: string;
@@ -93,6 +95,12 @@ export class CompraServicio {
   ) {
     return this.supabase.Supabase.functions.invoke('enviar-push-compra', {
       body: { clienteId, peliculaNombre, codigoCompra },
+    });
+  }
+
+  async enviarPushDeUso(codigoCompra: string, tipo: TipoUso) {
+    return this.supabase.Supabase.functions.invoke('enviar-push-uso', {
+      body: { codigoCompra, tipo },
     });
   }
 

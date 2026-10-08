@@ -24,7 +24,7 @@ export class LectorCodigo implements OnDestroy {
 
   private lector: Html5Qrcode | null = null;
 
-  emitir() {
+  emitirCodigo() {
     const codigo = normalizarCodigo(this.codigo());
 
     if (codigo) {
@@ -40,8 +40,6 @@ export class LectorCodigo implements OnDestroy {
 
     this.escaneando.set(true);
 
-    // el div del lector recién queda visible tras este cambio de signal: hay que
-    // esperar un frame para que tenga tamaño antes de arrancar la cámara sobre él
     await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
     this.lector = new Html5Qrcode(ID_LECTOR);
@@ -53,7 +51,7 @@ export class LectorCodigo implements OnDestroy {
         async (textoDecodificado) => {
           this.codigo.set(textoDecodificado);
           await this.detenerEscaner();
-          this.emitir();
+          this.emitirCodigo();
         },
         undefined,
       );

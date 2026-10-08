@@ -24,11 +24,4 @@ export class CompraComboServicio {
       .eq('codigo_compra', codigoCompra)
       .returns<ItemComboDeCompra[]>();
   }
-
-  entregar(itemId: string, cantidad: number) {
-    return this.supabase.Supabase.rpc('entregar_combo', {
-      item_id: itemId,
-      cantidad_param: cantidad,
-    });
-  }
 }

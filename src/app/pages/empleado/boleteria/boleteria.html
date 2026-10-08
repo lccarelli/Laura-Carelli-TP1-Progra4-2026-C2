@@ -1,13 +1,16 @@
 <main class="pagina">
   <section class="panel-flotante panel--ancho">
     <h2 class="panel__titulo">Boletería</h2>
-    <p class="boleteria__ayuda">Buscá una compra por su código para validar el ingreso.</p>
+    <p class="boleteria__ayuda">
+      Escaneá o escribí el código de la compra: las entradas se validan al instante y cada una sirve
+      una sola vez.
+    </p>
 
     <div class="boleteria__busqueda">
-      <app-lector-codigo [buscando]="buscando()" (buscar)="buscar($event)" />
+      <app-lector-codigo [buscando]="buscando() || validando()" (buscar)="buscar($event)" />
     </div>
 
-    @if (noEncontrada()) {
+    @if (compraNoEncontrada()) {
       <p class="boleteria__error">Código no encontrado.</p>
     }
 
@@ -22,42 +25,33 @@
         @if (compra.cancelada_en) {
           <p class="boleteria__error">Esta compra fue cancelada. No corresponde el ingreso.</p>
         } @else {
+          @if (estado() === 'habilitado') {
+            <app-aviso-uso titulo="Ingreso validado">
+              {{ entradas().length === 1 ? '1 entrada' : entradas().length + ' entradas' }}
+              registrada{{ entradas().length === 1 ? '' : 's' }} ahora.
+            </app-aviso-uso>
+          } @else if (estado() === 'usado') {
+            <app-aviso-uso titulo="Este código ya fue utilizado" [usado]="true">
+              Ingresó el {{ ultimoIngreso() | date: 'dd/MM/yyyy HH:mm' }}.
+            </app-aviso-uso>
+          }
+
           <h4 class="boleteria__subtitulo">Butacas</h4>
           <ul class="boleteria__lista">
-            @for (item of butacas(); track item.id) {
-              @if (item.butaca; as butaca) {
+            @for (entrada of entradas(); track entrada.id) {
+              @if (entrada.butaca; as butaca) {
                 <li class="boleteria__fila">
                   <span>{{ butaca.fila }}{{ butaca.numero }} ({{ butaca.tipo }})</span>
 
-                  @if (item.validada_en) {
+                  @if (entrada.validada_en) {
                     <span class="boleteria__ok">
-                      Ingresó el {{ item.validada_en | date: 'dd/MM HH:mm' }} ✔
+                      Ingresó el {{ entrada.validada_en | date: 'dd/MM HH:mm' }} ✔
                     </span>
-                  } @else {
-                    <app-boton
-                      variante="claro-negro"
-                      [disabled]="validando()"
-                      (clic)="ingresar([item.id])"
-                    >
-                      Ingresar
-                    </app-boton>
                   }
                 </li>
               }
             }
           </ul>
-
-          @if (pendientes().length > 1) {
-            <app-boton
-              variante="menu"
-              [disabled]="validando()"
-              (clic)="ingresar(ids(pendientes()))"
-            >
-              Ingresar todas ({{ pendientes().length }})
-            </app-boton>
-          } @else if (butacas().length > 0 && pendientes().length === 0) {
-            <p class="boleteria__ok">Todas las entradas ya ingresaron.</p>
-          }
         }
       </div>
     }

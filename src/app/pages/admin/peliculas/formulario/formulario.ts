@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { PeliculaServicio } from '../../../../servicios/pelicula/pelicula';
 import { GeneroServicio } from '../../../../servicios/genero/genero';
+import { ImagenServicio } from '../../../../servicios/imagen/imagen';
 import { Errores } from '../../../../servicios/errores/errores';
 import { PeliculaPorCrear } from '../../../../interfaces/pelicula-por-crear';
 import { Genero } from '../../../../interfaces/genero';
@@ -16,6 +17,7 @@ import { SelectorChips } from '../../../../componentes/selector-chips/selector-c
 import { Logger } from '../../../../servicios/logger/logger';
 import { Flujo } from '../../../../servicios/logger/flujo';
 import { TipoEvento } from '../../../../servicios/logger/tipo-evento';
+import { esImagenAlmacenada } from '../../../../utilidades/imagen';
 import { mapRatings } from '../../../../utilidades/omdb';
 import { traduccionDisponible, traducirAlEspanol } from '../../../../utilidades/traducir';
 
@@ -28,6 +30,7 @@ import { traduccionDisponible, traducirAlEspanol } from '../../../../utilidades/
 export class Formulario implements OnDestroy {
   private peliculaServicio = inject(PeliculaServicio);
   private generoServicio = inject(GeneroServicio);
+  private imagenServicio = inject(ImagenServicio);
   private errores = inject(Errores);
   private formBuilder = inject(FormBuilder);
   private route = inject(ActivatedRoute);
@@ -69,6 +72,7 @@ export class Formulario implements OnDestroy {
   protected trailerUrl = signal('');
   protected imagenUrl = signal('');
   private suscripcion?: Subscription;
+  private imagenOriginal: string | null = null;
 
   protected consultaTrailer = computed(() => {
     const anio = this.fechaEstreno().slice(0, 4);
@@ -187,6 +191,7 @@ export class Formulario implements OnDestroy {
       return;
     }
 
+    this.imagenOriginal = data.imagen_url;
     this.formulario.setValue({
       nombre: data.nombre,
       sinopsis: data.sinopsis ?? '',
@@ -250,11 +255,36 @@ export class Formulario implements OnDestroy {
       this.errores.mostrar(error.message);
     } else {
       this.logger.registrar(Flujo.BajaPelicula, TipoEvento.Exito, id);
+      await this.imagenServicio.eliminar(this.imagenOriginal);
       await this.router.navigate(['/admin/peliculas']);
     }
   }
 
+  private async imagenParaGuardar(): Promise<string | null> {
+    const { imagen_url } = this.formulario.getRawValue();
+
+    if (!imagen_url || esImagenAlmacenada(imagen_url)) {
+      return imagen_url;
+    }
+
+    const { data, error } = await this.imagenServicio.guardarDesdeUrl(imagen_url);
+
+    if (error || !data) {
+      this.errores.mostrar(error?.message ?? 'No se pudo guardar la imagen.');
+      return null;
+    }
+
+    this.formulario.patchValue({ imagen_url: data.url });
+    return data.url;
+  }
+
   async guardar() {
+    const imagenUrl = await this.imagenParaGuardar();
+
+    if (imagenUrl === null) {
+      return;
+    }
+
     const valores = this.valoresParaGuardar();
     const idExistente = this.id();
     const flujo = idExistente ? Flujo.ModificacionPelicula : Flujo.AltaPelicula;
@@ -268,6 +298,10 @@ export class Formulario implements OnDestroy {
         this.logger.registrar(flujo, TipoEvento.Error, error.message);
         this.errores.mostrar(error.message);
         return;
+      }
+
+      if (this.imagenOriginal !== valores.imagen_url) {
+        await this.imagenServicio.eliminar(this.imagenOriginal);
       }
 
       peliculaId = idExistente;
